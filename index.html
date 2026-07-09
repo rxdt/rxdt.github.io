@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roxana dT</title>
+    <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software experiments.">
+    <meta property="og:title" content="Roxana dT">
+    <meta property="og:description" content="Agent tools, AI evaluation projects, and practical software experiments.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rxdt.github.io/">
+    <meta property="og:image" content="https://rxdt.github.io/assets/py-ralph-frame.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #101820;
+        --muted: #52625d;
+        --paper: #f7f5ee;
+        --panel: #ffffff;
+        --line: #d9ded8;
+        --green: #2c9c7a;
+        --orange: #f15a2b;
+        --gold: #e1b437;
+        --shadow: 0 18px 50px rgba(16, 24, 32, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(247, 245, 238, 0.92);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(14px);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 72px;
+        gap: 24px;
+      }
+
+      .brand {
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.75fr);
+        align-items: center;
+        gap: 48px;
+        padding: 74px 0 58px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--green);
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 34px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--green);
+      }
+
+      h1 {
+        margin: 18px 0 20px;
+        max-width: 760px;
+        font-size: clamp(46px, 6vw, 86px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 21px;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid var(--ink);
+        border-radius: 8px;
+        font-weight: 800;
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .button.secondary {
+        background: transparent;
+        color: var(--ink);
+      }
+
+      .portrait {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .portrait img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .portrait-caption {
+        padding: 18px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      section {
+        padding: 56px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .section-note {
+        max-width: 520px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .project {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .project-image {
+        width: 100%;
+        height: 300px;
+        display: block;
+        object-fit: cover;
+        background: #edf1ee;
+      }
+
+      .project-body {
+        padding: 22px;
+      }
+
+      .project-kicker {
+        color: var(--orange);
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h3 {
+        margin: 8px 0 10px;
+        font-size: 28px;
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .project p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 18px;
+        font-weight: 800;
+      }
+
+      .links a {
+        color: var(--green);
+      }
+
+      .focus-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .focus {
+        border-left: 4px solid var(--gold);
+        background: rgba(255, 255, 255, 0.58);
+        padding: 18px 18px 18px 20px;
+      }
+
+      .focus strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .focus span {
+        color: var(--muted);
+      }
+
+      .contact {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .contact-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .contact-list a {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px 16px;
+        background: var(--panel);
+        font-weight: 800;
+      }
+
+      footer {
+        padding: 36px 0 46px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 820px) {
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+          justify-content: center;
+          padding: 16px 0;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+        }
+
+        .hero,
+        .contact {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 48px;
+        }
+
+        .portrait {
+          max-width: 360px;
+        }
+
+        .section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .project-grid,
+        .focus-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .project-image {
+          height: auto;
+          aspect-ratio: 16 / 10;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell nav">
+        <a class="brand" href="/">Roxana dT</a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#work">Work</a>
+          <a href="#focus">Focus</a>
+          <a href="#contact">Contact</a>
+          <a href="https://github.com/rxdt">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="shell hero">
+        <div>
+          <div class="eyebrow">Builder in San Francisco</div>
+          <h1>Agent tools, AI evals, and small software that has to survive contact with users.</h1>
+          <p class="lede">
+            I spent a long time at FAANGs, did a stint in VC, and now build apps with my interns,
+            coding agents, and a lot of verification.
+          </p>
+          <div class="actions" aria-label="Primary links">
+            <a class="button" href="https://github.com/rxdt/py_ralph_frame">See py_ralph_frame</a>
+            <a class="button secondary" href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5">Read the conference writeup</a>
+          </div>
+        </div>
+        <aside class="portrait" aria-label="Profile">
+          <img src="https://github.com/rxdt.png?size=520" alt="Roxana dT GitHub avatar">
+          <div class="portrait-caption">
+            Practical AI engineering, product-path evaluation, and agent workflows that keep humans in the loop.
+          </div>
+        </aside>
+      </div>
+
+      <section id="work">
+        <div class="shell">
+          <div class="section-head">
+            <h2>Selected Work</h2>
+            <p class="section-note">
+              Current public projects around coding agents, evaluation, and the practical mess of using AI to build software.
+            </p>
+          </div>
+          <div class="project-grid">
+            <article class="project">
+              <img class="project-image" src="assets/py-ralph-frame.png" alt="py_ralph_frame thumbnail">
+              <div class="project-body">
+                <div class="project-kicker">Developer tool</div>
+                <h3>py_ralph_frame</h3>
+                <p>
+                  A lightweight spec-driven loop harness for Claude Code, Codex, and Gemini CLI.
+                  It runs fresh-context agent loops with specs, commits, and verification gates.
+                </p>
+                <div class="links">
+                  <a href="https://github.com/rxdt/py_ralph_frame">Repository</a>
+                  <a href="https://github.com/rxdt/py_ralph_frame/agents?author=rxdt">Agent runs</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="project">
+              <img class="project-image" src="assets/inference-conference.png" alt="Loop of absurdity diagram from the inference conference project">
+              <div class="project-body">
+                <div class="project-kicker">AI eval case study</div>
+                <h3>Inference Conference</h3>
+                <p>
+                  Three AI agents built spaCy model recommenders. A fresh AI peer-review panel ran the repos,
+                  caught leakage and product-path failures, and rejected all three.
+                </p>
+                <div class="links">
+                  <a href="https://github.com/rxdt/inference_conference">Repository</a>
+                  <a href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5">Writeup</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="focus">
+        <div class="shell">
+          <div class="section-head">
+            <h2>What I Care About</h2>
+            <p class="section-note">
+              The theme is not bigger demos. It is tighter loops between intent, implementation, evidence, and judgment.
+            </p>
+          </div>
+          <div class="focus-grid">
+            <div class="focus">
+              <strong>Agent loops</strong>
+              <span>Fresh context, clear specs, commits, and gates so coding agents can be useful without becoming fire-and-forget.</span>
+            </div>
+            <div class="focus">
+              <strong>Evaluation that bites</strong>
+              <span>Measure the product path, audit provenance, and treat confident wrongness as worse than refusing to guess.</span>
+            </div>
+            <div class="focus">
+              <strong>Practical software</strong>
+              <span>Small tools, clear interfaces, and enough rigor that the next human can understand what happened.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="shell contact">
+          <div>
+            <h2>Find Me</h2>
+            <p class="section-note">
+              The best trail is public work: repos, writeups, and the artifacts left by agent runs.
+            </p>
+          </div>
+          <div class="contact-list" aria-label="External profiles">
+            <a href="https://github.com/rxdt">GitHub</a>
+            <a href="https://dev.to/rxdt">Dev.to</a>
+            <a href="https://x.com/roxdtvc">X / Twitter</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        Built on GitHub Pages. Source: <a href="https://github.com/rxdt/rxdt.github.io">rxdt/rxdt.github.io</a>.
+      </div>
+    </footer>
+  </body>
+</html>
