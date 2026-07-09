@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Roxana dT</title>
+    <title>rxdt</title>
     <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software experiments.">
     <meta property="og:title" content="Roxana dT">
     <meta property="og:description" content="Agent tools, AI evaluation projects, and practical software experiments.">
@@ -90,10 +90,6 @@
       }
 
       .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.75fr);
-        align-items: center;
-        gap: 48px;
         padding: 74px 0 58px;
       }
 
@@ -153,27 +149,6 @@
       .button.secondary {
         background: transparent;
         color: var(--ink);
-      }
-
-      .portrait {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        overflow: hidden;
-        background: var(--panel);
-        box-shadow: var(--shadow);
-      }
-
-      .portrait img {
-        display: block;
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-      }
-
-      .portrait-caption {
-        padding: 18px;
-        color: var(--muted);
-        font-size: 15px;
       }
 
       section {
@@ -322,17 +297,12 @@
           flex-wrap: wrap;
         }
 
-        .hero,
         .contact {
           grid-template-columns: 1fr;
         }
 
         .hero {
           padding-top: 48px;
-        }
-
-        .portrait {
-          max-width: 360px;
         }
 
         .section-head {
@@ -379,12 +349,6 @@
             <a class="button secondary" href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5">Read the conference writeup</a>
           </div>
         </div>
-        <aside class="portrait" aria-label="Profile">
-          <img src="https://github.com/rxdt.png?size=520" alt="Roxana dT GitHub avatar">
-          <div class="portrait-caption">
-            Practical AI engineering, product-path evaluation, and agent workflows that keep humans in the loop.
-          </div>
-        </aside>
       </div>
 
       <section id="work">
