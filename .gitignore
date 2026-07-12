@@ -1,0 +1,20 @@
+.coverage
+.cache_*
+coverage/
+dist/
+.DS_Store
+.claude
+.codex
+.vscode/
+**/node_modules/
+**test-results/
+**/.lighthouseci/
+**/.playwright-*
+scratchpad/
+*pnpm-debug.log
+.npmrc
+.pnpm-store/
+*.png
+# workspace uses the root lockfile only; per-package lockfiles are stale artifacts
+frontend/pnpm-lock.yaml
+harness/pnpm-lock.yaml

@@ -1,0 +1,29 @@
+{
+  "name": "loopgate_js",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "type": "module",
+  "bin": {
+    "harness": "./harness/harness.mjs"
+  },
+  "engines": {
+    "node": "^22.22.0 || >=24.8.0",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "build": "pnpm --filter ./frontend build",
+    "dev": "pnpm --filter ./frontend dev",
+    "gate": "node harness/harness.mjs gate",
+    "harness:lint": "pnpm --prefix harness run lint",
+    "harness:test": "pnpm --prefix harness run test:coverage",
+    "lint": "pnpm --filter ./harness lint",
+    "loop": "node harness/harness.mjs loop",
+    "preflight": "node harness/harness.mjs preflight",
+    "preview": "pnpm --filter ./frontend preview",
+    "setup": "node harness/harness.mjs setup",
+    "status": "node harness/harness.mjs status",
+    "test": "pnpm --filter ./harness coverage",
+    "test:file": "pnpm --filter ./harness test:file --"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["vite/client"],
+    "strict": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "useUnknownInCatchVariables": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["../frontend/src/**/*.ts", "../frontend/*.ts"],
+  "exclude": [
+    "../.git/**",
+    "../**/.lighthouseci/**",
+    "../**/coverage/**",
+    "../**/dist/**",
+    "../**/build/**",
+    "../**/node_modules/**",
+    "../**/scratchpad/**",
+    "../**/test-results/**",
+    "../frontend/tests/**"
+  ]
+}

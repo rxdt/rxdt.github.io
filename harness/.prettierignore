@@ -1,0 +1,12 @@
+**/dist/
+**/test-results/
+**/coverage/
+**/playwright-report/
+**/node_modules/
+**/.claude/
+**/*.md
+**/.lighthouseci/
+**/scratchpad/
+**/worktree/
+# generated lockfiles are not hand-formatted
+**/pnpm-lock.yaml

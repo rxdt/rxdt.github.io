@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreDependencies": ["@secretlint/secretlint-rule-preset-recommend"],
+  "ignoreBinaries": ["semgrep"],
+  "include": ["files", "exports", "nsExports", "types", "nsTypes"],
+  "workspaces": {
+    "frontend": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "harness": {
+      "entry": [
+        "cli.ts",
+        "*.config.{js,cjs,mjs,ts}",
+        "*.test.ts",
+        "lighthouserc.cjs"
+      ],
+      "project": ["*.ts", "*.{js,cjs,mjs}"]
+    }
+  }
+}

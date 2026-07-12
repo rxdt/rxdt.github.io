@@ -1,0 +1,12 @@
+{
+  "elements": ["html5"],
+  "extends": ["html-validate:recommended", "html-validate:prettier"],
+  "rules": {
+    "deprecated-rule": "error",
+    "svg-focusable": "error",
+    "no-inline-style": "error",
+    "element-permitted-content": "error",
+    "no-dup-id": "error",
+    "attr-spacing": "error"
+  }
+}

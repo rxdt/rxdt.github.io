@@ -1,0 +1,1 @@
+loop_gate_js template seed app — replace this file with a description of your site for LLM crawlers.
