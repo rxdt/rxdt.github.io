@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="HGOXOZO_k4LCft-w2hY9nPwxJlCA005cy3fJMXP3Lyc">
-    <title>Roxana dT — Agent tools, AI evals, and the AI Deployment Calculator</title>
-    <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software — including the AI Deployment Calculator, a browser tool that estimates GPU VRAM and hardware for AI workloads.">
+    <title>Roxana dT - Agent tools, AI evals, and the AI Deployment Calculator</title>
+    <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software including the AI Deployment Calculator, a browser tool that estimates GPU VRAM and hardware for AI workloads.">
     <link rel="canonical" href="https://rxdt.github.io/">
-    <meta property="og:title" content="Roxana dT — Agent tools, AI evals, and the AI Deployment Calculator">
+    <meta property="og:title" content="Roxana dT - Agent tools, AI evals, and the AI Deployment Calculator">
     <meta property="og:description" content="Agent tools, AI evaluation projects, and the AI Deployment Calculator for estimating GPU VRAM and hardware.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://rxdt.github.io/">
-    <meta property="og:image" content="https://rxdt.github.io/assets/py-ralph-frame.png">
+    <meta property="og:image" content="https://rxdt.github.io/assets/rxdt_pixels.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script type="application/ld+json">
@@ -43,16 +43,18 @@
     </script>
     <style>
       :root {
-        color-scheme: light;
-        --ink: #101820;
-        --muted: #52625d;
-        --paper: #f7f5ee;
-        --panel: #ffffff;
-        --line: #d9ded8;
-        --green: #2c9c7a;
-        --orange: #f15a2b;
-        --gold: #e1b437;
-        --shadow: 0 18px 50px rgba(16, 24, 32, 0.1);
+        color-scheme: dark;
+        --ink: #f4f4f5;
+        --muted: #a1a1aa;
+        --paper: #0d0f12;
+        --panel: rgba(12, 13, 18, 0.72);
+        --panel-strong: rgba(6, 7, 11, 0.88);
+        --line: rgba(167, 139, 250, 0.22);
+        --line-soft: rgba(255, 255, 255, 0.1);
+        --violet: #a78bfa;
+        --violet-strong: #8b5cf6;
+        --amber: #fcd34d;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
       }
 
       * {
@@ -65,10 +67,25 @@
 
       body {
         margin: 0;
-        background: var(--paper);
+        background:
+          radial-gradient(ellipse at 50% 0%, rgba(76, 29, 149, 0.34), rgba(13, 15, 18, 0.92) 42%, #050507 100%),
+          var(--paper);
         color: var(--ink);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         line-height: 1.5;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(167, 139, 250, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(167, 139, 250, 0.045) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 70%);
       }
 
       a {
@@ -77,8 +94,7 @@
       }
 
       a:hover {
-        text-decoration: underline;
-        text-underline-offset: 4px;
+        color: var(--violet);
       }
 
       .shell {
@@ -87,8 +103,8 @@
       }
 
       header {
-        border-bottom: 1px solid var(--line);
-        background: rgba(247, 245, 238, 0.92);
+        border-bottom: 1px solid var(--line-soft);
+        background: rgba(5, 5, 7, 0.78);
         position: sticky;
         top: 0;
         z-index: 10;
@@ -107,6 +123,7 @@
         font-size: 18px;
         font-weight: 800;
         letter-spacing: 0;
+        color: var(--ink);
       }
 
       .nav-links {
@@ -119,14 +136,19 @@
       }
 
       .hero {
-        padding: 74px 0 58px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.04fr) minmax(300px, 0.72fr);
+        gap: 48px;
+        align-items: center;
+        min-height: calc(100vh - 72px);
+        padding: 58px 0 64px;
       }
 
       .eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        color: var(--green);
+        color: var(--violet);
         font-size: 14px;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -138,13 +160,13 @@
         width: 34px;
         height: 3px;
         border-radius: 999px;
-        background: var(--green);
+        background: var(--violet);
       }
 
       h1 {
         margin: 18px 0 20px;
         max-width: 760px;
-        font-size: clamp(46px, 6vw, 86px);
+        font-size: clamp(44px, 6vw, 84px);
         line-height: 0.95;
         letter-spacing: 0;
       }
@@ -153,6 +175,39 @@
         max-width: 720px;
         color: var(--muted);
         font-size: 21px;
+      }
+
+      .portrait {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        border-radius: 12px;
+        background: rgba(8, 8, 12, 0.55);
+        box-shadow:
+          0 0 46px rgba(139, 92, 246, 0.24),
+          inset 0 0 18px rgba(167, 139, 250, 0.12),
+          var(--shadow);
+      }
+
+      .portrait::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(167, 139, 250, 0.16), transparent 34%),
+          radial-gradient(circle at 50% 20%, transparent, rgba(0, 0, 0, 0.22) 70%);
+        mix-blend-mode: screen;
+      }
+
+      .portrait img {
+        width: 100%;
+        min-height: 560px;
+        max-height: 72vh;
+        display: block;
+        object-fit: cover;
+        object-position: 50% 28%;
+        filter: grayscale(1) contrast(1.08);
       }
 
       .actions {
@@ -168,21 +223,30 @@
         justify-content: center;
         min-height: 46px;
         padding: 0 18px;
-        border: 1px solid var(--ink);
+        border: 1px solid rgba(167, 139, 250, 0.54);
         border-radius: 8px;
         font-weight: 800;
-        background: var(--ink);
-        color: var(--paper);
+        background: rgba(167, 139, 250, 0.16);
+        color: var(--ink);
+        box-shadow: inset 0 0 10px rgba(167, 139, 250, 0.18);
       }
 
       .button.secondary {
         background: transparent;
         color: var(--ink);
+        border-color: var(--line-soft);
+        box-shadow: none;
+      }
+
+      .button:hover {
+        text-decoration: none;
+        border-color: var(--violet);
+        background: rgba(167, 139, 250, 0.24);
       }
 
       section {
         padding: 56px 0;
-        border-top: 1px solid var(--line);
+        border-top: 1px solid var(--line-soft);
       }
 
       .section-head {
@@ -214,11 +278,12 @@
       }
 
       .project {
-        border: 1px solid var(--line);
+        border: 1px solid var(--line-soft);
         border-radius: 8px;
         overflow: hidden;
         background: var(--panel);
         box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
       }
 
       .project-image {
@@ -226,7 +291,7 @@
         height: 300px;
         display: block;
         object-fit: cover;
-        background: #edf1ee;
+        background: #111117;
       }
 
       .project-image--calc {
@@ -235,8 +300,10 @@
         justify-content: center;
         text-align: center;
         padding: 0 20px;
-        background: linear-gradient(135deg, var(--green), #1c6f57);
-        color: var(--paper);
+        background:
+          radial-gradient(circle at top left, rgba(167, 139, 250, 0.5), transparent 42%),
+          linear-gradient(135deg, #111117, #2e1065);
+        color: var(--ink);
         font-size: clamp(26px, 4vw, 34px);
         font-weight: 850;
         line-height: 1.05;
@@ -251,7 +318,7 @@
       }
 
       .project-kicker {
-        color: var(--orange);
+        color: var(--violet);
         font-size: 13px;
         font-weight: 850;
         letter-spacing: 0.08em;
@@ -280,7 +347,7 @@
       }
 
       .links a {
-        color: var(--green);
+        color: var(--violet);
       }
 
       .focus-grid {
@@ -290,9 +357,12 @@
       }
 
       .focus {
-        border-left: 4px solid var(--gold);
-        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid var(--line-soft);
+        border-left: 4px solid var(--violet);
+        border-radius: 8px;
+        background: rgba(12, 13, 18, 0.58);
         padding: 18px 18px 18px 20px;
+        backdrop-filter: blur(10px);
       }
 
       .focus strong {
@@ -318,11 +388,12 @@
       }
 
       .contact-list a {
-        border: 1px solid var(--line);
+        border: 1px solid var(--line-soft);
         border-radius: 8px;
         padding: 14px 16px;
         background: var(--panel);
         font-weight: 800;
+        backdrop-filter: blur(10px);
       }
 
       footer {
@@ -348,7 +419,18 @@
         }
 
         .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
           padding-top: 48px;
+        }
+
+        .portrait {
+          max-width: 420px;
+        }
+
+        .portrait img {
+          min-height: 420px;
+          max-height: none;
         }
 
         .section-head {
@@ -383,7 +465,7 @@
 
     <main>
       <div class="shell hero">
-        <div>
+        <div class="hero-copy">
           <div class="eyebrow">Builder in San Francisco</div>
           <h1>Agent tools, AI evals, and small software that has to survive contact with users.</h1>
           <p class="lede">
@@ -391,10 +473,13 @@
             coding agents, and a lot of verification.
           </p>
           <div class="actions" aria-label="Primary links">
-            <a class="button" href="https://github.com/rxdt/py_ralph_frame">See py_ralph_frame</a>
+            <a class="button" href="https://github.com/rxdt/loopgate-harness">See LoopGate Harness</a>
             <a class="button secondary" href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5">Read the conference writeup</a>
           </div>
         </div>
+        <figure class="portrait" aria-label="Portrait of Roxana dT">
+          <img src="assets/rxdt_pixels.png" alt="Black and white pixel portrait of Roxana dT">
+        </figure>
       </div>
 
       <section id="work">
@@ -427,17 +512,17 @@
             </article>
 
             <article class="project">
-              <img class="project-image" src="assets/py-ralph-frame.png" alt="py_ralph_frame thumbnail">
+              <img class="project-image" src="assets/py-ralph-frame.png" alt="LoopGate Harness thumbnail">
               <div class="project-body">
                 <div class="project-kicker">Developer tool</div>
-                <h3>py_ralph_frame</h3>
+                <h3>LoopGate Harness</h3>
                 <p>
                   A lightweight spec-driven loop harness for Claude Code, Codex, and Gemini CLI.
                   It runs fresh-context agent loops with specs, commits, and verification gates.
                 </p>
                 <div class="links">
-                  <a href="https://github.com/rxdt/py_ralph_frame">Repository</a>
-                  <a href="https://github.com/rxdt/py_ralph_frame/agents?author=rxdt">Agent runs</a>
+                  <a href="https://github.com/rxdt/loopgate-harness">Repository</a>
+                  <a href="https://github.com/rxdt/loopgate-harness/agents?author=rxdt">Agent runs</a>
                 </div>
               </div>
             </article>
