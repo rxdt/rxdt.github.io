@@ -3,15 +3,43 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>rxdt</title>
-    <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software experiments.">
-    <meta property="og:title" content="Roxana dT">
-    <meta property="og:description" content="Agent tools, AI evaluation projects, and practical software experiments.">
+    <title>Roxana dT — Agent tools, AI evals, and the AI Deployment Calculator</title>
+    <meta name="description" content="Roxana dT builds agent tools, AI evaluation projects, and practical software — including the AI Deployment Calculator, a browser tool that estimates GPU VRAM and hardware for AI workloads.">
+    <link rel="canonical" href="https://rxdt.github.io/">
+    <meta property="og:title" content="Roxana dT — Agent tools, AI evals, and the AI Deployment Calculator">
+    <meta property="og:description" content="Agent tools, AI evaluation projects, and the AI Deployment Calculator for estimating GPU VRAM and hardware.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://rxdt.github.io/">
     <meta property="og:image" content="https://rxdt.github.io/assets/py-ralph-frame.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Roxana dT",
+        "url": "https://rxdt.github.io/",
+        "sameAs": [
+          "https://github.com/rxdt",
+          "https://dev.to/rxdt",
+          "https://x.com/roxdtvc"
+        ],
+        "knowsAbout": ["AI agents", "AI evaluation", "GPU VRAM estimation", "AI deployment"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "AI Deployment Calculator",
+        "url": "https://aideploymentcalculator.vercel.app/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any (web browser)",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Browser-based calculator that estimates GPU VRAM requirements and recommends hardware for deploying AI workloads — text generation, embeddings, vision, image diffusion, and LoRA/QLoRA/full fine-tuning — accounting for model size, quantization, batching, and framework overhead.",
+        "author": { "@type": "Person", "name": "Roxana dT", "url": "https://rxdt.github.io/" }
+      }
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -200,6 +228,23 @@
         background: #edf1ee;
       }
 
+      .project-image--calc {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 20px;
+        background: linear-gradient(135deg, var(--green), #1c6f57);
+        color: var(--paper);
+        font-size: clamp(26px, 4vw, 34px);
+        font-weight: 850;
+        line-height: 1.05;
+      }
+
+      .project-image--calc:hover {
+        text-decoration: none;
+      }
+
       .project-body {
         padding: 22px;
       }
@@ -360,6 +405,26 @@
             </p>
           </div>
           <div class="project-grid">
+            <article class="project">
+              <a class="project-image project-image--calc" href="https://aideploymentcalculator.vercel.app/" aria-label="Open the AI Deployment Calculator">
+                <span>AI Deployment Calculator</span>
+              </a>
+              <div class="project-body">
+                <div class="project-kicker">Web app</div>
+                <h3>AI Deployment Calculator</h3>
+                <p>
+                  A browser-based AI deployment calculator that estimates GPU VRAM requirements
+                  and recommends hardware for AI workloads — text generation, embeddings, vision,
+                  image diffusion, and LoRA/QLoRA/full fine-tuning — accounting for model size,
+                  quantization, batching, and framework overhead. Runs fully client-side, no backend.
+                </p>
+                <div class="links">
+                  <a href="https://aideploymentcalculator.vercel.app/">Launch calculator</a>
+                  <a href="https://github.com/rxdt/ai_deployment_calculator">Repository</a>
+                </div>
+              </div>
+            </article>
+
             <article class="project">
               <img class="project-image" src="assets/py-ralph-frame.png" alt="py_ralph_frame thumbnail">
               <div class="project-body">
