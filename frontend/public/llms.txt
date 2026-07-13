@@ -1,1 +1,15 @@
-loop_gate_js template seed app — replace this file with a description of your site for LLM crawlers.
+# LoopGate JS
+
+LoopGate JS, also known as loopgate_js, is a TypeScript and Vite frontend
+coding-agent loop harness for Claude, Codex, Copilot, Agy, and other CLI
+agents.
+
+It provides a repo-native workflow where prompts, specs, project status, tests,
+and gate checks live with the code. Agents can run fresh-context iterations,
+edit frontend code, and commit only after passing guardrails such as ESLint,
+Stylelint, HTML validation, strict TypeScript, Vitest coverage, Playwright,
+Lighthouse, dependency checks, security checks, and containment rules.
+
+Repository: https://github.com/rxdt/loopgate_js
+Sample app: https://aideploymentcalculator.vercel.app/
+Sample app source: https://github.com/rxdt/ai_deployment_calculator

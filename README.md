@@ -2,9 +2,9 @@
 
 <img src=".banner.svg" alt="Blue infinity loop" width="360">
 
-<h1>LoopGate</h1>
-<p><em>frontend edition</em></p>
-<p>A repo-native coding-agent loop harness for Claude, Codex, Copilot, and other CLI agents. Agents can edit. Gates decide what lands. You set the task, the loop feeds the prompt, and each iteration must commit through guardrails.</p>
+<h1>LoopGate JS</h1>
+<p><em>TypeScript frontend coding-agent loop harness</em></p>
+<p>LoopGate JS is a repo-native TypeScript and Vite harness for running autonomous coding-agent loops with Claude, Codex, Copilot, Agy, and other CLI agents. Agents can edit. Gates decide what lands. You set the task, the loop feeds the prompt, and each iteration must commit through lint, tests, Playwright, Lighthouse, coverage, security, and containment guardrails.</p>
 
 ![Claude](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=claude&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
@@ -25,6 +25,18 @@
 
 ---
 
+## What is LoopGate JS?
+
+LoopGate JS, also published as `loopgate_js`, is a frontend loop harness for
+AI coding agents. It turns a normal Vite + TypeScript repository into a
+repeatable agent workflow: prompts live in the repo, specs define the work,
+agents run in fresh iterations, and every result has to pass the same quality
+gate before it can land.
+
+Use it when you want Claude Code, OpenAI Codex, GitHub Copilot, Agy, or another
+CLI coding agent to build frontend code inside a strict JavaScript/TypeScript
+quality loop instead of making one-off edits.
+
 ## TL;DR: Getting Started
 
 1. `git init` (the gate, hooks, and loop all shell out to git)
@@ -37,12 +49,12 @@
 
 ## Features
 
-- Worker-agnostic: Claude, Codex, Copilot, Agy, or any prompt-reading CLI
-- Built in Quality: Agents work, only if they pass the quality gates you set ✅
+- Worker-agnostic AI coding-agent loop: Claude, Codex, Copilot, Agy, or any prompt-reading CLI
+- Built-in quality gates: agents work only if they pass the quality bar you set ✅
 - Repo-as-memory workflow: specs/status/prompt are durable but code is king, leaving you free 😎
-- Frontend-ready seed app: Vite, strict TypeScript, inline production build, and a replaceable `frontend/src/main.ts` entry point
+- Frontend-ready TypeScript seed app: Vite, strict TypeScript, inline production build, and a replaceable `frontend/src/main.ts` entry point
 - Browser quality bar: HTML validation, ESLint, Stylelint, dependency-cruiser, Knip, Semgrep, Secretlint, and `pnpm audit` **AND SO MUCH MORE**
-- Test harness included: Vitest with hard 100% coverage, Playwright across desktop and mobile viewports, Lighthouse budgets, jsdom, fast-check, and axe-core
+- Test harness included: Vitest with hard 100% coverage, Playwright across desktop and mobile viewports, Lighthouse SEO budgets, jsdom, fast-check, and axe-core
 - Preflight vs full gate split 🆗
 - Forbidden-path containment: Don't touch that!-configurable 🛑
 - Installable project template: harness install loopgate gets the repo ready ▶️
