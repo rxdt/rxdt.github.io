@@ -1,4 +1,4 @@
-# Roxana dT
+# Rox dT
 
 Personal GitHub Pages site for [rxdt](https://github.com/rxdt).
 
