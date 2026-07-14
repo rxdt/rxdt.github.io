@@ -1,4 +1,5 @@
 import { globSync } from "node:fs";
+import csp from "vite-plugin-csp-guard";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
@@ -202,7 +203,19 @@ function inlineBuildAssets(): Plugin {
 
 export default defineConfig({
   root: frontendRoot,
-  plugins: [inlineBuildAssets()],
+  plugins: [
+    inlineBuildAssets(),
+    csp({
+      algorithm: "sha256",
+      dev: { run: true },
+      policy: {
+        "script-src": ["'self'"], // plugin auto-adds sha256 hashes of inlined blocks
+        "style-src": ["'self'"],
+        "img-src": ["'self'", "data:"],
+        "media-src": ["'self'"],
+      },
+    }),
+  ],
   build: {
     rollupOptions: {
       input: htmlEntries,

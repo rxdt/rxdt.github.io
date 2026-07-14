@@ -20,6 +20,7 @@
     "lint": "pnpm --filter ./harness lint",
     "loop": "node harness/harness.mjs loop",
     "preflight": "node harness/harness.mjs preflight",
+    "prettier": "pnpm --prefix harness exec prettier",
     "preview": "pnpm --filter ./frontend preview",
     "setup": "node harness/harness.mjs setup",
     "status": "node harness/harness.mjs status",

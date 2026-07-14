@@ -108,3 +108,19 @@ for (const { heading, route } of writeupRoutes) {
     ).toHaveAttribute("href", "/");
   });
 }
+test("no CSP violations: styles and scripts load under policy", async ({
+  page,
+}) => {
+  const violations: string[] = [];
+  await page.exposeFunction("__reportCsp", (d: string) => violations.push(d));
+  await page.addInitScript(() =>
+    document.addEventListener("securitypolicyviolation", (e) =>
+      (window as unknown as { __reportCsp: (d: string) => void }).__reportCsp(
+        e.violatedDirective,
+      ),
+    ),
+  );
+  await page.goto("/");
+  await expect(page.locator(".cursor-gold-dot")).toHaveCount(30); // proves external JS ran
+  expect(violations).toEqual([]);
+});

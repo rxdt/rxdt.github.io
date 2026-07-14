@@ -11,6 +11,7 @@ import promise from "eslint-plugin-promise"; // Promise best practices
 import regexp from "eslint-plugin-regexp"; // Safe, readable regex
 import n from "eslint-plugin-n"; // Node.js correctness
 import noOnlyTests from "eslint-plugin-no-only-tests"; // Block focused tests
+import html from "@html-eslint/eslint-plugin"; // HTML linting: inline style/script bans
 import eslintConfigPrettier from "eslint-config-prettier"; // Disable formatting rules (Prettier owns formatting)
 import { defineConfig, globalIgnores } from "eslint/config"; // ESLint flat-config helpers.
 import { fileURLToPath } from "node:url";
@@ -346,6 +347,13 @@ export default defineConfig([
     files: configTypeScriptFiles,
     rules: {
       "no-console": "off",
+    },
+  },
+  {
+    files: ["**/*.html"],
+    ...html.configs["flat/recommended"],
+    rules: {
+      "@html-eslint/no-inline-styles": "error", //  bans style="" and <style>
     },
   },
   // JSON family files, linted via `pnpm json:lint`.

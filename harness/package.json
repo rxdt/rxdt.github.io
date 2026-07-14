@@ -35,6 +35,7 @@
     "@eslint/js": "latest",
     "@eslint/json": "latest",
     "@google/design.md": "latest",
+    "@html-eslint/eslint-plugin": "latest",
     "@lhci/cli": "latest",
     "@playwright/test": "latest",
     "@secretlint/secretlint-rule-preset-recommend": "latest",
@@ -75,9 +76,10 @@
     "stylelint-media-use-custom-media": "latest",
     "stylelint-plugin-defensive-css": "latest",
     "tsx": "latest",
-    "typescript": "5.x",
+    "typescript": "~5.9.3",
     "typescript-eslint": "latest",
     "vite": "latest",
+    "vite-plugin-csp-guard": "latest",
     "vitest": "latest"
   }
 }

@@ -681,11 +681,15 @@ const importedEslintConfig = once(async (): Promise<FlatConfigBlock[]> => {
     isPlainObject(value) ? value : undefined;
   const blocks = isPlainObject(module) ? module.default : undefined;
   if (Array.isArray(blocks) && blocks.every((block) => isPlainObject(block))) {
-    return blocks.map((block) => ({
-      files: block.files,
-      linterOptions: asRecord(block.linterOptions),
-      rules: asRecord(block.rules),
-    }));
+    return blocks.map((block) => {
+      const linterOptions = asRecord(block.linterOptions);
+      const rules = asRecord(block.rules);
+      return {
+        files: block.files,
+        ...(linterOptions && { linterOptions }),
+        ...(rules && { rules }),
+      };
+    });
   }
   throw new Error("eslint config is not an array of objects");
 });

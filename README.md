@@ -140,6 +140,9 @@ Deliberate design, not clutter:
 
 ```sh
 pnpm setup      # install deps, merge root scripts, set core.hooksPath to .githooks
+pnpm -r update  # bump all latest-pinned deps in repo to newest
+pnpm peers check
+pnpm --dir frontend run typecheck && pnpm --dir frontend run build
 pnpm preflight  # fast checks: format, lint (plus loop containment)
 pnpm gate       # full pass: see the table above
 pnpm status     # render run/gate status
