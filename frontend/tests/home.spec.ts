@@ -80,7 +80,11 @@ test("homepage renders required plan media with durable playback contracts", asy
 
   await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
     "src",
-    "/assets/merged.gif",
+    "/assets/merged.webp",
+  );
+  await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
+    "fetchpriority",
+    "high",
   );
   await expect(
     page.getByAltText("Intent Inference Conference project thumbnail"),
@@ -108,19 +112,24 @@ for (const { heading, route } of writeupRoutes) {
     ).toHaveAttribute("href", "/");
   });
 }
-test("no CSP violations: styles and scripts load under policy", async ({
+test("homepage styles and script behavior load without CSP violations", async ({
   page,
 }) => {
-  const violations: string[] = [];
-  await page.exposeFunction("__reportCsp", (d: string) => violations.push(d));
-  await page.addInitScript(() =>
-    document.addEventListener("securitypolicyviolation", (e) =>
-      (window as unknown as { __reportCsp: (d: string) => void }).__reportCsp(
-        e.violatedDirective,
-      ),
-    ),
+  await page.addInitScript(() => {
+    document.addEventListener("securitypolicyviolation", (violationEvent) => {
+      document.documentElement.dataset.cspViolation =
+        violationEvent.violatedDirective;
+    });
+  });
+
+  const response = await page.goto("/");
+
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("head > style")).toHaveCount(0);
+  await expect(page.locator(".background-grid")).toHaveCSS("position", "fixed");
+  await expect(page.locator("video.project-video")).toHaveJSProperty(
+    "autoplay",
+    true,
   );
-  await page.goto("/");
-  await expect(page.locator(".cursor-gold-dot")).toHaveCount(30); // proves external JS ran
-  expect(violations).toEqual([]);
+  await expect(page.locator("html")).not.toHaveAttribute("data-csp-violation");
 });
