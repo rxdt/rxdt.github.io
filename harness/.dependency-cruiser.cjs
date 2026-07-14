@@ -27,7 +27,7 @@ module.exports = {
       severity: "warn",
       from: {
         orphan: true,
-        pathNot: ["\\.(test|spec)\\.ts$", "src/main\\.ts$", "src/types\\.ts$"],
+        pathNot: ["\\.(test|spec)\\.ts$"],
       },
       to: {},
     },

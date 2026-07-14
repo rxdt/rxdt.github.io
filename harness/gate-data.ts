@@ -188,7 +188,6 @@ export const FULL_CHECKS: Record<string, string[]> = {
   ],
   cruise: [
     tool("depcruise"),
-    "frontend/src",
     "--config",
     "harness/.dependency-cruiser.cjs",
     "--output-type",

@@ -1,66 +1,51 @@
-The human vision. Agents read this for direction; `docs/specs/` turns it into concrete, prioritized work. Humans start owning this file. Remove `docs/plan.md` from `FORBIDDEN_FILES` in [harness/gate-data.ts](../harness/gate-data.ts) if you want agents to take over managing the vision.
-
-Code will go in `frontend/src/`
+Code will go in `frontend/`
 
 ## Objective
 
-Prose to describe the intended outcome, e.g. a one page web app that does X for Y users. e.g. email will always be clear of junk mail. Use affirmative phrasing in non-contradictory detail.
+Finish styling and hardening of a static Github site personal website for the owner. This repo should be an exemplary case of using the harness within it.
 
 ## Features and functionality
 
-Detail the objective outcome.
-
-EXAMPLE:
-
-- User experience is like {this}
-- Data Storage {stores X like Y}
-- Cost is kept to {#}
-- Page X does Y, Page A does B
-- Links to wireframes or mockups
-- Schema contract
-- Tests to include to enforce functionality
-- Project will be deployed at {place}
-- API integrations include {A}, {B}, {C}
-- Local tasks are {X}, {Y}, {Z}
+- Owner has a fully functioning personal website which is deployable to Github sites.
+- Harness rules are enforced and implemented or documented as blockers.
+- The site has a main page and a few links to blog-like pages
+- All links to external sites work as expected
+- Visual checks are made on the browser for different devices
+- The site is responsive
+- The site is accessible
 
 ## Approach
 
-Describe the high-level steps for completing the project. Prefer concrete direction over vague quality words. For example, describe user experience deliverables, data flows, or things the project must avoid, in the context of timing.
+Get the gate green.
 
-EXAMPLE:
-
-- User description
-- Major technical choices
-- Workflows
-- Libraries and architecture
-- Storage choices
-- APIs
-- Services
-- Data sources
-- Performance targets
-- UX expectations
-- Compatibility requirements
-
-EXAMPLE:
-
-1. Dependencies installed: Vite, Zod, {your libraries}
-2. Entry module wired into `frontend/index.html`; `pnpm --dir frontend run build` passes.
-3. User can see blank homepage.
-4. Homepage fetches `{endpoint}` and renders the response.
-   ...
-   {FINAL}. The one page web app is styled like mockup and ... (This item should be a mirror of the Objective at the top)
+1. Fill out `docs/specs/frontend.md`
+2. Fill out `docs/PROJECT_STATUS.md`
+3. Consistently keep each `*.md` file in `docs/` <= 100 lines
+4. Run each check individually
+5. Try to get `pnpm preflight` passing
+6. Add tests where tests are expected for 100% coverage
+7. Do NOT touch `harness` logic or ANY config files
+8. Try to get `pnpm gate` passing
+9. Notify the owner in `docs/PROJECT_STATUS.md`
+   1. of all blockers
+   2. if there are excess dead files that need to be deleted
+   3. when the gate is green
+   4. when you think the app is ready to deploy.
+   5. of any issues you notice with the harness itself even if non-blocking
+   6. of improvements you recommend for a more efficient harness
+   7. of what should change to make agents more efficient in loops
 
 ## Milestones
 
-Similar to 'Approach', with concrete deliverables in a timeline
-
-1. First major milestone and its concrete description
-2. Second major milestone and its concrete description
-3. Third major milestone and its concrete description
-4. {fill in additional milestones}
-5. Release or handoff milestone
+1. HTML errors are fixed from ~60 to zero
+2. All lint checks pass
+3. Tests are written to cover code 100%
+4. Lighthouse and Playwright pass 100%
+5. All checks pass
+6. All work in `frontend/specs` is complete
+7. The owner verifies manually the site 'looks' right locally
+8. The owner deploys the app to the site
 
 ## Out of Scope
 
-1. {item the project will NOT do}
-2. {item the project will NOT do}
+Creating a backend app

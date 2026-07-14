@@ -1,7 +1,14 @@
+import { globSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
 const frontendRoot = fileURLToPath(new URL("../frontend", import.meta.url));
+
+// Every standalone HTML page at the frontend root is its own build entry, so
+// `vite build` emits each portfolio page (not just index.html) into dist/.
+const htmlEntries = globSync("*.html", { cwd: frontendRoot }).map((file) =>
+  fileURLToPath(new URL(`../frontend/${file}`, import.meta.url)),
+);
 
 interface BundleAsset {
   readonly type: "asset";
@@ -196,4 +203,9 @@ function inlineBuildAssets(): Plugin {
 export default defineConfig({
   root: frontendRoot,
   plugins: [inlineBuildAssets()],
+  build: {
+    rollupOptions: {
+      input: htmlEntries,
+    },
+  },
 });

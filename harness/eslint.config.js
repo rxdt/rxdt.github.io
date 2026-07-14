@@ -124,8 +124,6 @@ export default defineConfig([
         },
       ],
       "no-underscore-dangle": ["error", { enforceInClassFields: true }],
-      // Owner decision: no-magic-numbers is impractical for this codebase (it fires 220+
-      // times in src/ on ordinary numeric/index math). Disabled for TypeScript; revisit later.
       "@typescript-eslint/no-magic-numbers": "off",
       // TYPE SAFETY Stop lazily skipping types
       "@typescript-eslint/no-explicit-any": "error", // Outlaws 'any' completely

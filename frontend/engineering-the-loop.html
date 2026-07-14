@@ -1,0 +1,468 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stop Prompting, Start Engineering the Loop</title>
+<meta name="description" content="In AI-assisted coding, the model matters less than the harness you build around it. On loop engineering, verification debt, and controlled delegation.">
+<link rel="canonical" href="https://dev.to/rxdt/stop-prompting-start-engineering-the-loop-325d">
+<style>
+  :root {
+    --paper: #f7f5ef;
+    --paper-2: #efece3;
+    --ink: #1a1c22;
+    --slate: #5b6270;
+    --faint: #8a8f9a;
+    --rule: #d8d2c6;
+    --stamp: #b83227;
+    --stamp-soft: #f0e2df;
+    --accent-ink: #2a3140;
+    --shadow: 26 28 34;
+    --measure: 66ch;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Charter, Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #17181c;
+      --paper-2: #1e2026;
+      --ink: #ece7db;
+      --slate: #a3a8b3;
+      --faint: #767b86;
+      --rule: #34363e;
+      --stamp: #e15a45;
+      --stamp-soft: #2b1f1d;
+      --accent-ink: #c7d0e0;
+      --shadow: 0 0 0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #17181c;
+    --paper-2: #1e2026;
+    --ink: #ece7db;
+    --slate: #a3a8b3;
+    --faint: #767b86;
+    --rule: #34363e;
+    --stamp: #e15a45;
+    --stamp-soft: #2b1f1d;
+    --accent-ink: #c7d0e0;
+    --shadow: 0 0 0;
+  }
+  :root[data-theme="light"] {
+    --paper: #f7f5ef;
+    --paper-2: #efece3;
+    --ink: #1a1c22;
+    --slate: #5b6270;
+    --faint: #8a8f9a;
+    --rule: #d8d2c6;
+    --stamp: #b83227;
+    --stamp-soft: #f0e2df;
+    --accent-ink: #2a3140;
+    --shadow: 26 28 34;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(1.02rem, 0.96rem + 0.3vw, 1.16rem);
+    line-height: 1.62;
+    font-feature-settings: "kern", "liga";
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: clamp(1.4rem, 4vw, 4rem) clamp(1.1rem, 4vw, 3.5rem) 5rem;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .site-link {
+    display: inline-flex;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .canonical-link { text-decoration-color: var(--stamp); }
+
+  /* ---- Masthead ---- */
+  .masthead {
+    border-top: 3px double var(--ink);
+    border-bottom: 3px double var(--ink);
+    padding: 1.5rem 0 1.7rem;
+    margin-bottom: 2.6rem;
+    text-align: center;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin: 0 0 1.1rem;
+  }
+  .masthead h1 {
+    font-size: clamp(1.9rem, 1.3rem + 2.8vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 auto;
+    max-width: 20ch;
+  }
+  .masthead .sub {
+    font-style: italic;
+    color: var(--slate);
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
+    max-width: 44ch;
+    margin: 1rem auto 0;
+    text-wrap: balance;
+  }
+  .byline {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1.4rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---- Column + marginalia grid ---- */
+  .col {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 20rem);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
+    justify-content: center;
+  }
+  .flow { min-width: 0; }
+  .flow > * + * { margin-top: 1.15rem; }
+
+  p { margin: 0; }
+  .flow p { max-width: var(--measure); }
+  .lead { font-size: 1.12em; }
+  .lead::first-letter {
+    initial-letter: 3;
+    -webkit-initial-letter: 3;
+    font-weight: 600;
+    margin-right: 0.7rem;
+    color: var(--accent-ink);
+  }
+
+  a { color: inherit; text-decoration-color: var(--stamp); text-underline-offset: 2px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--stamp); outline-offset: 3px; border-radius: 2px; }
+
+  strong { font-weight: 600; }
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  .flow code {
+    background: var(--paper-2);
+    padding: 0.08em 0.34em;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    word-break: break-word;
+  }
+
+  /* ---- Section headings ---- */
+  h2 {
+    font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.9rem);
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .section { scroll-margin-top: 1rem; }
+  .section + .section { margin-top: 3.2rem; padding-top: 2.6rem; border-top: 1px solid var(--rule); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ---- Marginalia (sidebars) ---- */
+  aside.margin {
+    grid-column: 2;
+    font-family: var(--mono);
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--slate);
+    padding: 1.05rem 1.15rem 1.2rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--ink);
+    position: sticky;
+    top: 1rem;
+  }
+  aside.margin > * + * { margin-top: 0.7rem; }
+  aside.margin .label {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--slate);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  aside.margin h3 {
+    font-family: var(--serif);
+    font-size: 1.02rem;
+    line-height: 1.25;
+    font-weight: 600;
+    margin: 0;
+  }
+  aside.margin p { max-width: none; }
+  aside.margin code { color: var(--accent-ink); word-break: break-word; }
+
+  @media (max-width: 62rem) {
+    .col { grid-template-columns: minmax(0, 1fr); }
+    aside.margin {
+      grid-column: 1;
+      position: static;
+      max-width: var(--measure);
+      margin: 0.4rem 0 0.2rem;
+    }
+  }
+
+  /* ---- Callouts ---- */
+  .errata {
+    border-left: 3px solid var(--stamp);
+    background: var(--stamp-soft);
+    padding: 0.9rem 1.1rem;
+    font-size: 0.95em;
+  }
+  .errata .label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  blockquote {
+    margin: 0;
+    padding: 0.2rem 0 0.2rem 1.3rem;
+    border-left: 2px solid var(--rule);
+    color: var(--ink);
+    font-style: italic;
+    max-width: var(--measure);
+  }
+  blockquote.pull {
+    font-style: normal;
+    border-left: none;
+    padding: 0;
+    text-align: center;
+    margin: 0.4rem auto;
+  }
+  blockquote.pull p {
+    font-size: clamp(1.3rem, 1rem + 1.6vw, 2rem);
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    max-width: 24ch;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+
+  /* ---- Audit checklist ---- */
+  .checklist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--measure);
+  }
+  .checklist li {
+    position: relative;
+    padding: 0.5rem 0 0.5rem 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .checklist li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0.2rem;
+    top: 0.5rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--stamp);
+  }
+
+  hr.rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 3.2rem 0 0;
+  }
+
+  .colophon {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--slate);
+    border-top: 3px double var(--ink);
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    max-width: var(--measure);
+    margin-inline: auto;
+  }
+  .colophon strong { color: var(--ink); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="topbar">
+    <a class="site-link" href="/">Rox dT</a>
+    <a class="site-link canonical-link" href="https://dev.to/rxdt/stop-prompting-start-engineering-the-loop-325d" rel="canonical">Originally on dev.to &rarr;</a>
+  </div>
+
+  <header class="masthead">
+    <p class="eyebrow">Field Notes &middot; On Harnesses</p>
+    <h1>Stop Prompting, Start Engineering the Loop</h1>
+    <p class="sub">The hardest problem in AI-assisted coding isn&rsquo;t picking a model. It&rsquo;s engineering the loop around it.</p>
+    <p class="byline">
+      <span>By Roxana del Toro</span>
+      <span>Loop engineering</span>
+      <span>Verification debt</span>
+    </p>
+  </header>
+
+  <div class="col">
+    <div class="flow">
+      <p class="lead">The hardest problem in AI-assisted coding isn&rsquo;t picking a model. It&rsquo;s engineering the loop around it. It will soon be quaint to ask <em>which model is best?</em> As reasoning and tool-use models converge in capabilities, the model matters less than the harness you build for it. This month alone: Anthropic released Fable, yanked it because guardrails &lsquo;could not be trusted,&rsquo; then re-released it. OpenAI dropped three frontier models just this week. And Meta shipped its first agentic model. Yet agentic coding issues continue.</p>
+    </div>
+
+    <aside class="margin">
+      <span class="label">Thesis</span>
+      <h3>The model is rented. Your harness is an asset.</h3>
+      <p>A strong model in a weak system is unruly and expensive. A weaker model in a disciplined one ships useful work, at lower cost and lower risk.</p>
+    </aside>
+  </div>
+
+  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
+    <div class="flow">
+      <span class="kicker">I &middot; Complete the circle</span>
+      <h2>Loop Engineering</h2>
+      <p>Yes, the model matters. But the system around it increasingly matters more. A strong model inside a weak system can be unruly and expensive, or even downright destructive. A weaker model in a disciplined system ships more useful work, at lower cost and lower risk.</p>
+      <p>That&rsquo;s why two IDEs running the same model feel nothing alike. One reads the right files, makes a focused change, runs the relevant tests, and reports uncertainty. The other burns context, edits unrelated code, retries failed approaches, and declares victory.</p>
+
+      <blockquote class="pull"><p>The difference isn&rsquo;t the model. It&rsquo;s the harness.</p></blockquote>
+
+      <p>Benchmarks measure what a model can do under controlled conditions. The same model posts different scores on the same benchmark depending on the platform. But developers don&rsquo;t care about marketing numbers. They care what a system does inside a messy repository.</p>
+      <p>So the competitive edge isn&rsquo;t access to the smartest model. It&rsquo;s the best execution environment around whatever model you have.</p>
+    </div>
+    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
+  </div>
+
+  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
+    <div class="flow">
+      <span class="kicker">II &middot; Two disciplines</span>
+      <h2>Prompt engineering vs. loop engineering</h2>
+      <p>Prompting is a single request. Loop engineering is the operating system around the request.</p>
+      <p>Developers need to stop treating agents like chatbots that need elaborate instructions. A giant spec is not a workflow. It&rsquo;s an undocumented program with weak control flow and no failure handling.</p>
+      <p>Agents have their own ADHD. They keep working after the useful work is done: refactoring unrelated code, rewriting tests, &ldquo;cleaning up.&rdquo; You know the moment. You set the task up perfectly, stepped away from the terminal, and came back to a <strong>WTF?!</strong> diff.</p>
+
+      <blockquote class="pull"><p>More prompting doesn&rsquo;t fix this. Boundaries do.</p></blockquote>
+
+      <p>Stop prompting a model to behave. An agent without a harness is a driver on a road with no lanes, no signs, no speed limit &mdash; just a post-it called <code>AGENTS.md</code>. A harness paints road lanes, puts up stoplights, adds a highway patrol. Imagine driving in a foreign country where roads didn&rsquo;t have signs or markers. Do you drive on the left or the right, or is it all one road?</p>
+      <p>A harness loop defines the task, gathers context, plans, makes a bounded change, runs checks, inspects failures, retries selectively, records decisions, and STOPS at a success condition or budget limit. Instructions should not just tell agents &ldquo;Do not do.&rdquo; A harness should detect and stop changes. It should restrict paths, inspect diffs, enforce scope, and reject work that violates a contract.</p>
+    </div>
+
+    <aside class="margin">
+      <span class="label">The road metaphor</span>
+      <p>No harness &rarr; a driver on a road with no lanes, no signs, no speed limit. Just a post-it called <code>AGENTS.md</code>.</p>
+      <p>A harness paints the lanes, puts up the stoplights, and adds the highway patrol.</p>
+    </aside>
+  </div>
+
+  <div class="col">
+    <div class="flow" style="margin-top:1.4rem;">
+      <div class="errata">
+        <span class="label">On the author&rsquo;s harness</span>
+        <p>My <a href="https://github.com/rxdt/loopgate-harness">Python harness</a> and the TypeScript port are wrappers around a bash loop with a hard timeout. None of it is clever. It enforces boring coding standards humans try to follow &mdash; and agents do, when guardrails are set. Like most software, it&rsquo;s a work in progress.</p>
+      </div>
+    </div>
+    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
+  </div>
+
+  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
+    <div class="flow">
+      <span class="kicker">III &middot; The bottleneck moved</span>
+      <h2>Verification Debt</h2>
+      <p>Agents generate code faster than humans can verify it. The bottleneck has moved from generation to diff review, and we&rsquo;re accruing <strong>verification debt</strong> &mdash; like technical debt, except it piles up before you&rsquo;ve proven anything works. A 1,000-line agent patch compiles. It passes the tests the agent wrote. Neither proves intended behavior. Maybe it misunderstood the requirement. Mocked away the hard part. Quietly changed a public interface.</p>
+      <p>The cost is measurable. In METR&rsquo;s trial, experienced open-source developers took <strong>19% longer</strong> with AI tools while thinking they&rsquo;d been <strong>20% faster</strong>. Review sucks time. But going fast on a merry-go-round isn&rsquo;t speed.</p>
+      <p>And the backlash against &ldquo;AI slop&rdquo; is earned. Five agents don&rsquo;t produce five times the output. They produce conflicting abstractions and five times the review burden. Engineers were never graded on lines of code. There is elegance in less. Yet &ldquo;tasks completed&rdquo; is now a boast, and a dangerous metric.</p>
+      <p>Verification belongs inside the loop: executable acceptance criteria, independent tests, static analysis, type checks, security scans, and human review proportional to risk.</p>
+    </div>
+
+    <aside class="margin">
+      <span class="label">The METR number</span>
+      <h3>&minus;19% slower. Felt +20% faster.</h3>
+      <p>Experienced open-source developers, using AI tools, took 19% longer &mdash; while believing they&rsquo;d been 20% faster. The review burden negates the speed gain.</p>
+    </aside>
+  </div>
+
+  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
+    <div class="flow">
+      <span class="kicker">IV &middot; Death by defensible changes</span>
+      <h2>Repo damage: how AI agents degrade a codebase</h2>
+      <p>The failure that should make you nervous isn&rsquo;t one bad patch. It&rsquo;s cumulative degradation. An agent solves today&rsquo;s narrow task while making the codebase harder to maintain. Every change is individually defensible. The sum? Entropy.</p>
+      <p>You see it when agents operate without context. They recreate functions that already exist because they never looked. They route around architectural constraints they don&rsquo;t understand. They add dependencies for problems an installed library already solves.</p>
+      <p>Fixing this takes more than updating <code>AGENTS.md</code>. The workflow is controlled delegation &mdash; a harness with local quality gates:</p>
+      <ul class="checklist">
+        <li><strong>Before the edit:</strong> the system understands the repository.</li>
+        <li><strong>During:</strong> it constrains the scope.</li>
+        <li><strong>After:</strong> it evaluates the diff as a change to the whole, not an answer to a prompt.</li>
+      </ul>
+      <p>Humans build the harness. Agents work inside it. The harness manages context, tools, permissions, budgets, checkpoints, and verification. That makes engineering the loop central work.</p>
+    </div>
+    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
+  </div>
+
+  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
+    <div class="flow">
+      <span class="kicker">V &middot; The checklist</span>
+      <h2>Audit your AI coding loop</h2>
+      <p>The best developers won&rsquo;t write the most code. They&rsquo;ll build the loops that write the best code. The model is rented. Your harness is an asset.</p>
+      <p><strong>No harness? Big problem.</strong> Run the audit:</p>
+      <ul class="checklist">
+        <li>Every run has a hard budget: time, tokens, iterations.</li>
+        <li>Agents can only touch scoped paths.</li>
+        <li>Acceptance criteria are executable and written before agents start.</li>
+        <li>Tests do not come from the agent that wrote the code.</li>
+        <li>Agents stop on success.</li>
+      </ul>
+    </div>
+    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
+  </div>
+
+  <p class="colophon">
+    Originally published on <a href="https://dev.to/rxdt/stop-prompting-start-engineering-the-loop-325d">dev.to</a>. Reference harness implementations, in Python and TypeScript, are open source: <a href="https://github.com/rxdt/loopgate-harness"><strong>rxdt/loopgate-harness</strong></a>.
+    <br><a href="/">Back to Rox dT</a>
+  </p>
+
+</div>
+
+</body>
+</html>

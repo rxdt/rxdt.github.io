@@ -38,7 +38,7 @@ export default defineConfig({
       reportsDirectory: coverageDir,
       // Cover only the harness engine + the frontend app source — never libraries,
       // generated fixtures, config files, or the e2e specs (run under the `e2e` check).
-      include: ["harness/*.ts", "frontend/src/**/*.ts"],
+      include: ["harness/*.ts"],
       exclude: [
         "**/node_modules/**",
         "**/.pnpm-store/**",

@@ -1,0 +1,38 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="96" fill="#F7F5EE"/>
+  <rect x="64" y="64" width="896" height="896" rx="72" fill="#101820"/>
+  <rect x="96" y="96" width="832" height="832" rx="52" fill="#F7F5EE"/>
+
+  <circle cx="512" cy="420" r="220" fill="#DFEDE6"/>
+  <circle cx="512" cy="420" r="164" fill="#F7F5EE"/>
+
+  <path d="M512 198C622.5 198 713.9 279.6 729.3 385.8" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+  <path d="M729.3 385.8L769.8 349.1" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+  <path d="M729.3 385.8L678.9 406.8" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+
+  <path d="M512 642C401.5 642 310.1 560.4 294.7 454.2" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+  <path d="M294.7 454.2L254.2 490.9" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+  <path d="M294.7 454.2L345.1 433.2" stroke="#101820" stroke-width="28" stroke-linecap="round"/>
+
+  <rect x="368" y="276" width="288" height="288" rx="34" fill="#101820"/>
+  <rect x="395" y="303" width="234" height="234" rx="20" fill="#F7F5EE"/>
+  <circle cx="425" cy="333" r="10" fill="#F15A2B"/>
+  <circle cx="456" cy="333" r="10" fill="#E1B437"/>
+  <circle cx="487" cy="333" r="10" fill="#2C9C7A"/>
+  <path d="M435 392L478 420L435 448" stroke="#101820" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M506 452H584" stroke="#2C9C7A" stroke-width="20" stroke-linecap="round"/>
+
+  <rect x="152" y="694" width="204" height="88" rx="22" fill="#101820"/>
+  <rect x="410" y="694" width="204" height="88" rx="22" fill="#2C9C7A"/>
+  <rect x="668" y="694" width="204" height="88" rx="22" fill="#101820"/>
+  <path d="M356 738H410" stroke="#101820" stroke-width="18" stroke-linecap="round"/>
+  <path d="M614 738H668" stroke="#101820" stroke-width="18" stroke-linecap="round"/>
+
+  <text x="512" y="170" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="74" font-weight="800" fill="#101820">py_ralph_frame</text>
+  <text x="512" y="854" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="800" fill="#101820">fresh-context agent loops</text>
+  <text x="512" y="902" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600" fill="#496059">specs  commits  gates</text>
+
+  <text x="254" y="751" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#F7F5EE">SPEC</text>
+  <text x="512" y="751" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#F7F5EE">LOOP</text>
+  <text x="770" y="751" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#F7F5EE">GATE</text>
+</svg>

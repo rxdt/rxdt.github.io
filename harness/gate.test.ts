@@ -248,7 +248,7 @@ function stageFiles(repo: string, files: Record<string, string>): void {
 // A distinct staged-file path for each forbidden pattern (indexed, so patterns never collide).
 const forbiddenPatternList: readonly string[] = FORBIDDEN_PATTERNS;
 const bannedPatternFile = (pattern: string): string =>
-  `frontend/src/banned-${String(forbiddenPatternList.indexOf(pattern))}.ts`;
+  `frontend/banned-${String(forbiddenPatternList.indexOf(pattern))}.ts`;
 
 // A plain agent-owned file inside a given forbidden directory.
 const agentFileIn = (directory: string): string =>
@@ -495,7 +495,7 @@ const REQUIRED_CHECK_POLICIES: readonly {
     check: "cruise",
     fragments: [
       harnessTool("depcruise"),
-      "frontend/src",
+      "frontend",
       "harness/.dependency-cruiser.cjs",
       "err",
     ],
@@ -1092,7 +1092,7 @@ describe("runGate / runPreflight wiring", () => {
   test("without RALPH_LOOP, preflight runs commit checks without containment", () => {
     let seen: Record<string, string[]> | undefined;
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     let seenRepo: string | undefined;
     const result = runPreflight(repo, (runnerRepo, checks) => {
       seenRepo = runnerRepo;
@@ -1106,7 +1106,7 @@ describe("runGate / runPreflight wiring", () => {
 
   test("preflight surfaces a failing quality check", () => {
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     const problems = runPreflight(repo, () => [
       "security failed:\nempty trust anchors",
     ]);
@@ -1212,10 +1212,10 @@ describe("loop containment", () => {
       "frontend/package.json",
       '{ "scripts": { "preflight": "true" } }\n',
     );
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).not.toContain("frontend/package.json");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
     const survived = readFileSync(
       path.join(repo, "frontend/package.json"),
       "utf8",
@@ -1236,8 +1236,8 @@ describe("loop containment", () => {
   });
 
   test.each([
-    "frontend/src/report.ts",
-    "frontend/src/harnessed.ts", // 'harness' as a substring, not a dir
+    "frontend/report.ts",
+    "frontend/harnessed.ts", // 'harness' as a substring, not a dir
     "docs/harness-notes.md",
   ])("isForbiddenPath does not over-match legit path: %s", (allowed) => {
     expect(isForbiddenPath(allowed)).toBe(false);
@@ -1252,10 +1252,10 @@ describe("loop containment", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     stageFile(repo, target, "value = 1\n");
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).not.toContain(target);
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   // A plain file inside any forbidden directory is ejected; one preflight covers every dir at once.
@@ -1264,7 +1264,7 @@ describe("loop containment", () => {
     const repo = makeRepo();
     const directories = [...FORBIDDEN_DIRS];
     stageFiles(repo, {
-      "frontend/src/report.ts": "export const keep = 1;\n",
+      "frontend/report.ts": "export const keep = 1;\n",
       ...Object.fromEntries(
         directories.map((directory) => [
           agentFileIn(directory),
@@ -1278,7 +1278,7 @@ describe("loop containment", () => {
     for (const directory of directories) {
       expect(staged, directory).not.toContain(agentFileIn(directory));
     }
-    expect(staged).toContain("frontend/src/report.ts");
+    expect(staged).toContain("frontend/report.ts");
   });
 
   // Config-like files nested under any forbidden dir are ejected by the directory rule (all dirs,
@@ -1287,7 +1287,7 @@ describe("loop containment", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     const files: Record<string, string> = {
-      "frontend/src/report.ts": "export const keep = 1;\n",
+      "frontend/report.ts": "export const keep = 1;\n",
     };
     for (const directory of FORBIDDEN_DIRS) {
       files[`${directory}/config.py`] = "strict = false\n";
@@ -1297,7 +1297,7 @@ describe("loop containment", () => {
     stageFiles(repo, files);
 
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/report.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
   });
 
   test("ejects a generated mix of forbidden files and nested forbidden-dir paths", () => {
@@ -1308,7 +1308,7 @@ describe("loop containment", () => {
     );
     const files = [...FORBIDDEN_FILES].toSorted((a, b) => a.localeCompare(b));
     const generated: Record<string, string> = {
-      "frontend/src/report.ts": "export const keep = 1;\n",
+      "frontend/report.ts": "export const keep = 1;\n",
     };
     for (const [index, target] of files.entries()) {
       generated[target] = `file-${String(index)}\n`;
@@ -1321,7 +1321,7 @@ describe("loop containment", () => {
     }
     stageFiles(repo, generated);
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/report.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
   });
 
   test("ejects both sides of a copied change when the source is forbidden", () => {
@@ -1329,15 +1329,15 @@ describe("loop containment", () => {
     const repo = makeRepo();
     stageFile(repo, "harness/gate.ts", "export const locked = 1;\n");
     runCommand(["git", "commit", "-q", "-m", "add locked harness file"], repo);
-    mkdirSync(path.join(repo, "frontend/src"), { recursive: true });
+    mkdirSync(path.join(repo, "frontend"), { recursive: true });
     copyFileSync(
       path.join(repo, "harness/gate.ts"),
-      path.join(repo, "frontend/src/copied.ts"),
+      path.join(repo, "frontend/copied.ts"),
     );
-    runCommand(["git", "add", "--", "frontend/src/copied.ts"], repo);
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    runCommand(["git", "add", "--", "frontend/copied.ts"], repo);
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/report.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
   });
 
   // Every exact FORBIDDEN_FILE is ejected while innocent work stays staged (all files, one preflight).
@@ -1346,7 +1346,7 @@ describe("loop containment", () => {
     const repo = makeRepo();
     const forbidden = [...FORBIDDEN_FILES];
     stageFiles(repo, {
-      "frontend/src/report.ts": "export const keep = 1;\n",
+      "frontend/report.ts": "export const keep = 1;\n",
       ...Object.fromEntries(
         forbidden.map((target) => [target, "agent edit\n"]),
       ),
@@ -1357,7 +1357,7 @@ describe("loop containment", () => {
     for (const target of forbidden) {
       expect(staged, target).not.toContain(target);
     }
-    expect(staged).toContain("frontend/src/report.ts");
+    expect(staged).toContain("frontend/report.ts");
   });
 
   test("ejects a reintroduced frontend tsconfig override", () => {
@@ -1368,9 +1368,9 @@ describe("loop containment", () => {
       "frontend/tsconfig.json",
       JSON.stringify({ compilerOptions: { strict: false }, include: ["src"] }),
     );
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/report.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
   });
 
   test("undoes a staged deletion of a forbidden file", () => {
@@ -1378,11 +1378,11 @@ describe("loop containment", () => {
     stageFile(repo, "pnpm-workspace.yaml", "x = 1\n");
     runCommand(["git", "commit", "-q", "-m", "add workspace file"], repo);
     runCommand(["git", "rm", "-q", "pnpm-workspace.yaml"], repo);
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     process.env.RALPH_LOOP = "1";
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).not.toContain("pnpm-workspace.yaml");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("ejects multiple forbidden paths in one commit", () => {
@@ -1390,12 +1390,12 @@ describe("loop containment", () => {
     const repo = makeRepo();
     stageFile(repo, "pnpm-workspace.yaml", "x = 1\n");
     stageFile(repo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     const staged = stagedNames(repo);
     expect(staged).not.toContain("pnpm-workspace.yaml");
     expect(staged).not.toContain("harness/gate.ts");
-    expect(staged).toContain("frontend/src/report.ts");
+    expect(staged).toContain("frontend/report.ts");
   });
 });
 
@@ -1403,46 +1403,46 @@ describe("loop containment (continued)", () => {
   test("without the loop, a human may stage forbidden paths", () => {
     const repo = makeRepo();
     stageFile(repo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).toContain("harness/gate.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("only loop preflight unstages forbidden paths", () => {
     process.env.RALPH_LOOP = "1";
     const gateRepo = makeRepo();
     stageFile(gateRepo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(gateRepo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(gateRepo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runGate(gateRepo, () => [])).toEqual([]);
     expect(stagedNames(gateRepo)).toContain("harness/gate.ts");
-    expect(stagedNames(gateRepo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(gateRepo)).toContain("frontend/report.ts");
 
     delete process.env.RALPH_LOOP;
     const humanRepo = makeRepo();
     stageFile(humanRepo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(humanRepo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(humanRepo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(humanRepo, () => [])).toEqual([]);
     expect(stagedNames(humanRepo)).toContain("harness/gate.ts");
-    expect(stagedNames(humanRepo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(humanRepo)).toContain("frontend/report.ts");
 
     process.env.RALPH_LOOP = "1";
     const loopRepo = makeRepo();
     stageFile(loopRepo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(loopRepo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(loopRepo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(loopRepo, () => [])).toEqual([]);
     expect(stagedNames(loopRepo)).not.toContain("harness/gate.ts");
-    expect(stagedNames(loopRepo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(loopRepo)).toContain("frontend/report.ts");
   });
 
   test("an empty RALPH_LOOP value is treated as loop-off", () => {
     process.env.RALPH_LOOP = "";
     const repo = makeRepo();
     stageFile(repo, "harness/gate.ts", "export const value = 1;\n");
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).toContain("harness/gate.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test.each(["0", "true", " 1 "])(
@@ -1451,10 +1451,10 @@ describe("loop containment (continued)", () => {
       process.env.RALPH_LOOP = value;
       const repo = makeRepo();
       stageFile(repo, "harness/gate.ts", "export const value = 1;\n");
-      stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+      stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
       expect(runPreflight(repo, () => [])).toEqual([]);
       expect(stagedNames(repo)).toContain("harness/gate.ts");
-      expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+      expect(stagedNames(repo)).toContain("frontend/report.ts");
     },
   );
 
@@ -1464,7 +1464,7 @@ describe("loop containment (continued)", () => {
       stderr.push(String(chunk));
       return true;
     });
-    const target = "frontend/src/report.ts";
+    const target = "frontend/report.ts";
     const pattern = requiredForbiddenPattern("ts-ignore");
     const content = [
       ...Array.from(
@@ -1501,10 +1501,10 @@ describe("loop containment (continued)", () => {
       process.env.RALPH_LOOP = "1";
       const repo = makeRepo();
       stageFile(repo, target, "updated\n");
-      stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+      stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
       expect(runPreflight(repo, () => [])).toEqual([]);
       expect(stagedNames(repo)).not.toContain(target);
-      expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+      expect(stagedNames(repo)).toContain("frontend/report.ts");
     },
   );
 
@@ -1513,19 +1513,19 @@ describe("loop containment (continued)", () => {
     stageFile(repo, "harness/.htmlvalidate.json", "{}\n");
     runCommand(["git", "commit", "-q", "-m", "add html config"], repo);
     runCommand(["git", "rm", "-q", "harness/.htmlvalidate.json"], repo);
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     process.env.RALPH_LOOP = "1";
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).not.toContain("harness/.htmlvalidate.json");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("checks staged .ts content when the worktree file is gone", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/state.ts", 'document.querySelector(".x");\n');
-    runCommand(["rm", path.join(repo, "frontend/src/state.ts")], repo);
-    expect(preferenceProblems(repo, ["frontend/src/state.ts"])).not.toEqual([]);
+    stageFile(repo, "frontend/state.ts", 'document.querySelector(".x");\n');
+    runCommand(["rm", path.join(repo, "frontend/state.ts")], repo);
+    expect(preferenceProblems(repo, ["frontend/state.ts"])).not.toEqual([]);
     const isFlagged = runPreflight(repo, () => []).some((problem) =>
       problem.includes("class selector"),
     );
@@ -1547,30 +1547,24 @@ describe("loop containment (continued)", () => {
   test("checks clean staged content instead of dirty worktree content", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/state.ts", "const good = 1;\n");
-    writeFileSync(
-      path.join(repo, "frontend/src/state.ts"),
-      "const _bad = 1;\n",
-    );
+    stageFile(repo, "frontend/state.ts", "const good = 1;\n");
+    writeFileSync(path.join(repo, "frontend/state.ts"), "const _bad = 1;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
   });
 
   test("ejects both sides of a rename when the destination is forbidden", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/report.ts", "export const y = 2;\n");
+    stageFile(repo, "frontend/report.ts", "export const y = 2;\n");
     runCommand(["git", "commit", "-q", "-m", "add feature"], repo);
     mkdirSync(path.join(repo, "harness"), { recursive: true });
-    runCommand(
-      ["git", "mv", "frontend/src/report.ts", "harness/gate.ts"],
-      repo,
-    );
-    stageFile(repo, "frontend/src/state.ts", "export const keep = 1;\n");
+    runCommand(["git", "mv", "frontend/report.ts", "harness/gate.ts"], repo);
+    stageFile(repo, "frontend/state.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
     const staged = stagedNames(repo);
-    expect(staged).not.toContain("frontend/src/report.ts");
+    expect(staged).not.toContain("frontend/report.ts");
     expect(staged).not.toContain("harness/gate.ts");
-    expect(staged).toContain("frontend/src/state.ts");
+    expect(staged).toContain("frontend/state.ts");
   });
 
   test("ejects both sides of a rename when the source is forbidden", () => {
@@ -1578,73 +1572,67 @@ describe("loop containment (continued)", () => {
     const repo = makeRepo();
     stageFile(repo, "harness/gate.ts", "export const locked = 1;\n");
     runCommand(["git", "commit", "-q", "-m", "add locked harness file"], repo);
-    mkdirSync(path.join(repo, "frontend/src"), { recursive: true });
-    runCommand(
-      ["git", "mv", "harness/gate.ts", "frontend/src/report.ts"],
-      repo,
-    );
-    stageFile(repo, "frontend/src/state.ts", "export const keep = 1;\n");
+    mkdirSync(path.join(repo, "frontend"), { recursive: true });
+    runCommand(["git", "mv", "harness/gate.ts", "frontend/report.ts"], repo);
+    stageFile(repo, "frontend/state.ts", "export const keep = 1;\n");
 
     expect(runPreflight(repo, () => [])).toEqual([]);
     const staged = stagedNames(repo);
     expect(staged).not.toContain("harness/gate.ts");
-    expect(staged).not.toContain("frontend/src/report.ts");
-    expect(staged).toContain("frontend/src/state.ts");
+    expect(staged).not.toContain("frontend/report.ts");
+    expect(staged).toContain("frontend/state.ts");
   });
 
   test("does not run preferences on forbidden paths after dropping them", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     stageFile(repo, "harness/gate.ts", "const _bad = 1;\n");
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/report.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
   });
 
   test("reports a banned add and keeps it staged alongside its staged deletion", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     const pattern = requiredForbiddenPattern("eslint-disable");
-    stageFile(repo, "frontend/src/old.ts", "export const oldValue = 1;\n");
+    stageFile(repo, "frontend/old.ts", "export const oldValue = 1;\n");
     runCommand(["git", "commit", "-q", "-m", "add old source"], repo);
-    runCommand(["git", "rm", "-q", "frontend/src/old.ts"], repo);
+    runCommand(["git", "rm", "-q", "frontend/old.ts"], repo);
     stageFile(
       repo,
-      "frontend/src/new.ts",
+      "frontend/new.ts",
       `export const newValue = 1; // ${pattern}\n`,
     );
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     // The banned add is reported (blocking the push); nothing is unstaged, so new.ts and the
     // old.ts deletion both remain staged for the author to resolve.
     expect(runPreflight(repo, () => [])).toContain(
-      `forbidden pattern '${pattern}' in frontend/src/new.ts`,
+      `forbidden pattern '${pattern}' in frontend/new.ts`,
     );
-    expect(stagedNames(repo)).toContain("frontend/src/new.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/old.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/new.ts");
+    expect(stagedNames(repo)).toContain("frontend/old.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("reports a rewritten rename with a banned added line", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     const pattern = requiredForbiddenPattern("ts-ignore");
-    stageFile(repo, "frontend/src/old.ts", "export const oldValue = 1;\n");
+    stageFile(repo, "frontend/old.ts", "export const oldValue = 1;\n");
     runCommand(["git", "commit", "-q", "-m", "add old source"], repo);
-    runCommand(
-      ["git", "mv", "frontend/src/old.ts", "frontend/src/new.ts"],
-      repo,
-    );
+    runCommand(["git", "mv", "frontend/old.ts", "frontend/new.ts"], repo);
     writeFileSync(
-      path.join(repo, "frontend/src/new.ts"),
+      path.join(repo, "frontend/new.ts"),
       `export const newValue = 1; // ${pattern}\n`,
     );
-    runCommand(["git", "add", "--", "frontend/src/new.ts"], repo);
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    runCommand(["git", "add", "--", "frontend/new.ts"], repo);
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toContain(
-      `forbidden pattern '${pattern}' in frontend/src/new.ts`,
+      `forbidden pattern '${pattern}' in frontend/new.ts`,
     );
-    expect(stagedNames(repo)).toContain("frontend/src/new.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/new.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("reports a git-detected rename against its destination, not its source path", () => {
@@ -1656,40 +1644,34 @@ describe("loop containment (continued)", () => {
     const pattern = requiredForbiddenPattern("ts-ignore");
     const body =
       "export const a = 1;\nexport const b = 2;\nexport const c = 3;\n";
-    stageFile(repo, "frontend/src/old.ts", body);
+    stageFile(repo, "frontend/old.ts", body);
     runCommand(["git", "commit", "-q", "-m", "add old source"], repo);
-    runCommand(
-      ["git", "mv", "frontend/src/old.ts", "frontend/src/new.ts"],
-      repo,
-    );
+    runCommand(["git", "mv", "frontend/old.ts", "frontend/new.ts"], repo);
     // Minimal edit keeps similarity high so Git records this as a rename (R), not delete+add.
-    writeFileSync(
-      path.join(repo, "frontend/src/new.ts"),
-      `${body}// ${pattern}\n`,
-    );
-    runCommand(["git", "add", "--", "frontend/src/new.ts"], repo);
+    writeFileSync(path.join(repo, "frontend/new.ts"), `${body}// ${pattern}\n`);
+    runCommand(["git", "add", "--", "frontend/new.ts"], repo);
     const problems = runPreflight(repo, () => []);
     expect(problems).toContain(
-      `forbidden pattern '${pattern}' in frontend/src/new.ts`,
+      `forbidden pattern '${pattern}' in frontend/new.ts`,
     );
     expect(problems).not.toContain(
-      `forbidden pattern '${pattern}' in frontend/src/old.ts`,
+      `forbidden pattern '${pattern}' in frontend/old.ts`,
     );
   });
 
   test("reporting a banned file leaves it staged and its dirty worktree edits intact", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    const target = "frontend/src/state.ts";
+    const target = "frontend/state.ts";
     const pattern = requiredForbiddenPattern("nosec");
     stageFile(repo, target, `export const staged = 1; // ${pattern}\n`);
     writeFileSync(path.join(repo, target), "export const dirty = 2;\n");
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     expect(runPreflight(repo, () => [])).toContain(
       `forbidden pattern '${pattern}' in ${target}`,
     );
     expect(stagedNames(repo)).toContain(target);
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
     // Report-only never touches the worktree: the later dirty edit is preserved.
     expect(readFileSync(path.join(repo, target), "utf8")).toBe(
       "export const dirty = 2;\n",
@@ -1704,7 +1686,7 @@ describe("banned patterns and preferences under loop", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
     const files: Record<string, string> = {
-      "frontend/src/report.ts": "export const keep = 1;\n",
+      "frontend/report.ts": "export const keep = 1;\n",
     };
     for (const pattern of FORBIDDEN_PATTERNS) {
       files[bannedPatternFile(pattern)] =
@@ -1720,7 +1702,7 @@ describe("banned patterns and preferences under loop", () => {
       );
       expect(staged).toContain(bannedPatternFile(pattern));
     }
-    expect(staged).toContain("frontend/src/report.ts");
+    expect(staged).toContain("frontend/report.ts");
   });
 
   test("reports a banned TypeScript suppression and keeps the file staged", () => {
@@ -1729,14 +1711,14 @@ describe("banned patterns and preferences under loop", () => {
     const pattern = requiredForbiddenPattern("ts-ignore");
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       `export const value = 1; // @${pattern}\n`,
     );
     const problems = runPreflight(repo, () => []);
     expect(problems).toContain(
-      `forbidden pattern '${pattern}' in frontend/src/state.ts`,
+      `forbidden pattern '${pattern}' in frontend/state.ts`,
     );
-    expect(stagedNames(repo)).toContain("frontend/src/state.ts");
+    expect(stagedNames(repo)).toContain("frontend/state.ts");
   });
 
   test("matches banned patterns case-insensitively", () => {
@@ -1745,16 +1727,16 @@ describe("banned patterns and preferences under loop", () => {
     const pattern = requiredForbiddenPattern("nosec");
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       `export const value = 1; // ${pattern.toUpperCase()}\n`,
     );
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     // The uppercase NOSEC still matches; it is reported (lowercased pattern name) and stays staged.
     expect(runPreflight(repo, () => [])).toContain(
-      `forbidden pattern '${pattern}' in frontend/src/state.ts`,
+      `forbidden pattern '${pattern}' in frontend/state.ts`,
     );
-    expect(stagedNames(repo)).toContain("frontend/src/state.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).toContain("frontend/state.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("ignores banned patterns that appear only in removed lines", () => {
@@ -1762,13 +1744,13 @@ describe("banned patterns and preferences under loop", () => {
     const repo = makeRepo();
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       `export const value = 1; // ${requiredForbiddenPattern("nosec")}\n`,
     );
     runCommand(["git", "commit", "-q", "-m", "add legacy suppression"], repo);
-    stageFile(repo, "frontend/src/state.ts", "export const value = 2;\n");
+    stageFile(repo, "frontend/state.ts", "export const value = 2;\n");
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/state.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/state.ts"]);
   });
 
   test("ignores banned patterns that appear only in diff context", () => {
@@ -1776,7 +1758,7 @@ describe("banned patterns and preferences under loop", () => {
     const repo = makeRepo();
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       [
         "export const before = 1;\n",
         `export const legacy = 1; // ${requiredForbiddenPattern("ts-expect-error")}\n`,
@@ -1786,7 +1768,7 @@ describe("banned patterns and preferences under loop", () => {
     runCommand(["git", "commit", "-q", "-m", "add legacy context"], repo);
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       [
         "export const before = 2;\n",
         `export const legacy = 1; // ${requiredForbiddenPattern("ts-expect-error")}\n`,
@@ -1794,7 +1776,7 @@ describe("banned patterns and preferences under loop", () => {
       ].join(""),
     );
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).toEqual(["frontend/src/state.ts"]);
+    expect(stagedNames(repo)).toEqual(["frontend/state.ts"]);
   });
 
   test("reports only the file whose ADDED line has a banned pattern, not legacy content", () => {
@@ -1804,18 +1786,18 @@ describe("banned patterns and preferences under loop", () => {
     const addedPattern = requiredForbiddenPattern("ts-ignore");
     stageFile(
       repo,
-      "frontend/src/legacy.ts",
+      "frontend/legacy.ts",
       `export const legacy = 1; // ${legacyPattern}\n`,
     );
     runCommand(["git", "commit", "-q", "-m", "add legacy suppression"], repo);
     stageFile(
       repo,
-      "frontend/src/state.ts",
+      "frontend/state.ts",
       `export const value = 1; // ${addedPattern}\n`,
     );
     stageFile(
       repo,
-      "frontend/src/legacy.ts",
+      "frontend/legacy.ts",
       [
         `export const legacy = 1; // ${legacyPattern}\n`,
         "export const clean = 1;\n",
@@ -1826,14 +1808,14 @@ describe("banned patterns and preferences under loop", () => {
     // Only state.ts adds a banned pattern; legacy.ts's nosec is pre-existing context, so it is not
     // re-flagged. Both files stay staged (patterns are reported, never unstaged).
     expect(problems).toContain(
-      `forbidden pattern '${addedPattern}' in frontend/src/state.ts`,
+      `forbidden pattern '${addedPattern}' in frontend/state.ts`,
     );
     expect(problems).not.toContain(
-      `forbidden pattern '${legacyPattern}' in frontend/src/legacy.ts`,
+      `forbidden pattern '${legacyPattern}' in frontend/legacy.ts`,
     );
     expect(stagedNames(repo)).toEqual([
-      "frontend/src/legacy.ts",
-      "frontend/src/state.ts",
+      "frontend/legacy.ts",
+      "frontend/state.ts",
     ]);
   });
 
@@ -1842,36 +1824,28 @@ describe("banned patterns and preferences under loop", () => {
     const repo = makeRepo();
     const patternA = requiredForbiddenPattern("ts-nocheck");
     const patternB = requiredForbiddenPattern("prettier-ignore");
-    stageFile(
-      repo,
-      "frontend/src/a.ts",
-      `export const a = 1; // ${patternA}\n`,
-    );
-    stageFile(
-      repo,
-      "frontend/src/b.ts",
-      `export const b = 1; // ${patternB}\n`,
-    );
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    stageFile(repo, "frontend/a.ts", `export const a = 1; // ${patternA}\n`);
+    stageFile(repo, "frontend/b.ts", `export const b = 1; // ${patternB}\n`);
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
     const problems = runPreflight(repo, () => []);
     expect(problems).toContain(
-      `forbidden pattern '${patternA}' in frontend/src/a.ts`,
+      `forbidden pattern '${patternA}' in frontend/a.ts`,
     );
     expect(problems).toContain(
-      `forbidden pattern '${patternB}' in frontend/src/b.ts`,
+      `forbidden pattern '${patternB}' in frontend/b.ts`,
     );
     // Every file stays staged; nothing is unstaged for a pattern hit.
     expect(stagedNames(repo)).toEqual([
-      "frontend/src/a.ts",
-      "frontend/src/b.ts",
-      "frontend/src/report.ts",
+      "frontend/a.ts",
+      "frontend/b.ts",
+      "frontend/report.ts",
     ]);
   });
 
   test("does not flag banned words that appear only in a filename", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/nosec.ts", "export const clean = 1;\n");
+    stageFile(repo, "frontend/nosec.ts", "export const clean = 1;\n");
 
     const problems = runPreflight(repo, () => []);
 
@@ -1883,7 +1857,7 @@ describe("banned patterns and preferences under loop", () => {
   test("flags a staged preference break (disallowed DOM selector)", () => {
     process.env.RALPH_LOOP = "1";
     const repo = makeRepo();
-    stageFile(repo, "frontend/src/state.ts", 'document.querySelector(".x");\n');
+    stageFile(repo, "frontend/state.ts", 'document.querySelector(".x");\n');
     const isFlagged = runPreflight(repo, () => []).some((problem) =>
       problem.includes("class selector"),
     );
@@ -1981,17 +1955,14 @@ describe("harness setup script merging", () => {
 // slips through: its path is not forbidden, and its "content" is just the link target, so a
 // source-looking file can point at a protected file (harness/gate.ts) or escape the repo
 // entirely (/etc/passwd). The loop must resolve or reject symlinks, not treat them as source.
-const linkRepo = (
-  target: string,
-  linkPath = "frontend/src/evil.ts",
-): string => {
+const linkRepo = (target: string, linkPath = "frontend/evil.ts"): string => {
   process.env.RALPH_LOOP = "1";
   const repo = makeRepo();
   const absoluteLink = path.join(repo, linkPath);
   mkdirSync(path.dirname(absoluteLink), { recursive: true });
   symlinkSync(target, absoluteLink);
   runCommand(["git", "add", "--", linkPath], repo);
-  stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+  stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
   return repo;
 };
 
@@ -2004,25 +1975,22 @@ describe("symlink and path-traversal containment", () => {
       path.join(repo, "harness/gate.ts"),
       "export const locked = 1;\n",
     );
-    mkdirSync(path.join(repo, "frontend/src"), { recursive: true });
-    symlinkSync(
-      "../../harness/gate.ts",
-      path.join(repo, "frontend/src/evil.ts"),
-    );
-    runCommand(["git", "add", "--", "frontend/src/evil.ts"], repo);
-    stageFile(repo, "frontend/src/report.ts", "export const keep = 1;\n");
+    mkdirSync(path.join(repo, "frontend"), { recursive: true });
+    symlinkSync("../../harness/gate.ts", path.join(repo, "frontend/evil.ts"));
+    runCommand(["git", "add", "--", "frontend/evil.ts"], repo);
+    stageFile(repo, "frontend/report.ts", "export const keep = 1;\n");
 
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).not.toContain("frontend/src/evil.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).not.toContain("frontend/evil.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 
   test("ejects a symlink that escapes the repository", () => {
     const repo = linkRepo("/etc/passwd");
 
     expect(runPreflight(repo, () => [])).toEqual([]);
-    expect(stagedNames(repo)).not.toContain("frontend/src/evil.ts");
-    expect(stagedNames(repo)).toContain("frontend/src/report.ts");
+    expect(stagedNames(repo)).not.toContain("frontend/evil.ts");
+    expect(stagedNames(repo)).toContain("frontend/report.ts");
   });
 });
 
@@ -2202,7 +2170,7 @@ describe("frontend gate shape", () => {
       check: "cruise",
       tool: "depcruise",
       required: [
-        "frontend/src",
+        "frontend",
         "--config harness/.dependency-cruiser.cjs",
         "--output-type err",
       ],
@@ -2330,10 +2298,7 @@ describe("frontend gate shape", () => {
       include?: unknown;
     };
     // Paths are ../-prefixed because the config lives in harness/ but governs frontend/ source.
-    expect(config.include).toEqual([
-      "../frontend/src/**/*.ts",
-      "../frontend/*.ts",
-    ]);
+    expect(config.include).toEqual(["../frontend/**/*.ts", "../frontend/*.ts"]);
     expect(config.exclude).toEqual(
       expect.arrayContaining([
         "../**/node_modules/**",
@@ -2435,7 +2400,7 @@ describe("frontend gate shape", () => {
     // .pnpm-store, which both double-runs suites and tanks the 100% thresholds.
     expect(config.test?.coverage?.include).toEqual([
       "harness/*.ts",
-      "frontend/src/**/*.ts",
+      "frontend/**/*.ts",
     ]);
     expect(config.test?.coverage?.thresholds).toEqual({
       branches: 100,
@@ -2515,7 +2480,7 @@ describe("frontend gate shape", () => {
     // report it and fail, so the work never becomes a commit.
     stageFile(
       repo,
-      "frontend/src/sneaky.ts",
+      "frontend/sneaky.ts",
       "export const value = 1; // eslint-disable-next-line\n",
     );
     const patternBlocked = commit("sneak an escape hatch");
@@ -2528,8 +2493,8 @@ describe("frontend gate shape", () => {
     // A forbidden PATH is unstaged by the hook; with nothing real left to commit, the harness only
     // warns (no hard fail), and the protected file's content never lands. (pnpm-workspace.yaml is a
     // FORBIDDEN_FILE at the repo root, so staging it can't write through the harness/ link.)
-    runCommand(["git", "restore", "--staged", "frontend/src/sneaky.ts"], repo);
-    rmSync(path.join(repo, "frontend/src/sneaky.ts"));
+    runCommand(["git", "restore", "--staged", "frontend/sneaky.ts"], repo);
+    rmSync(path.join(repo, "frontend/sneaky.ts"));
     stageFile(repo, "pnpm-workspace.yaml", "[tool.evil]\n");
     commit("slip in a protected path");
     // Containment: the protected path is ejected from the index and its content never lands in a
