@@ -7,8 +7,8 @@
 # Usage:
 #   harness/ralph.sh [max_iterations] [max_minutes_per_iteration] <agent command...>
 #  e.g.
-#   harness/ralph.sh 10 20 claude -p --permission-mode acceptEdits
-#   harness/ralph.sh 10 20 codex exec --json --sandbox workspace-write -
+#   harness/ralph.sh 10 40 claude -p --permission-mode acceptEdits
+#   harness/ralph.sh 10 40 codex exec --json --sandbox workspace-write -
 #
 # ****      Motto: Keep Ralph Dumb.      ****
 set -eu
@@ -17,7 +17,7 @@ set -eu
 export RALPH_LOOP=1
 
 MAX_ITERATIONS=2
-MAX_MINUTES=20
+MAX_MINUTES=40
 case "${1:-}" in
     ''|*[!0-9]*) ;;
     *)

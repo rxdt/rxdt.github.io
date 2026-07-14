@@ -13,6 +13,10 @@ Finish styling and hardening of a static Github site personal website for the ow
 - Visual checks are made on the browser for different devices
 - The site is responsive
 - The site is accessible
+- The video for "Comfyday" `frontend/public/assets/comfyday-sample.mp4`starts and auto-plays on loop
+- The portrait `merged.svg` plays on loop
+- `frontend/public/assets/inference-conference.png` is used for the "Inference Conference" div
+-
 
 ## Approach
 

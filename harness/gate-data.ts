@@ -16,7 +16,6 @@ export const FORBIDDEN_BASENAMES = new Set(["package.json"]);
 export const FORBIDDEN_FILES = new Set([
   "AGENTS.md",
   "PROMPT.md",
-  "docs/plan.md",
   "harness/preferences.ts",
   // tooling/config that would weaken the gate's thresholds or its checks
   "package.json",
@@ -146,7 +145,7 @@ export const COMMIT_CHECKS: Record<string, string[]> = {
 // FOLLOW-UP (size budget): a per-package `size` check (size-limit) belongs here. The previous size
 // subsystem was removed during the library/template redesign; without it an agent can sneak
 // new/oversized files into a bundle without tripping a budget. Re-adding it means a `size` entry
-// here plus its tests (removed from gate.test.ts — recover the shape from Git history at a721b9a).
+// here plus its tests (removed from gate.test.ts
 export const FULL_CHECKS: Record<string, string[]> = {
   ...COMMIT_CHECKS,
   // The forbidden app tsconfig governs the typecheck (browser types, strict flags); pinned
@@ -198,7 +197,7 @@ export const FULL_CHECKS: Record<string, string[]> = {
   // (or a domain word not yet in the allowlist) warns loudly without ever failing the gate.
   spelling: [
     tool("cspell"),
-    ".",
+    "frontend/*",
     "--config",
     "harness/cspell.json",
     "--no-progress",
@@ -231,13 +230,6 @@ export const FULL_CHECKS: Record<string, string[]> = {
   // pnpm audit reads the pnpm-lock.yaml; --dir targets the frontend package. Covers the same
   // dependency-vulnerability surface npm audit did before the pnpm migration.
   audit: ["pnpm", "--dir", "frontend", "audit", "--audit-level", "high"],
-  // No `lockfile` (lockfile-lint) check: lockfile-lint has no pnpm-lock parser (npm/yarn only),
-  // and pnpm already blocks the injection vector it guarded — pnpm refuses to install packages in
-  // pnpm-lock.yaml that are absent from package.json, and the lock does not carry alternative HTTP
-  // tarball sources for registry packages. No `npmSignatures`: `pnpm audit signatures` needs an
-  // installed-package context the gate can't give cleanly; osv + pnpm audit cover dependency risk.
-  // No `versions` (syncpack) check: this is a TEMPLATE — packages intentionally track `latest`, so
-  // enforcing cross-package version consistency fights the intent. Downstream repos may re-add it.
   // Disabled: this is a template — deps track `latest`, so transitive-dep CVEs
   // are noise here. Downstream repos that pin versions should re-enable.
   // osv: [

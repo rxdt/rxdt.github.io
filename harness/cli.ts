@@ -259,7 +259,7 @@ export const runLoop = async (
     };
   }
   const iterations = parseCount(cliArgs[1], 2);
-  const minutes = parseCount(cliArgs[2], 20);
+  const minutes = parseCount(cliArgs[2], 40);
   if (iterations === undefined || minutes === undefined)
     return { code: 2, lines: ["num_iterations and max_minutes must be >= 1"] };
   const cwd = dependencies.cwd();
@@ -269,6 +269,7 @@ export const runLoop = async (
   const sequence = nextSequence(dependencies.listSequences(day));
   const log = path.join(day, `${String(sequence).padStart(4, "0")}.jsonl`);
   const command = [
+    `RALPH_AGENT_SEQUENCE=${sequence}`,
     dependencies.ralphPath(),
     String(iterations),
     String(minutes),

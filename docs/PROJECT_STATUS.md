@@ -38,7 +38,7 @@
   reliance on missing or ignored project images, added static WebP portrait,
   expanded Playwright route/asset coverage, and fixed frontend HTML/lint.
 
-## Blockers
+## Blockers (verify before fully trusting these items)
 
 - No explicit agent id was exposed in environment; run log path indicates
   `0001-codex`, used for traceability.
@@ -48,5 +48,3 @@
 - `pnpm gate` coverage fails in harness tests expecting `docs/PROMPT.md`,
   cruise frontend scoping, app tsconfig frontend includes, and frontend coverage
   include settings.
-- `pnpm gate` generated an untracked root `pnpm-lock.yaml`; lockfiles are
-  forbidden for agents, so it is not staged.

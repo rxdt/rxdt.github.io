@@ -14,7 +14,3 @@ scratchpad/
 *pnpm-debug.log
 .npmrc
 .pnpm-store/
-*.png
-# workspace uses the root lockfile only; per-package lockfiles are stale artifacts
-frontend/pnpm-lock.yaml
-harness/pnpm-lock.yaml
