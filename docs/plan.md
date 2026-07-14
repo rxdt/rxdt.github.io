@@ -6,17 +6,18 @@ Finish styling and hardening of a static Github site personal website for the ow
 
 ## Features and functionality
 
-- Owner has a fully functioning personal website which is deployable to Github sites.
-- Harness rules are enforced and implemented or documented as blockers.
-- The site has a main page and a few links to blog-like pages
-- All links to external sites work as expected
-- Visual checks are made on the browser for different devices
-- The site is responsive
-- The site is accessible
-- The video for "Comfyday" `frontend/public/assets/comfyday-sample.mp4`starts and auto-plays on loop
-- The portrait `merged.svg` plays on loop
-- `frontend/public/assets/inference-conference.png` is used for the "Inference Conference" div
--
+- [ ] Owner has a fully functioning personal website which is deployable to Github sites.
+- [ ] Harness rules are enforced and implemented or documented as blockers.
+- [ ] The site has a main page and a few links to blog-like pages
+- [ ] All links to external sites work as expected
+- [ ] Visual checks are made on the browser for different devices
+- [ ] The site is responsive
+- [ ] The site is accessible
+- [ ] The video for "Comfyday" `frontend/public/assets/comfyday-sample.mp4`starts and auto-plays on loop
+- [ ] The portrait `merged.svg` plays on loop
+- [ ] `frontend/public/assets/inference-conference.png` is used for the "Inference Conference" div
+- [ ] `frontend/public/assets/caclulator.png` is the image for `AI Deployment Calculator` div
+- [ ] the image for 'LoopGate Harness' is fully visible and not cut off
 
 ## Approach
 
@@ -41,14 +42,14 @@ Get the gate green.
 
 ## Milestones
 
-1. HTML errors are fixed from ~60 to zero
-2. All lint checks pass
-3. Tests are written to cover code 100%
-4. Lighthouse and Playwright pass 100%
-5. All checks pass
-6. All work in `frontend/specs` is complete
-7. The owner verifies manually the site 'looks' right locally
-8. The owner deploys the app to the site
+- [ ] HTML errors are fixed from ~60 to zero
+- [ ] All lint checks pass
+- [ ] Tests are written to cover code 100%
+- [ ] Lighthouse and Playwright pass 100%
+- [ ] All checks pass
+- [ ] All work in `frontend/specs` is complete
+- [ ] The owner verifies manually the site 'looks' right locally
+- [ ] The owner deploys the app to the site
 
 ## Out of Scope
 

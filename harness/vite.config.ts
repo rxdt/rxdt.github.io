@@ -204,7 +204,6 @@ function inlineBuildAssets(): Plugin {
 export default defineConfig({
   root: frontendRoot,
   plugins: [
-    inlineBuildAssets(),
     csp({
       algorithm: "sha256",
       dev: { run: true },
