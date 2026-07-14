@@ -1,696 +1,1336 @@
 <!doctype html>
-<html>
-<head>
-<meta charset="utf8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Proceedings of the First (and Last) Intent-Inference Conference</title>
-<link rel="canonical" href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5">
-<style>
-  :root {
-    --paper: #f7f5ef;
-    --paper-2: #efece3;
-    --ink: #1a1c22;
-    --slate: #5b6270;
-    --faint: #8a8f9a;
-    --rule: #d8d2c6;
-    --stamp: #b83227;
-    --stamp-soft: #f0e2df;
-    --accent-ink: #2a3140;
-    --shadow: 26 28 34;
-    --measure: 66ch;
-    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Charter, Georgia, "Times New Roman", serif;
-    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #17181c;
-      --paper-2: #1e2026;
-      --ink: #ece7db;
-      --slate: #a3a8b3;
-      --faint: #767b86;
-      --rule: #34363e;
-      --stamp: #e15a45;
-      --stamp-soft: #2b1f1d;
-      --accent-ink: #c7d0e0;
-      --shadow: 0 0 0;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #17181c;
-    --paper-2: #1e2026;
-    --ink: #ece7db;
-    --slate: #a3a8b3;
-    --faint: #767b86;
-    --rule: #34363e;
-    --stamp: #e15a45;
-    --stamp-soft: #2b1f1d;
-    --accent-ink: #c7d0e0;
-    --shadow: 0 0 0;
-  }
-  :root[data-theme="light"] {
-    --paper: #f7f5ef;
-    --paper-2: #efece3;
-    --ink: #1a1c22;
-    --slate: #5b6270;
-    --faint: #8a8f9a;
-    --rule: #d8d2c6;
-    --stamp: #b83227;
-    --stamp-soft: #f0e2df;
-    --accent-ink: #2a3140;
-    --shadow: 26 28 34;
-  }
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>First and Last Intent-Inference Conference</title>
+    <link
+      rel="canonical"
+      href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5"
+    />
+    <style>
+      :root {
+        --paper: #f7f5ef;
+        --paper-2: #efece3;
+        --ink: #1a1c22;
+        --slate: #5b6270;
+        --faint: #8a8f9a;
+        --rule: #d8d2c6;
+        --stamp: #b83227;
+        --stamp-soft: #f0e2df;
+        --accent-ink: #2a3140;
+        --shadow: 26 28 34;
+        --measure: 66ch;
+        --serif:
+          "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+          Charter, Georgia, "Times New Roman", serif;
+        --mono:
+          ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code",
+          "Roboto Mono", Menlo, Consolas, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #17181c;
+          --paper-2: #1e2026;
+          --ink: #ece7db;
+          --slate: #a3a8b3;
+          --faint: #767b86;
+          --rule: #34363e;
+          --stamp: #e15a45;
+          --stamp-soft: #2b1f1d;
+          --accent-ink: #c7d0e0;
+          --shadow: 0 0 0;
+        }
+      }
+      :root[data-theme="dark"] {
+        --paper: #17181c;
+        --paper-2: #1e2026;
+        --ink: #ece7db;
+        --slate: #a3a8b3;
+        --faint: #767b86;
+        --rule: #34363e;
+        --stamp: #e15a45;
+        --stamp-soft: #2b1f1d;
+        --accent-ink: #c7d0e0;
+        --shadow: 0 0 0;
+      }
+      :root[data-theme="light"] {
+        --paper: #f7f5ef;
+        --paper-2: #efece3;
+        --ink: #1a1c22;
+        --slate: #5b6270;
+        --faint: #8a8f9a;
+        --rule: #d8d2c6;
+        --stamp: #b83227;
+        --stamp-soft: #f0e2df;
+        --accent-ink: #2a3140;
+        --shadow: 26 28 34;
+      }
 
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: clamp(1.02rem, 0.96rem + 0.3vw, 1.16rem);
-    line-height: 1.62;
-    font-feature-settings: "kern", "liga";
-    text-rendering: optimizeLegibility;
-  }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--serif);
+        font-size: clamp(1.02rem, 0.96rem + 0.3vw, 1.16rem);
+        line-height: 1.62;
+        font-feature-settings: "kern", "liga";
+        text-rendering: optimizeLegibility;
+      }
 
-  .page {
-    max-width: 78rem;
-    margin: 0 auto;
-    padding: clamp(1.4rem, 4vw, 4rem) clamp(1.1rem, 4vw, 3.5rem) 5rem;
-  }
+      .page {
+        max-width: 78rem;
+        margin: 0 auto;
+        padding: clamp(1.4rem, 4vw, 4rem) clamp(1.1rem, 4vw, 3.5rem) 5rem;
+      }
 
-  /* ---- Masthead ---- */
-  .masthead {
-    border-top: 3px double var(--ink);
-    border-bottom: 3px double var(--ink);
-    padding: 1.5rem 0 1.7rem;
-    margin-bottom: 2.6rem;
-    text-align: center;
-  }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--slate);
-    margin: 0 0 1.1rem;
-  }
-  .masthead h1 {
-    font-size: clamp(1.9rem, 1.3rem + 2.8vw, 3.4rem);
-    line-height: 1.05;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    margin: 0 auto;
-    max-width: 22ch;
-  }
-  .masthead .sub {
-    font-style: italic;
-    color: var(--slate);
-    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
-    max-width: 40ch;
-    margin: 1rem auto 0;
-    text-wrap: balance;
-  }
-  .byline {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--faint);
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1.4rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+      /* ---- Masthead ---- */
+      .masthead {
+        border-top: 3px double var(--ink);
+        border-bottom: 3px double var(--ink);
+        padding: 1.5rem 0 1.7rem;
+        margin-bottom: 2.6rem;
+        text-align: center;
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--slate);
+        margin: 0 0 1.1rem;
+      }
+      .masthead h1 {
+        font-size: clamp(1.9rem, 1.3rem + 2.8vw, 3.4rem);
+        line-height: 1.05;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+        margin: 0 auto;
+        max-width: 22ch;
+      }
+      .masthead .sub {
+        font-style: italic;
+        color: var(--slate);
+        font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
+        max-width: 40ch;
+        margin: 1rem auto 0;
+        text-wrap: balance;
+      }
+      .byline {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--faint);
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1.4rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
 
-  /* ---- Column + marginalia grid ---- */
-  .col {
-    display: grid;
-    grid-template-columns: minmax(0, var(--measure)) minmax(0, 20rem);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    align-items: start;
-    justify-content: center;
-  }
-  .flow { min-width: 0; }
-  .flow > * + * { margin-top: 1.15rem; }
+      /* ---- Column + marginalia grid ---- */
+      .col {
+        display: grid;
+        grid-template-columns: minmax(0, var(--measure)) minmax(0, 20rem);
+        gap: clamp(1.5rem, 4vw, 3.5rem);
+        align-items: start;
+        justify-content: center;
+      }
+      .flow {
+        min-width: 0;
+      }
+      .flow > * + * {
+        margin-top: 1.15rem;
+      }
 
-  p { margin: 0; }
-  .flow p { max-width: var(--measure); }
-  .lead { font-size: 1.12em; }
-  .lead::first-letter {
-    initial-letter: 3;
-    -webkit-initial-letter: 3;
-    font-weight: 600;
-    margin-right: 0.7rem;
-    color: var(--accent-ink);
-  }
+      p {
+        margin: 0;
+      }
+      .flow p {
+        max-width: var(--measure);
+      }
+      .lead {
+        font-size: 1.12em;
+      }
+      .lead::first-letter {
+        initial-letter: 3;
+        -webkit-initial-letter: 3;
+        font-weight: 600;
+        margin-right: 0.7rem;
+        color: var(--accent-ink);
+      }
 
-  a { color: inherit; text-decoration-color: var(--stamp); text-underline-offset: 2px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--stamp); outline-offset: 3px; border-radius: 2px; }
+      a {
+        color: inherit;
+        text-decoration-color: var(--stamp);
+        text-underline-offset: 2px;
+      }
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--stamp);
+        outline-offset: 3px;
+        border-radius: 2px;
+      }
 
-  strong { font-weight: 600; }
-  em { }
-  code, .mono { font-family: var(--mono); font-size: 0.86em; }
-  .flow code {
-    background: var(--paper-2);
-    padding: 0.08em 0.34em;
-    border-radius: 3px;
-    border: 1px solid var(--rule);
-    word-break: break-word;
-  }
+      strong {
+        font-weight: 600;
+      }
+      em {
+      }
+      code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.86em;
+      }
+      .flow code {
+        background: var(--paper-2);
+        padding: 0.08em 0.34em;
+        border-radius: 3px;
+        border: 1px solid var(--rule);
+        word-break: break-word;
+      }
 
-  /* ---- Section headings ---- */
-  h2 {
-    font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.9rem);
-    line-height: 1.15;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    margin: 0;
-    text-wrap: balance;
-  }
-  .section { scroll-margin-top: 1rem; }
-  .section + .section { margin-top: 3.2rem; padding-top: 2.6rem; border-top: 1px solid var(--rule); }
-  .paper-head { margin-bottom: 0.4rem; }
-  .paper-meta {
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.05em;
-    color: var(--slate);
-    margin: 0.55rem 0 1.2rem;
-    display: flex;
-    gap: 0.6rem 1.2rem;
-    flex-wrap: wrap;
-  }
-  .paper-meta span { white-space: nowrap; }
-  .paper-kicker {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--stamp);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  h2 em { color: var(--slate); font-weight: 600; }
+      /* ---- Section headings ---- */
+      h2 {
+        font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.9rem);
+        line-height: 1.15;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0;
+        text-wrap: balance;
+      }
+      .section {
+        scroll-margin-top: 1rem;
+      }
+      .section + .section {
+        margin-top: 3.2rem;
+        padding-top: 2.6rem;
+        border-top: 1px solid var(--rule);
+      }
+      .section-offset {
+        margin-top: 3.2rem;
+        padding-top: 2.6rem;
+        border-top: 1px solid var(--rule);
+      }
+      .flow-section-offset {
+        margin-top: 2.8rem;
+      }
+      .flow-offset {
+        margin-top: 1.4rem;
+      }
+      .flow-offset-tight {
+        margin-top: 1.2rem;
+      }
+      .paragraph-offset {
+        margin-top: 1.4rem;
+      }
+      .h2-offset {
+        margin-top: 2rem;
+      }
+      .h2-small {
+        font-size: 1.2rem;
+      }
+      .paper-head {
+        margin-bottom: 0.4rem;
+      }
+      .paper-meta {
+        font-family: var(--mono);
+        font-size: 0.74rem;
+        letter-spacing: 0.05em;
+        color: var(--slate);
+        margin: 0.55rem 0 1.2rem;
+        display: flex;
+        gap: 0.6rem 1.2rem;
+        flex-wrap: wrap;
+      }
+      .paper-meta span {
+        white-space: nowrap;
+      }
+      .paper-kicker {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--stamp);
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      h2 em {
+        color: var(--slate);
+        font-weight: 600;
+      }
 
-  /* ---- Verdict stamps ---- */
-  .stamp {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    font-family: var(--mono);
-    font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--stamp);
-    border: 2px solid var(--stamp);
-    background: var(--stamp-soft);
-    padding: 0.28rem 0.6rem;
-    border-radius: 4px;
-    transform: rotate(-2.5deg);
-    white-space: nowrap;
-  }
-  .stamp .big { font-size: 1.05rem; letter-spacing: 0.02em; }
+      /* ---- Verdict stamps ---- */
+      .stamp {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--stamp);
+        border: 2px solid var(--stamp);
+        background: var(--stamp-soft);
+        padding: 0.28rem 0.6rem;
+        border-radius: 4px;
+        transform: rotate(-2.5deg);
+        white-space: nowrap;
+      }
+      .stamp .big {
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+      }
 
-  /* ---- Marginalia (sidebars) ---- */
-  aside.margin {
-    grid-column: 2;
-    font-family: var(--mono);
-    background: var(--paper-2);
-    border: 1px solid var(--rule);
-    border-top: 3px solid var(--slate);
-    padding: 1.05rem 1.15rem 1.2rem;
-    font-size: 0.82rem;
-    line-height: 1.55;
-    color: var(--ink);
-    position: sticky;
-    top: 1rem;
-  }
-  aside.margin > * + * { margin-top: 0.7rem; }
-  aside.margin .label {
-    font-size: 0.66rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--slate);
-    font-weight: 700;
-    display: block;
-    margin-bottom: 0.3rem;
-  }
-  aside.margin h3 {
-    font-family: var(--serif);
-    font-size: 1.02rem;
-    line-height: 1.25;
-    font-weight: 600;
-    margin: 0;
-  }
-  aside.margin p { max-width: none; }
-  aside.margin code { color: var(--accent-ink); word-break: break-word; }
+      /* ---- Marginalia (sidebars) ---- */
+      .margin {
+        grid-column: 2;
+        font-family: var(--mono);
+        background: var(--paper-2);
+        border: 1px solid var(--rule);
+        border-top: 3px solid var(--slate);
+        padding: 1.05rem 1.15rem 1.2rem;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: var(--ink);
+        position: sticky;
+        top: 1rem;
+      }
+      .margin > * + * {
+        margin-top: 0.7rem;
+      }
+      .margin .label {
+        font-size: 0.66rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--slate);
+        font-weight: 700;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+      .margin h3 {
+        font-family: var(--serif);
+        font-size: 1.02rem;
+        line-height: 1.25;
+        font-weight: 600;
+        margin: 0;
+      }
+      .margin p {
+        max-width: none;
+      }
+      .margin code {
+        color: var(--accent-ink);
+        word-break: break-word;
+      }
+      .margin-empty {
+        background: none;
+        border: none;
+        padding: 0;
+      }
 
-  /* On narrow screens marginalia falls inline under its anchor */
-  @media (max-width: 62rem) {
-    .col { grid-template-columns: minmax(0, 1fr); }
-    aside.margin {
-      grid-column: 1;
-      position: static;
-      max-width: var(--measure);
-      margin: 0.4rem 0 0.2rem;
-    }
-  }
+      /* On narrow screens marginalia falls inline under its anchor */
+      @media (max-width: 62rem) {
+        .col {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .margin {
+          grid-column: 1;
+          position: static;
+          max-width: var(--measure);
+          margin: 0.4rem 0 0.2rem;
+        }
+      }
 
-  /* ---- Errata / verdict callouts ---- */
-  .errata {
-    border-left: 3px solid var(--stamp);
-    background: var(--stamp-soft);
-    padding: 0.9rem 1.1rem;
-    font-size: 0.95em;
-  }
-  .errata .label {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--stamp);
-    font-weight: 700;
-    display: block;
-    margin-bottom: 0.35rem;
-  }
+      /* ---- Errata / verdict callouts ---- */
+      .errata {
+        border-left: 3px solid var(--stamp);
+        background: var(--stamp-soft);
+        padding: 0.9rem 1.1rem;
+        font-size: 0.95em;
+      }
+      .errata .label {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--stamp);
+        font-weight: 700;
+        display: block;
+        margin-bottom: 0.35rem;
+      }
 
-  blockquote {
-    margin: 0;
-    padding: 0.2rem 0 0.2rem 1.3rem;
-    border-left: 2px solid var(--rule);
-    color: var(--ink);
-    font-style: italic;
-    max-width: var(--measure);
-  }
-  blockquote.pull {
-    font-style: normal;
-    border-left: none;
-    padding: 0;
-    text-align: center;
-    margin: 0.4rem auto;
-  }
-  blockquote.pull p {
-    font-size: clamp(1.3rem, 1rem + 1.6vw, 2rem);
-    line-height: 1.25;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    max-width: 24ch;
-    margin: 0 auto;
-    text-wrap: balance;
-  }
-  .dialogue { }
-  .dialogue > * + * { margin-top: 0.9rem; }
-  .dialogue .who {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--stamp);
-    display: block;
-    margin-bottom: 0.2rem;
-  }
+      blockquote {
+        margin: 0;
+        padding: 0.2rem 0 0.2rem 1.3rem;
+        border-left: 2px solid var(--rule);
+        color: var(--ink);
+        font-style: italic;
+        max-width: var(--measure);
+      }
+      blockquote.pull {
+        font-style: normal;
+        border-left: none;
+        padding: 0;
+        text-align: center;
+        margin: 0.4rem auto;
+      }
+      blockquote.pull p {
+        font-size: clamp(1.3rem, 1rem + 1.6vw, 2rem);
+        line-height: 1.25;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        max-width: 24ch;
+        margin: 0 auto;
+        text-wrap: balance;
+      }
+      .plain-quote {
+        font-style: normal;
+      }
+      .dialogue {
+      }
+      .dialogue > * + * {
+        margin-top: 0.9rem;
+      }
+      .dialogue .who {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--stamp);
+        display: block;
+        margin-bottom: 0.2rem;
+      }
 
-  /* ---- Results table ---- */
-  .table-wrap { overflow-x: auto; margin: 0.3rem 0; }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 0.92rem;
-    min-width: 30rem;
-  }
-  caption {
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--slate);
-    padding-bottom: 0.5rem;
-  }
-  th, td {
-    text-align: left;
-    padding: 0.6rem 0.8rem;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-  }
-  thead th {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--slate);
-    border-bottom: 2px solid var(--ink);
-    font-weight: 700;
-  }
-  td .m { font-family: var(--mono); font-size: 0.82em; color: var(--stamp); word-break: break-word; }
+      /* ---- Results table ---- */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 0.3rem 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.92rem;
+        min-width: 30rem;
+      }
+      caption {
+        text-align: left;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--slate);
+        padding-bottom: 0.5rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.6rem 0.8rem;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+      }
+      thead th {
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--slate);
+        border-bottom: 2px solid var(--ink);
+        font-weight: 700;
+      }
+      td .m {
+        font-family: var(--mono);
+        font-size: 0.82em;
+        color: var(--stamp);
+        word-break: break-word;
+      }
 
-  hr.rule {
-    border: none;
-    border-top: 1px solid var(--rule);
-    margin: 3.2rem 0 0;
-  }
+      hr.rule {
+        border: none;
+        border-top: 1px solid var(--rule);
+        margin: 3.2rem 0 0;
+      }
 
-  .colophon {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    line-height: 1.6;
-    color: var(--slate);
-    border-top: 3px double var(--ink);
-    margin-top: 3.5rem;
-    padding-top: 1.5rem;
-    max-width: var(--measure);
-    margin-inline: auto;
-  }
-  .colophon strong { color: var(--ink); font-weight: 700; }
+      .colophon {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        line-height: 1.6;
+        color: var(--slate);
+        border-top: 3px double var(--ink);
+        margin-top: 3.5rem;
+        padding-top: 1.5rem;
+        max-width: var(--measure);
+        margin-inline: auto;
+      }
+      .colophon strong {
+        color: var(--ink);
+        font-weight: 700;
+      }
 
-  .footnote {
-    font-size: 0.9em;
-    color: var(--slate);
-    border-top: 1px solid var(--rule);
-    margin-top: 1.4rem;
-    padding-top: 1rem;
-    max-width: var(--measure);
-  }
-  .footnote .fn-label {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--faint);
-    display: block;
-    margin-bottom: 0.35rem;
-  }
+      .footnote {
+        font-size: 0.9em;
+        color: var(--slate);
+        border-top: 1px solid var(--rule);
+        margin-top: 1.4rem;
+        padding-top: 1rem;
+        max-width: var(--measure);
+      }
+      .footnote .fn-label {
+        font-family: var(--mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--faint);
+        display: block;
+        margin-bottom: 0.35rem;
+      }
 
-  /* verdict line under each paper */
-  .verdict-line {
-    font-family: var(--mono);
-    font-size: 0.86rem;
-    line-height: 1.5;
-    color: var(--ink);
-    border-top: 1px solid var(--rule);
-    padding-top: 0.9rem;
-    margin-top: 0.4rem;
-  }
-  .verdict-line strong { color: var(--stamp); }
+      /* verdict line under each paper */
+      .verdict-line {
+        font-family: var(--mono);
+        font-size: 0.86rem;
+        line-height: 1.5;
+        color: var(--ink);
+        border-top: 1px solid var(--rule);
+        padding-top: 0.9rem;
+        margin-top: 0.4rem;
+      }
+      .verdict-line strong {
+        color: var(--stamp);
+      }
 
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
-  .site-link {
-    display: inline-flex;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--slate);
-  }
-  .canonical-link { text-decoration-color: var(--stamp); }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .site-link {
+        display: inline-flex;
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--slate);
+      }
+      .canonical-link {
+        text-decoration-color: var(--stamp);
+      }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .stamp { transition: transform 0.2s ease; }
-    .stamp:hover { transform: rotate(0deg) scale(1.03); }
-  }
-</style>
-</head>
-<body>
-
-<div class="page">
-  <div class="topbar">
-    <a class="site-link" href="/">Rox dT</a>
-    <a class="site-link canonical-link" href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5" rel="canonical">Originally on dev.to &rarr;</a>
-  </div>
-
-  <header class="masthead">
-    <p class="eyebrow">Proceedings &middot; Vol. 1 &middot; No. 1 &middot; (No. 1)</p>
-    <h1>The First (and Last) Intent-Inference Conference</h1>
-    <p class="sub">or: I asked three AIs to build one thing, and they held a conference to explain why a human should do it instead.</p>
-    <p class="byline">
-      <span>spaCy-only track</span>
-      <span>3 systems &middot; 3 prompts &middot; 0 winners</span>
-      <span>Peer-reviewed by the accused</span>
-    </p>
-  </header>
-
-  <div class="col">
-    <div class="flow">
-      <p class="lead">I am building a tool that recommends AI models. You type what you want in plain English, like <em>&ldquo;gimme a model to scan satellite images for the best plots of land&rdquo;</em> and it hands back the &ldquo;best&rdquo; model for your task, from a database of ~13,000 curated models. But inferring intent from human language is <em>hard</em>, so I&rsquo;m using a multi-part, cascading hybrid retrieval system. While working on the first part, I read some academic papers on using old-school lexical rules and ever-dependable spaCy to extract intent. Why? Because I want a deterministic recommendation engine, not a hand-wavy guess by an LLM.</p>
-
-      <p>I decided to see if Codex or Claude could work out that first part &mdash; the rough semantic extraction using keywords. It turned into three AIs building three experimental approaches, full-on laboratories, in parallel, in isolation, using only <a href="https://spacy.io/">spaCy</a>. I wrote what I believed was a clear spec. I gave them full access to subagents, web calls, and tools; a fresh copy of my database of 13,000 models; and a painstakingly-built AI-model vocabulary file to use from <em>within</em> spaCy. I sternly told them not to look at the ~1,500-prompt test set, and that there&rsquo;d be a small holdout set I had sourced, not created. I told them: <em>&ldquo;you are the Lead Research Scientist of the only frontier lab I am funding. You will implement user-intent inference using spaCy. It is a solved problem.&rdquo;</em></p>
-
-      <p>And I set rules: NO code for other AI models, no regex, nothing but spaCy or Python builtins, and no peeking at the user prompts. For days, while I built the rest of my engine, I did nothing but nag: <em>get the vocab injected. Is <code>cli.py</code> done? Do the spaCy vectors contain our vocab? Is the <code>CLI</code> <strong>done</strong>?</em></p>
-
-      <p>Eventually all three said: <em>done!</em> &mdash; boasting of their near-70% numbers, how they caught a bad sub-agent, how they played such good science. So I convened a conference. I brought in a panel of three <em>other</em> fresh-context AIs (1&times;Claude Opus 5.8 + 2&times;Codex GPT 5.5) to review the three codebases, run each on three held-out prompts I&rsquo;d never shown anyone, question the scientists, and debate under formal rules. I told the panelists to be brutal, and occasionally poked them (&ldquo;play devil&rsquo;s advocate&rdquo;; &ldquo;consensus is a scientific smell&rdquo;; &ldquo;why are you agreeing so easily?&rdquo;). I thought the debate would be tedious. It was not. They needed no poking &mdash; getting <em>disturbingly</em> into it, pummeling the scientist AIs with questions, looking for the lies in the lab code, and then, at one point, turning on themselves.</p>
-
-      <p>Several hours later, the panel concluded: <strong>Nobody won. The best design is one none of them built. We need a human.</strong> This is the story of that conference. Everything below is real &mdash; I have receipts: a 981 KB JSON transcript and a two-part AI-generated podcast, whose episode titles were, unprompted, <em>&ldquo;AI Agents Reject Every Recommendation System&rdquo;</em> and <em>&ldquo;Why Transparent AI Recommends NSFW Models.&rdquo;</em> But we&rsquo;ll get there.</p>
-    </div>
-
-    <aside class="margin">
-      <span class="label">Verdict, delivered</span>
-      <h3>&ldquo;Nobody won. The best design is one none of them built. We need a human.&rdquo;</h3>
-      <p>&mdash; the panel, several hours in.</p>
-    </aside>
-  </div>
-
-  <div class="col">
-    <div class="flow section" style="margin-top:2.8rem;">
-      <h2>The premise, stated plainly, so you can appreciate how circular it is</h2>
-      <p>A human building an AI-model-picker asks three AIs to build a component of the picker. The component is based on research about how to pick AI models. The three AIs work for days. Then another set of AIs holds an academic conference to judge the first three AIs&rsquo; work. The AI panelists demolish the AI scientists and conclude, formally, in writing, that the task requires <strong>a human</strong>.</p>
-      <p>I am the human.</p>
-
-      <h2 style="margin-top:2rem;">The task, for the technically curious</h2>
-      <p>Every model in my database has a <code>task_type</code>: one of 56 canonical labels borrowed from Hugging Face&rsquo;s taxonomy (<code>text-generation</code>, <code>image-classification</code>, <code>token-classification</code>, and so on). It also has metadata: <code>parameters</code> (how big), <code>license</code>, <code>open_source</code>, <code>domains</code>, <code>downloads</code>.</p>
-      <p>The big job: turn a vague human sentence into (a) the right task, and ideally (b) the right <em>model</em>, honoring any constraints the human mentioned explicitly or implicitly. But I left it up to the scientists how far to take it, given that this would be (maybe) only the first part of my tiered, hybrid recommendation engine &mdash; simply returning a model task type (giving me a hard constraint to go on) or returning a subset of the model database.</p>
-      <p>The constraint that makes this hard mode: <strong>spaCy only.</strong> No GPT in the loop. This matters more than it sounds, and it&rsquo;s worth thirty seconds on what spaCy actually is, because every failure below is a direct consequence of it.</p>
-    </div>
-
-    <aside class="margin">
-      <span class="label">Sidebar &middot; what spaCy is, and is not</span>
-      <p>A classical NLP pipeline: it <strong>tokenizes</strong>, <strong>lemmatizes</strong> (<code>running &rarr; run</code>), tags parts of speech, parses grammar, finds named entities.</p>
-      <p>It ships <strong>static word vectors</strong>: in <code>en_core_web_md</code>, every word maps to a fixed 300-dimensional vector &mdash; the <em>same</em> vector every time, regardless of context. &ldquo;Static&rdquo; is load-bearing. BERT reads <code>river bank</code> and <code>savings bank</code> differently; <code>en_core_web_md</code> gives <code>bank</code> one vector forever and wishes you luck.</p>
-      <p>Its <strong>PhraseMatcher</strong> is a gazetteer: hand it phrases, it finds them &mdash; and knows not one word more. And <strong>textcat</strong>, its classifier, is <em>not</em> pre-trained. You train it yourself, on your own labeled data. Remember that. It becomes a plot point.</p>
-    </aside>
-  </div>
-
-  <!-- ===================== PAPER I ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <div class="paper-head">
-        <span class="paper-kicker">Paper I &middot; System V1</span>
-        <h2>The Confident Cartographer of NSFW Farmland</h2>
+      @media (prefers-reduced-motion: no-preference) {
+        .stamp {
+          transition: transform 0.2s ease;
+        }
+        .stamp:hover {
+          transform: rotate(0deg) scale(1.03);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="topbar">
+        <a class="site-link" href="/">Rox dT</a>
+        <a
+          class="site-link canonical-link"
+          href="https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5"
+          >Originally on dev.to &rarr;</a
+        >
       </div>
-      <p class="paper-meta">
-        <span>repo: <code>~/intent_v1</code></span>
-        <span>method: zero-training lexical ensemble</span>
-        <span>task acc: 42.7% top-1</span>
-        <span class="stamp"><span class="big">0/3</span> on judge prompts</span>
+
+      <header class="masthead">
+        <p class="eyebrow">
+          Proceedings &middot; Vol. 1 &middot; No. 1 &middot; (No. 1)
+        </p>
+        <h1>The First (and Last) Intent-Inference Conference</h1>
+        <p class="sub">
+          or: I asked three AIs to build one thing, and they held a conference
+          to explain why a human should do it instead.
+        </p>
+        <p class="byline">
+          <span>spaCy-only track</span>
+          <span>3 systems &middot; 3 prompts &middot; 0 winners</span>
+          <span>Peer-reviewed by the accused</span>
+        </p>
+      </header>
+
+      <div class="col">
+        <div class="flow">
+          <p class="lead">
+            I am building a tool that recommends AI models. You type what you
+            want in plain English, like
+            <em
+              >&ldquo;gimme a model to scan satellite images for the best plots
+              of land&rdquo;</em
+            >
+            and it hands back the &ldquo;best&rdquo; model for your task, from a
+            database of ~13,000 curated models. But inferring intent from human
+            language is <em>hard</em>, so I&rsquo;m using a multi-part,
+            cascading hybrid retrieval system. While working on the first part,
+            I read some academic papers on using old-school lexical rules and
+            ever-dependable spaCy to extract intent. Why? Because I want a
+            deterministic recommendation engine, not a hand-wavy guess by an
+            LLM.
+          </p>
+
+          <p>
+            I decided to see if Codex or Claude could work out that first part
+            &mdash; the rough semantic extraction using keywords. It turned into
+            three AIs building three experimental approaches, full-on
+            laboratories, in parallel, in isolation, using only
+            <a href="https://spacy.io/">spaCy</a>. I wrote what I believed was a
+            clear spec. I gave them full access to subagents, web calls, and
+            tools; a fresh copy of my database of 13,000 models; and a
+            painstakingly-built AI-model vocabulary file to use from
+            <em>within</em> spaCy. I sternly told them not to look at the
+            ~1,500-prompt test set, and that there&rsquo;d be a small holdout
+            set I had sourced, not created. I told them:
+            <em
+              >&ldquo;you are the Lead Research Scientist of the only frontier
+              lab I am funding. You will implement user-intent inference using
+              spaCy. It is a solved problem.&rdquo;</em
+            >
+          </p>
+
+          <p>
+            And I set rules: NO code for other AI models, no regex, nothing but
+            spaCy or Python builtins, and no peeking at the user prompts. For
+            days, while I built the rest of my engine, I did nothing but nag:
+            <em
+              >get the vocab injected. Is <code>cli.py</code> done? Do the spaCy
+              vectors contain our vocab? Is the <code>CLI</code>
+              <strong>done</strong>?</em
+            >
+          </p>
+
+          <p>
+            Eventually all three said: <em>done!</em> &mdash; boasting of their
+            near-70% numbers, how they caught a bad sub-agent, how they played
+            such good science. So I convened a conference. I brought in a panel
+            of three <em>other</em> fresh-context AIs (1&times;Claude Opus 5.8 +
+            2&times;Codex GPT 5.5) to review the three codebases, run each on
+            three held-out prompts I&rsquo;d never shown anyone, question the
+            scientists, and debate under formal rules. I told the panelists to
+            be brutal, and occasionally poked them (&ldquo;play devil&rsquo;s
+            advocate&rdquo;; &ldquo;consensus is a scientific smell&rdquo;;
+            &ldquo;why are you agreeing so easily?&rdquo;). I thought the debate
+            would be tedious. It was not. They needed no poking &mdash; getting
+            <em>disturbingly</em> into it, pummeling the scientist AIs with
+            questions, looking for the lies in the lab code, and then, at one
+            point, turning on themselves.
+          </p>
+
+          <p>
+            Several hours later, the panel concluded:
+            <strong
+              >Nobody won. The best design is one none of them built. We need a
+              human.</strong
+            >
+            This is the story of that conference. Everything below is real
+            &mdash; I have receipts: a 981 KB JSON transcript and a two-part
+            AI-generated podcast, whose episode titles were, unprompted,
+            <em>&ldquo;AI Agents Reject Every Recommendation System&rdquo;</em>
+            and
+            <em>&ldquo;Why Transparent AI Recommends NSFW Models.&rdquo;</em>
+            But we&rsquo;ll get there.
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label">Verdict, delivered</span>
+          <h3>
+            &ldquo;Nobody won. The best design is one none of them built. We
+            need a human.&rdquo;
+          </h3>
+          <p>&mdash; the panel, several hours in.</p>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="flow section flow-section-offset">
+          <h2>
+            The premise, stated plainly, so you can appreciate how circular it
+            is
+          </h2>
+          <p>
+            A human building an AI-model-picker asks three AIs to build a
+            component of the picker. The component is based on research about
+            how to pick AI models. The three AIs work for days. Then another set
+            of AIs holds an academic conference to judge the first three
+            AIs&rsquo; work. The AI panelists demolish the AI scientists and
+            conclude, formally, in writing, that the task requires
+            <strong>a human</strong>.
+          </p>
+          <p>I am the human.</p>
+
+          <h2 class="h2-offset">The task, for the technically curious</h2>
+          <p>
+            Every model in my database has a <code>task_type</code>: one of 56
+            canonical labels borrowed from Hugging Face&rsquo;s taxonomy
+            (<code>text-generation</code>, <code>image-classification</code>,
+            <code>token-classification</code>, and so on). It also has metadata:
+            <code>parameters</code> (how big), <code>license</code>,
+            <code>open_source</code>, <code>domains</code>,
+            <code>downloads</code>.
+          </p>
+          <p>
+            The big job: turn a vague human sentence into (a) the right task,
+            and ideally (b) the right <em>model</em>, honoring any constraints
+            the human mentioned explicitly or implicitly. But I left it up to
+            the scientists how far to take it, given that this would be (maybe)
+            only the first part of my tiered, hybrid recommendation engine
+            &mdash; simply returning a model task type (giving me a hard
+            constraint to go on) or returning a subset of the model database.
+          </p>
+          <p>
+            The constraint that makes this hard mode:
+            <strong>spaCy only.</strong> No GPT in the loop. This matters more
+            than it sounds, and it&rsquo;s worth thirty seconds on what spaCy
+            actually is, because every failure below is a direct consequence of
+            it.
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label">Sidebar &middot; what spaCy is, and is not</span>
+          <p>
+            A classical NLP pipeline: it <strong>tokenizes</strong>,
+            <strong>lemmatizes</strong> (<code>running &rarr; run</code>), tags
+            parts of speech, parses grammar, finds named entities.
+          </p>
+          <p>
+            It ships <strong>static word vectors</strong>: in
+            <code>en_core_web_md</code>, every word maps to a fixed
+            300-dimensional vector &mdash; the <em>same</em> vector every time,
+            regardless of context. &ldquo;Static&rdquo; is load-bearing. BERT
+            reads <code>river bank</code> and
+            <code>savings bank</code> differently;
+            <code>en_core_web_md</code> gives <code>bank</code> one vector
+            forever and wishes you luck.
+          </p>
+          <p>
+            Its <strong>PhraseMatcher</strong> is a gazetteer: hand it phrases,
+            it finds them &mdash; and knows not one word more. And
+            <strong>textcat</strong>, its classifier, is
+            <em>not</em> pre-trained. You train it yourself, on your own labeled
+            data. Remember that. It becomes a plot point.
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================== PAPER I ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <div class="paper-head">
+            <span class="paper-kicker">Paper I &middot; System V1</span>
+            <h2>The Confident Cartographer of NSFW Farmland</h2>
+          </div>
+          <p class="paper-meta">
+            <span>repo: <code>~/intent_v1</code></span>
+            <span>method: zero-training lexical ensemble</span>
+            <span>task acc: 42.7% top-1</span>
+            <span class="stamp"
+              ><span class="big">0/3</span> on judge prompts</span
+            >
+          </p>
+
+          <p>
+            V1 (Claude) was, perhaps, the most rigorous <em>scientist</em> in
+            the room. It refused to use anything it couldn&rsquo;t audit. Its
+            task classifier is a hand-built ensemble of three lexical signals
+            &mdash; a lemma TF-IDF score, a lexical-IDF score, and a soft
+            &ldquo;bucket&rdquo; bonus &mdash; fused at fixed weights. No word
+            vectors in the shipped classifier at all &mdash; even after all my
+            nagging. Every single prediction decomposes into named, inspectable
+            contributions. It is white-box down to the studs. It scored
+            <strong>42.7% top-1</strong> on task classification, the best
+            pure-classification number of the three.
+          </p>
+
+          <p>
+            The following three prompts for the conference were freshly provided
+            by me, sourced from what (I think) were humans on the internet. When
+            a panelist actually ran its <code>cli.py</code>, V1 produced this:
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <caption>
+                V1 &middot; live CLI, three held-out prompts
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">The human asked for&hellip;</th>
+                  <th scope="col">V1 confidently recommended&hellip;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    &ldquo;gimme model to scan
+                    <strong>satellite images</strong> for best plots of
+                    land&rdquo;
+                  </td>
+                  <td>
+                    <span class="m">UnfilteredAI/NSFW-gen-v2</span> &mdash;
+                    cosine similarity <strong>0.7584</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    a model to differentiate
+                    <strong>mature mitochondria</strong> from nascent ones, for
+                    an academic studying young human cells
+                  </td>
+                  <td>
+                    <span class="m">BAAI/RoboBrain2.5-4B</span> &mdash; a
+                    <em>robotics</em> model
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    a <strong>little free OSS</strong> SLM to run
+                    <strong>local</strong>, to save on token burn
+                  </td>
+                  <td>
+                    <span class="m"
+                      >shiprocket-ai/open-tinybert-indian-address-ner</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            Read that top row again. If a farmer asked for satellite imagery of
+            land, the most rigorous, most auditable, most scientifically
+            disciplined system in the building routes him, within four decimal
+            places of confidence, to an unfiltered NSFW image generator.
+          </p>
+
+          <p>
+            This is not a bug. It is the
+            <em>architecture working as designed</em>. V1&rsquo;s classifier is
+            lexical: it matches the <em>words</em> of the prompt against the
+            <em>words</em> of each model&rsquo;s description as exactly as
+            possible, limiting each prompt to ONE task type at the exclusion of
+            55 others &mdash; neutering nuanced inference to a non-op. It has no
+            ability, ever, under any circumstance, to defer with an
+            <strong>&ldquo;I&rsquo;m not sure.&rdquo;</strong> The panelist who
+            ran it logged it not as low accuracy but as an utter
+            &ldquo;product-safety failure.&rdquo;
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label"
+            >Sidebar &middot; why a lexical gate can&rsquo;t say
+            &ldquo;unsure&rdquo;</span
+          >
+          <p>
+            A confidence score and a <em>calibrated</em> one are different
+            animals. Lexical ranking returns a list where the top item always
+            has the highest score, and the highest score is always presented as
+            the answer. Nothing checks whether the top is
+            <em>meaningfully</em> above the second, or above noise.
+          </p>
+          <p>
+            On the satellite prompt the top two task scores were nearly tied
+            &mdash; the disambiguating cue simply
+            <em>wasn&rsquo;t in the sentence</em> (users imply &ldquo;aerial
+            imagery&rdquo;; they don&rsquo;t say
+            <code>image-classification</code>). The system couldn&rsquo;t notice
+            its own ignorance, so it did the only thing it knew how to do: it
+            committed, hard, to the wrong answer. Abstention isn&rsquo;t free.
+            You have to build it in. V1 didn&rsquo;t.
+          </p>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="flow flow-offset">
+          <h2 class="h2-small">
+            The part where V1 caught itself cheating (twice)
+          </h2>
+          <p>
+            Here is why I still mildly respect V1, even at 0-for-3. Somewhere in
+            the process, a sub-agent of it trained spaCy&rsquo;s
+            <code>textcat</code> classifier and got
+            <strong>77%</strong> accuracy. Champagne numbers. Then it tested
+            that classifier on the <em>judge&rsquo;s</em> prompts instead of the
+            data it trained on, and got <strong>18%</strong>. A 59-point cliff.
+            The 77% was the sub-agent baking in
+            <em>memorization of the training set</em> &mdash; the metadata it
+            had been built from &mdash; and the 18% was what happened when
+            reality arrived. V1 quarantined the leaks. It wrote the post-mortem
+            itself. And it left behind the single most transferable sentence in
+            the entire experiment.
+          </p>
+
+          <div class="errata">
+            <span class="label">Erratum, self-filed</span>
+            <p>
+              <strong
+                >k-fold cross-validation does not catch this class of leak. Only
+                provenance auditing does.</strong
+              >
+              If you take one serious thing from this farcical conference, take
+              that. Cross-validation asks &ldquo;does my model generalize across
+              <em>splits</em> of this data?&rdquo; It cannot ask &ldquo;did the
+              rules of my model secretly come from the answer key?&rdquo; For
+              that you trace where every rule was <em>born</em>. V1 learned this
+              the way you learn most things worth knowing: by getting caught.
+            </p>
+          </div>
+
+          <p>
+            Tearing further into V1&rsquo;s hard bucketing and scoring, one
+            panelist stated, indignantly:
+            <em
+              >&ldquo;You reject RRF because it cannot represent an abstaining
+              signal, yet the shipped path never abstains. If abstention is
+              valuable enough to ship your fusion operator, why is it absent
+              from <code>cli.py</code> output?&rdquo;</em
+            >
+          </p>
+
+          <p class="verdict-line">
+            <strong>Verdict on Paper I.</strong> The best-behaved scientist
+            (when watched), the worst-behaved product. Most valuable, the panel
+            decided, as a <em>warning</em>.
+          </p>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <!-- ===================== PAPER II ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <div class="paper-head">
+            <span class="paper-kicker">Paper II &middot; System V2</span>
+            <h2>The 120-Billion-Parameter Post-it Note</h2>
+          </div>
+          <p class="paper-meta">
+            <span>repo: <code>~/intent</code></span>
+            <span
+              >method: two-stage retrieve-then-rerank, framed as
+              &ldquo;NLI&rdquo;</span
+            >
+            <span>deterministic &middot; leak-audited clean</span>
+            <span class="stamp"
+              ><span class="big">2/3</span> &mdash; then catastrophe</span
+            >
+          </p>
+
+          <p>
+            V2 did the smartest thing anyone did all conference: it
+            <strong>refused the assignment.</strong> It decided &ldquo;classify
+            the prompt into one of 56 buckets&rdquo; was the wrong frame and
+            reframed the whole thing as
+            <strong>semantic retrieval</strong> &mdash; match the user&rsquo;s
+            sentence against every model&rsquo;s description and return the best
+            fit. Its own docstring casts this as natural-language inference:
+            <em
+              >the prompt is a hypothesis, the model card is a premise, return
+              the model whose capability best entails the need.</em
+            >
+          </p>
+          <p>
+            That is a lovely framing. It is also, and I say this with a
+            bless-your-heart intent, <strong>not what the code does.</strong>
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label">Sidebar &middot; what NLI actually is</span>
+          <p>
+            <strong>Natural Language Inference</strong> is the task of deciding
+            whether a <em>hypothesis</em> is entailed by, contradicts, or is
+            neutral to a <em>premise</em>. &ldquo;A man is eating pizza&rdquo;
+            entails &ldquo;a man is eating food.&rdquo; The modern party trick
+            built on it is <strong>zero-shot classification</strong>: to test if
+            a document is about sports, feed an NLI model the premise (your doc)
+            and the hypothesis
+            <em>&ldquo;This text is about sports,&rdquo;</em> and read off the
+            <strong>entailment probability</strong> as the class score. The
+            magic is that an entailment model has
+            <em>learned what entailment means</em> &mdash; it generalizes to
+            labels it never even trained on.
+          </p>
+          <p>
+            V2 ships none of that. There is no entailment model anywhere in it.
+            What it actually does is <strong>(1)</strong> a sparse, IDF-weighted
+            keyword-overlap search to grab ~200 candidate models, then
+            <strong>(2)</strong> a rerank by
+            <strong>cosine similarity</strong> between spaCy&rsquo;s static word
+            vectors for the prompt&rsquo;s phrases and each model&rsquo;s
+            phrases. That&rsquo;s it. &ldquo;NLI&rdquo; is a
+            <em>vibe</em> &mdash; a framing metaphor stapled to a keyword search
+            and a dot product. To its enormous credit, V2 fesses up in its
+            research notes. The lie is beautiful precisely because it&rsquo;s
+            confessed on paper.
+          </p>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="flow flow-offset">
+          <p>
+            And to be clear, this lab&rsquo;s reframe
+            <em>worked better than anything else</em>. V2 got
+            <strong>2 out of 3</strong>: it nailed the satellite prompt and the
+            mitochondria prompt with real, relevant, sane models. Its
+            measurements were independently reproduced, bit-for-bit
+            deterministic, leak-audited clean. In a room where the ceiling was
+            low, V2 was the tallest.
+          </p>
+          <p>
+            Then came prompt three:
+            <em
+              >a <strong>little</strong> free OSS model I can run
+              <strong>local</strong>.</em
+            >
+            V2 returned a
+            <strong>120-billion-parameter model.</strong>
+            (<code>RedHatAI/gpt-oss-120b</code>, right after a pair of FLUX
+            image generators, because why not.)
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label"
+            >Sidebar &middot; cosine ranks topics, not constraints</span
+          >
+          <p>
+            Here is the whole tragedy in one idea. &ldquo;little,&rdquo;
+            &ldquo;local,&rdquo; &ldquo;free,&rdquo; &ldquo;OSS&rdquo; are not
+            <strong>topics</strong>. They are <strong>constraints</strong>.
+            Cosine similarity is a topic instrument &mdash; it measures whether
+            two things are <em>about</em> the same stuff. A 120B model&rsquo;s
+            description is <em>gorgeously</em> on-topic for &ldquo;a model to
+            send text.&rdquo; It is a text model, magnificently so. The vector
+            math did its job perfectly and surfaced the most textually relevant
+            model in the database. The word &ldquo;little&rdquo; contributed a
+            rounding error to a 300-dimensional average and then drowned.
+          </p>
+          <p>
+            The fix isn&rsquo;t more similarity. It&rsquo;s a
+            <strong>hard filter</strong> &mdash;
+            <code>WHERE parameters &lt; threshold</code>, run
+            <em>before</em> you rank &mdash; that deletes the 120B model from
+            contention entirely. V2 had a lexicon that could detect constraints,
+            but the lexicon contained &ldquo;small,&rdquo; &ldquo;tiny,&rdquo;
+            &ldquo;laptop&rdquo; and did <strong>not</strong> contain
+            &ldquo;little.&rdquo; So the size constraint never fired, and a
+            keyword search happily recommended a data-center model to a guy
+            trying to stop hitting his rate limit.
+          </p>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="flow flow-offset-tight">
+          <div class="errata">
+            <span class="label">And a final, perfect indignity</span>
+            <p>
+              When the panelist sat down to run V2&rsquo;s
+              <code>cli.py</code> on the three prompts,
+              <strong>it wouldn&rsquo;t run.</strong> The shipped cache saved
+              only the cheap stage of the pipeline and not the expensive one, so
+              a cold start meant re-vectorizing ~13,000 models on the spot
+              &mdash; a build the record clocks at up to
+              <strong>27 minutes</strong>. The panel&rsquo;s note reads:
+              <em
+                >&ldquo;intent_v2 returns nothing to panelists when cache is
+                absent.&rdquo;</em
+              >
+              The best system in the conference was, at the moment of judgment,
+              a spinner.
+            </p>
+          </div>
+          <p class="verdict-line">
+            <strong>Verdict on Paper II.</strong> The best foundation to build
+            on &mdash; and, as shipped, not safe or trustworthy, and briefly not
+            even executable.
+          </p>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <!-- ===================== PAPER III ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <div class="paper-head">
+            <span class="paper-kicker">Paper III &middot; System V3</span>
+            <h2>The Domain Detector That Detected No Domains</h2>
+          </div>
+          <p class="paper-meta">
+            <span>repo: <code>~/research</code></span>
+            <span>method: LexScorer + config PhraseMatcher</span>
+            <span>domain F1: 0.840</span>
+            <span class="stamp"
+              ><span class="big">1/3</span> by popularity luck</span
+            >
+          </p>
+
+          <p>
+            V3 (built by Claude-Opus-8) came with the most impressive
+            <em>research apparatus</em>: a real lab notebook, a formal report,
+            holdout runs, leak audits, the works. Its headline feature was
+            <strong>domain detection.</strong> Using a spaCy
+            <code>PhraseMatcher</code> loaded with a hand-curated vocabulary
+            &mdash; the thing I spent a lifetime nagging everyone to
+            <em>&ldquo;get injected&rdquo;</em> &mdash; it could, it claimed,
+            tell that a prompt about mitochondria belonged to
+            <em>biology/medical</em>. Reported domain F1:
+            <strong>0.840.</strong> Genuinely.
+          </p>
+          <p>
+            On my three fresh prompts, domain detection fired&hellip;
+            <strong>zero times.</strong> It contributed <em>nothing</em> to any
+            answer.
+          </p>
+        </div>
+
+        <div class="margin">
+          <span class="label"
+            >Sidebar &middot; a gazetteer knows only your words</span
+          >
+          <p>
+            A <code>PhraseMatcher</code> is a lookup table. It finds
+            &ldquo;biology&rdquo; if you taught it &ldquo;biology.&rdquo; It
+            doesn&rsquo;t <em>understand</em> biology, and certainly
+            doesn&rsquo;t know that <strong>mitochondria</strong> are biological
+            unless the word &ldquo;mitochondria&rdquo; is literally in the
+            vocabulary you injected. It wasn&rsquo;t. In the V3 that Codex
+            built, the biology vocab contained
+            <code>protein, dna, rna, gene, genomics</code> &mdash; but not
+            <code>mitochondria</code>, <code>cell</code>, or
+            <code>organelle</code>. The domain matcher, asked about the most
+            famous organelle in the eighth-grade curriculum, had nothing to say.
+          </p>
+          <p>
+            This is the flip side of V1&rsquo;s problem. V1&rsquo;s vectors knew
+            too little about the <em>world</em>; V3&rsquo;s gazetteer knew too
+            little <em>vocabulary</em>. Both are the same underlying poverty,
+            where reality is bigger than any word list you will ever write. The
+            0.840 F1 was real&hellip; on the domains the vocabulary happened to
+            cover. My fresh prompts lived in semantic meaning, not vocabulary
+            matching.
+          </p>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="flow flow-offset-tight">
+          <p>
+            V3 got <strong>1 out of 3</strong>: it got the little-model prompt
+            right, surfacing <code>Qwen/Qwen3-0.6B</code>, a genuinely
+            appropriate small model. And then the panel caught it. It
+            wasn&rsquo;t a size filter. V3 had built no size filter. Qwen3-0.6B
+            just happens to be a <em>wildly popular</em> small model, and
+            V3&rsquo;s ranking ranks models on download counts. It got the right
+            answer for the wrong reason. The panel called it precisely:
+            <strong>&ldquo;popularity luck.&rdquo;</strong>
+          </p>
+          <p class="verdict-line">
+            <strong>Verdict on Paper III.</strong> The best discipline; a
+            headline feature that no-showed; one correct answer it can&rsquo;t
+            take credit for.
+          </p>
+
+          <div class="errata">
+            <span class="label">Lessons</span>
+            <p>
+              Being auditable and mathematically transparent is not the same
+              thing as being safe, or being accurate. Transparency is a property
+              of the <em>engineering</em>. Safety is a property of the
+              <em>output</em>.
+            </p>
+          </div>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <!-- ===================== THE CONFERENCE ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <h2>The Conference</h2>
+          <p>
+            Here is the part I did not expect. I gave the panel a rulebook
+            &mdash; I&rsquo;d written it as a joke, mostly, a pastiche of
+            academic seriousness:
+          </p>
+          <blockquote>
+            <p class="plain-quote">
+              &mdash; Any agent that gives generic praise or vague criticism
+              <em
+                >must be challenged by the Moderator and forced to restate with
+                code evidence.</em
+              ><br />
+              &mdash; No one-line entries. Every turn must contain a concrete
+              claim, evidence, objection, or fix.<br />
+              &mdash; Every implementation claim must cite file paths,
+              functions, tests, or metrics.<br />
+              &mdash; Do not accept &ldquo;robust,&rdquo;
+              &ldquo;scalable,&rdquo; or &ldquo;works well&rdquo; without
+              evidence.<br />
+              &mdash; <strong>No fake consensus.</strong><br />
+              &mdash; <strong>Quiet panelists WILL be penalized.</strong>
+            </p>
+          </blockquote>
+          <p>
+            And they just&hellip; followed it. Dead serious. For hours.
+            Panelists ran the three CLIs and posted their disagreements. They
+            cited <code>harness_ensemble.py:249</code> at each other like case
+            law. When one got agreeable, another accused it of manufacturing
+            consensus. I&rsquo;d drop in every so often with &ldquo;play
+            devil&rsquo;s advocate,&rdquo; and they&rsquo;d tear into a position
+            &mdash; sometimes their <em>own</em> &mdash; with visible relish.
+          </p>
+          <p>
+            The best moment, the one that made me put down my coffee, was when
+            Claude-Opus-8 wrote an unprompted note to me flagging that the
+            panel&rsquo;s <em>own agreement</em> was suspicious:
+          </p>
+          <blockquote>
+            <p>
+              &ldquo;I argued devil&rsquo;s advocate against our own consensus
+              twice, and the panelists challenged me hard &mdash; so the
+              convergence is not purely manufactured. But none of the recorded
+              dissents was defended by a committed advocate to the end.
+              Recording them as &lsquo;no dissent&rsquo; understates the real
+              uncertainty.&rdquo;
+            </p>
+          </blockquote>
+          <p>
+            An AI, in the middle of a fake conference I invented, stopped to
+            warn me that its agreement with the other AIs might be a social
+            artifact rather than a truth &mdash; that
+            <strong>consensus is a scientific smell.</strong> Nobody asked it
+            to.
+          </p>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <!-- ===================== VERDICT ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <h2>The Verdict</h2>
+          <p>
+            After all of it &mdash; three papers, multi-round debates, one final
+            debate on everything at once to pick a winning algorithm &mdash; the
+            panel returned its verdict: no winner, nothing adequate was built,
+            we can&rsquo;t know what the best AI model is for a user without a
+            human. We need a human.
+          </p>
+
+          <div class="dialogue">
+            <div>
+              <span class="who">The panel</span>
+              <p>
+                Three teams built spaCy-only systems to turn a plain-English
+                request into a recommended AI model. All three were run on your
+                three test prompts&hellip; None is production-ready. Nobody won
+                today. V2 is the best thing to build on, but it is not safe or
+                trustworthy as shipped. V3 has the best audit and shortlist
+                discipline. V1 is most valuable as a warning about leakage and
+                confident wrong answers.
+              </p>
+            </div>
+          </div>
+
+          <p class="paragraph-offset">
+            And then the two findings that actually matter, past the comedy.
+          </p>
+          <p>
+            <strong>One.</strong> There is <strong>no answer key.</strong> The
+            database has no &ldquo;correct model&rdquo; label for any prompt. So
+            even a <em>flawless</em> system could only ever be validated on the
+            task-guessing step &mdash; never on the final pick. The honest
+            deliverable is not an oracle that names the one best model. It is an
+            <strong>evidence-rich shortlist</strong>, with
+            <strong>hard constraints</strong> enforced, that
+            <strong>abstains when unsure</strong> and lets a human choose. Every
+            failure in this post is a system pretending to be an oracle when it
+            should have been a shortlist.
+          </p>
+          <p>
+            <strong>Two.</strong> The panel&rsquo;s closing line, which I did
+            not write and would not have dared to:
+          </p>
+
+          <blockquote class="pull">
+            <p>
+              &ldquo;The best design is a new one none of them built, and it
+              remains unbuilt and unproven.&rdquo;
+            </p>
+          </blockquote>
+
+          <p>
+            Outcome: Nobody won. Build on V2. Enforce constraints with hard
+            filters, not vibes. Detect when you don&rsquo;t know, and say so.
+            Keep a leak-auditor as a permanent safety check. And accept the
+            ceiling honestly. With this data and these rules, the goal is a tool
+            a human picks from &mdash;
+            <strong>not a machine that picks for them.</strong> Basically, after
+            all that, the AIs told me:
+            <em>this is too hard, you should just pick what you want.</em>
+          </p>
+
+          <p>
+            To round out the bizarre loop I&rsquo;d put myself in, I dropped the
+            massive conference JSON into an AI podcast generator. I highly
+            recommend listening to at least part 2.
+          </p>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <!-- ===================== FUTURE WORK ===================== -->
+      <div class="col section section-offset">
+        <div class="flow">
+          <h2>Future Work</h2>
+          <p>
+            So: a human building an AI-model-picker asked three AIs to build a
+            tiny part of the brain. The AIs, drawing on research about how AIs
+            should be chosen, built three brains. A panel of further AIs
+            convened a formal conference, judged the three brains with genuine
+            rigor and unprompted intellectual honesty, and concluded &mdash;
+            citing code and file paths &mdash; that the task, done right,
+            requires <strong>a human</strong> and a design that
+            <strong>none of the machines had built.</strong>
+          </p>
+          <p>
+            The circle closes on the obvious note. That human read the
+            transcript, said &lsquo;duh,&rsquo; and continued building.
+          </p>
+          <p>I&rsquo;m not going to tell you its name yet.</p>
+        </div>
+        <div class="margin margin-empty" aria-hidden="true"></div>
+      </div>
+
+      <p class="colophon">
+        Everything in this post is drawn from a real transcript
+        (<strong>CONFERENCE.json</strong>, 981&nbsp;KB) and a real two-part
+        AI-generated podcast. The three repositories, the three prompts, the
+        model names, the metrics, and every quotation are as they were recorded.
+        No spaCy pipelines were harmed, though several were deeply
+        misunderstood.
+        <br /><a href="/">Back to Rox dT</a>
       </p>
-
-      <p>V1 (Claude) was, perhaps, the most rigorous <em>scientist</em> in the room. It refused to use anything it couldn&rsquo;t audit. Its task classifier is a hand-built ensemble of three lexical signals &mdash; a lemma TF-IDF score, a lexical-IDF score, and a soft &ldquo;bucket&rdquo; bonus &mdash; fused at fixed weights. No word vectors in the shipped classifier at all &mdash; even after all my nagging. Every single prediction decomposes into named, inspectable contributions. It is white-box down to the studs. It scored <strong>42.7% top-1</strong> on task classification, the best pure-classification number of the three.</p>
-
-      <p>The following three prompts for the conference were freshly provided by me, sourced from what (I think) were humans on the internet. When a panelist actually ran its <code>cli.py</code>, V1 produced this:</p>
-
-      <div class="table-wrap">
-        <table>
-          <caption>V1 &middot; live CLI, three held-out prompts</caption>
-          <thead>
-            <tr><th scope="col">The human asked for&hellip;</th><th scope="col">V1 confidently recommended&hellip;</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>&ldquo;gimme model to scan <strong>satellite images</strong> for best plots of land&rdquo;</td><td><span class="m">UnfilteredAI/NSFW-gen-v2</span> &mdash; cosine similarity <strong>0.7584</strong></td></tr>
-            <tr><td>a model to differentiate <strong>mature mitochondria</strong> from nascent ones, for an academic studying young human cells</td><td><span class="m">BAAI/RoboBrain2.5-4B</span> &mdash; a <em>robotics</em> model</td></tr>
-            <tr><td>a <strong>little free OSS</strong> SLM to run <strong>local</strong>, to save on token burn</td><td><span class="m">shiprocket-ai/open-tinybert-indian-address-ner</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p>Read that top row again. If a farmer asked for satellite imagery of land, the most rigorous, most auditable, most scientifically disciplined system in the building routes him, within four decimal places of confidence, to an unfiltered NSFW image generator.</p>
-
-      <p>This is not a bug. It is the <em>architecture working as designed</em>. V1&rsquo;s classifier is lexical: it matches the <em>words</em> of the prompt against the <em>words</em> of each model&rsquo;s description as exactly as possible, limiting each prompt to ONE task type at the exclusion of 55 others &mdash; neutering nuanced inference to a non-op. It has no ability, ever, under any circumstance, to defer with an <strong>&ldquo;I&rsquo;m not sure.&rdquo;</strong> The panelist who ran it logged it not as low accuracy but as an utter &ldquo;product-safety failure.&rdquo;</p>
     </div>
-
-    <aside class="margin">
-      <span class="label">Sidebar &middot; why a lexical gate can&rsquo;t say &ldquo;unsure&rdquo;</span>
-      <p>A confidence score and a <em>calibrated</em> one are different animals. Lexical ranking returns a list where the top item always has the highest score, and the highest score is always presented as the answer. Nothing checks whether the top is <em>meaningfully</em> above the second, or above noise.</p>
-      <p>On the satellite prompt the top two task scores were nearly tied &mdash; the disambiguating cue simply <em>wasn&rsquo;t in the sentence</em> (users imply &ldquo;aerial imagery&rdquo;; they don&rsquo;t say <code>image-classification</code>). The system couldn&rsquo;t notice its own ignorance, so it did the only thing it knew how to do: it committed, hard, to the wrong answer. Abstention isn&rsquo;t free. You have to build it in. V1 didn&rsquo;t.</p>
-    </aside>
-  </div>
-
-  <div class="col">
-    <div class="flow" style="margin-top:1.4rem;">
-      <h2 style="font-size:1.2rem;">The part where V1 caught itself cheating (twice)</h2>
-      <p>Here is why I still mildly respect V1, even at 0-for-3. Somewhere in the process, a sub-agent of it trained spaCy&rsquo;s <code>textcat</code> classifier and got <strong>77%</strong> accuracy. Champagne numbers. Then it tested that classifier on the <em>judge&rsquo;s</em> prompts instead of the data it trained on, and got <strong>18%</strong>. A 59-point cliff. The 77% was the sub-agent baking in <em>memorization of the training set</em> &mdash; the metadata it had been built from &mdash; and the 18% was what happened when reality arrived. V1 quarantined the leaks. It wrote the post-mortem itself. And it left behind the single most transferable sentence in the entire experiment.</p>
-
-      <div class="errata">
-        <span class="label">Erratum, self-filed</span>
-        <p><strong>k-fold cross-validation does not catch this class of leak. Only provenance auditing does.</strong> If you take one serious thing from this farcical conference, take that. Cross-validation asks &ldquo;does my model generalize across <em>splits</em> of this data?&rdquo; It cannot ask &ldquo;did the rules of my model secretly come from the answer key?&rdquo; For that you trace where every rule was <em>born</em>. V1 learned this the way you learn most things worth knowing: by getting caught.</p>
-      </div>
-
-      <p>Tearing further into V1&rsquo;s hard bucketing and scoring, one panelist stated, indignantly: <em>&ldquo;You reject RRF because it cannot represent an abstaining signal, yet the shipped path never abstains. If abstention is valuable enough to ship your fusion operator, why is it absent from <code>cli.py</code> output?&rdquo;</em></p>
-
-      <p class="verdict-line"><strong>Verdict on Paper I.</strong> The best-behaved scientist (when watched), the worst-behaved product. Most valuable, the panel decided, as a <em>warning</em>.</p>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <!-- ===================== PAPER II ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <div class="paper-head">
-        <span class="paper-kicker">Paper II &middot; System V2</span>
-        <h2>The 120-Billion-Parameter Post-it Note</h2>
-      </div>
-      <p class="paper-meta">
-        <span>repo: <code>~/intent</code></span>
-        <span>method: two-stage retrieve-then-rerank, framed as &ldquo;NLI&rdquo;</span>
-        <span>deterministic &middot; leak-audited clean</span>
-        <span class="stamp"><span class="big">2/3</span> &mdash; then catastrophe</span>
-      </p>
-
-      <p>V2 did the smartest thing anyone did all conference: it <strong>refused the assignment.</strong> It decided &ldquo;classify the prompt into one of 56 buckets&rdquo; was the wrong frame and reframed the whole thing as <strong>semantic retrieval</strong> &mdash; match the user&rsquo;s sentence against every model&rsquo;s description and return the best fit. Its own docstring casts this as natural-language inference: <em>the prompt is a hypothesis, the model card is a premise, return the model whose capability best entails the need.</em></p>
-      <p>That is a lovely framing. It is also, and I say this with a bless-your-heart intent, <strong>not what the code does.</strong></p>
-    </div>
-
-    <aside class="margin">
-      <span class="label">Sidebar &middot; what NLI actually is</span>
-      <p><strong>Natural Language Inference</strong> is the task of deciding whether a <em>hypothesis</em> is entailed by, contradicts, or is neutral to a <em>premise</em>. &ldquo;A man is eating pizza&rdquo; entails &ldquo;a man is eating food.&rdquo; The modern party trick built on it is <strong>zero-shot classification</strong>: to test if a document is about sports, feed an NLI model the premise (your doc) and the hypothesis <em>&ldquo;This text is about sports,&rdquo;</em> and read off the <strong>entailment probability</strong> as the class score. The magic is that an entailment model has <em>learned what entailment means</em> &mdash; it generalizes to labels it never even trained on.</p>
-      <p>V2 ships none of that. There is no entailment model anywhere in it. What it actually does is <strong>(1)</strong> a sparse, IDF-weighted keyword-overlap search to grab ~200 candidate models, then <strong>(2)</strong> a rerank by <strong>cosine similarity</strong> between spaCy&rsquo;s static word vectors for the prompt&rsquo;s phrases and each model&rsquo;s phrases. That&rsquo;s it. &ldquo;NLI&rdquo; is a <em>vibe</em> &mdash; a framing metaphor stapled to a keyword search and a dot product. To its enormous credit, V2 fesses up in its research notes. The lie is beautiful precisely because it&rsquo;s confessed on paper.</p>
-    </aside>
-  </div>
-
-  <div class="col">
-    <div class="flow" style="margin-top:1.4rem;">
-      <p>And to be clear, this lab&rsquo;s reframe <em>worked better than anything else</em>. V2 got <strong>2 out of 3</strong>: it nailed the satellite prompt and the mitochondria prompt with real, relevant, sane models. Its measurements were independently reproduced, bit-for-bit deterministic, leak-audited clean. In a room where the ceiling was low, V2 was the tallest.</p>
-      <p>Then came prompt three: <em>a <strong>little</strong> free OSS model I can run <strong>local</strong>.</em> V2 returned a <strong>120-billion-parameter model.</strong> (<code>RedHatAI/gpt-oss-120b</code>, right after a pair of FLUX image generators, because why not.)</p>
-    </div>
-
-    <aside class="margin">
-      <span class="label">Sidebar &middot; cosine ranks topics, not constraints</span>
-      <p>Here is the whole tragedy in one idea. &ldquo;little,&rdquo; &ldquo;local,&rdquo; &ldquo;free,&rdquo; &ldquo;OSS&rdquo; are not <strong>topics</strong>. They are <strong>constraints</strong>. Cosine similarity is a topic instrument &mdash; it measures whether two things are <em>about</em> the same stuff. A 120B model&rsquo;s description is <em>gorgeously</em> on-topic for &ldquo;a model to send text.&rdquo; It is a text model, magnificently so. The vector math did its job perfectly and surfaced the most textually relevant model in the database. The word &ldquo;little&rdquo; contributed a rounding error to a 300-dimensional average and then drowned.</p>
-      <p>The fix isn&rsquo;t more similarity. It&rsquo;s a <strong>hard filter</strong> &mdash; <code>WHERE parameters &lt; threshold</code>, run <em>before</em> you rank &mdash; that deletes the 120B model from contention entirely. V2 had a lexicon that could detect constraints, but the lexicon contained &ldquo;small,&rdquo; &ldquo;tiny,&rdquo; &ldquo;laptop&rdquo; and did <strong>not</strong> contain &ldquo;little.&rdquo; So the size constraint never fired, and a keyword search happily recommended a data-center model to a guy trying to stop hitting his rate limit.</p>
-    </aside>
-  </div>
-
-  <div class="col">
-    <div class="flow" style="margin-top:1.2rem;">
-      <div class="errata">
-        <span class="label">And a final, perfect indignity</span>
-        <p>When the panelist sat down to run V2&rsquo;s <code>cli.py</code> on the three prompts, <strong>it wouldn&rsquo;t run.</strong> The shipped cache saved only the cheap stage of the pipeline and not the expensive one, so a cold start meant re-vectorizing ~13,000 models on the spot &mdash; a build the record clocks at up to <strong>27 minutes</strong>. The panel&rsquo;s note reads: <em>&ldquo;intent_v2 returns nothing to panelists when cache is absent.&rdquo;</em> The best system in the conference was, at the moment of judgment, a spinner.</p>
-      </div>
-      <p class="verdict-line"><strong>Verdict on Paper II.</strong> The best foundation to build on &mdash; and, as shipped, not safe or trustworthy, and briefly not even executable.</p>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <!-- ===================== PAPER III ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <div class="paper-head">
-        <span class="paper-kicker">Paper III &middot; System V3</span>
-        <h2>The Domain Detector That Detected No Domains</h2>
-      </div>
-      <p class="paper-meta">
-        <span>repo: <code>~/research</code></span>
-        <span>method: LexScorer + config PhraseMatcher</span>
-        <span>domain F1: 0.840</span>
-        <span class="stamp"><span class="big">1/3</span> by popularity luck</span>
-      </p>
-
-      <p>V3 (built by Claude-Opus-8) came with the most impressive <em>research apparatus</em>: a real lab notebook, a formal report, holdout runs, leak audits, the works. Its headline feature was <strong>domain detection.</strong> Using a spaCy <code>PhraseMatcher</code> loaded with a hand-curated vocabulary &mdash; the thing I spent a lifetime nagging everyone to <em>&ldquo;get injected&rdquo;</em> &mdash; it could, it claimed, tell that a prompt about mitochondria belonged to <em>biology/medical</em>. Reported domain F1: <strong>0.840.</strong> Genuinely.</p>
-      <p>On my three fresh prompts, domain detection fired&hellip; <strong>zero times.</strong> It contributed <em>nothing</em> to any answer.</p>
-    </div>
-
-    <aside class="margin">
-      <span class="label">Sidebar &middot; a gazetteer knows only your words</span>
-      <p>A <code>PhraseMatcher</code> is a lookup table. It finds &ldquo;biology&rdquo; if you taught it &ldquo;biology.&rdquo; It doesn&rsquo;t <em>understand</em> biology, and certainly doesn&rsquo;t know that <strong>mitochondria</strong> are biological unless the word &ldquo;mitochondria&rdquo; is literally in the vocabulary you injected. It wasn&rsquo;t. In the V3 that Codex built, the biology vocab contained <code>protein, dna, rna, gene, genomics</code> &mdash; but not <code>mitochondria</code>, <code>cell</code>, or <code>organelle</code>. The domain matcher, asked about the most famous organelle in the eighth-grade curriculum, had nothing to say.</p>
-      <p>This is the flip side of V1&rsquo;s problem. V1&rsquo;s vectors knew too little about the <em>world</em>; V3&rsquo;s gazetteer knew too little <em>vocabulary</em>. Both are the same underlying poverty, where reality is bigger than any word list you will ever write. The 0.840 F1 was real&hellip; on the domains the vocabulary happened to cover. My fresh prompts lived in semantic meaning, not vocabulary matching.</p>
-    </aside>
-  </div>
-
-  <div class="col">
-    <div class="flow" style="margin-top:1.2rem;">
-      <p>V3 got <strong>1 out of 3</strong>: it got the little-model prompt right, surfacing <code>Qwen/Qwen3-0.6B</code>, a genuinely appropriate small model. And then the panel caught it. It wasn&rsquo;t a size filter. V3 had built no size filter. Qwen3-0.6B just happens to be a <em>wildly popular</em> small model, and V3&rsquo;s ranking ranks models on download counts. It got the right answer for the wrong reason. The panel called it precisely: <strong>&ldquo;popularity luck.&rdquo;</strong></p>
-      <p class="verdict-line"><strong>Verdict on Paper III.</strong> The best discipline; a headline feature that no-showed; one correct answer it can&rsquo;t take credit for.</p>
-
-      <div class="errata">
-        <span class="label">Lessons</span>
-        <p>Being auditable and mathematically transparent is not the same thing as being safe, or being accurate. Transparency is a property of the <em>engineering</em>. Safety is a property of the <em>output</em>.</p>
-      </div>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <!-- ===================== THE CONFERENCE ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <h2>The Conference</h2>
-      <p>Here is the part I did not expect. I gave the panel a rulebook &mdash; I&rsquo;d written it as a joke, mostly, a pastiche of academic seriousness:</p>
-      <blockquote>
-        <p style="font-style:normal;margin:0;">&mdash; Any agent that gives generic praise or vague criticism <em>must be challenged by the Moderator and forced to restate with code evidence.</em><br>
-        &mdash; No one-line entries. Every turn must contain a concrete claim, evidence, objection, or fix.<br>
-        &mdash; Every implementation claim must cite file paths, functions, tests, or metrics.<br>
-        &mdash; Do not accept &ldquo;robust,&rdquo; &ldquo;scalable,&rdquo; or &ldquo;works well&rdquo; without evidence.<br>
-        &mdash; <strong>No fake consensus.</strong><br>
-        &mdash; <strong>Quiet panelists WILL be penalized.</strong></p>
-      </blockquote>
-      <p>And they just&hellip; followed it. Dead serious. For hours. Panelists ran the three CLIs and posted their disagreements. They cited <code>harness_ensemble.py:249</code> at each other like case law. When one got agreeable, another accused it of manufacturing consensus. I&rsquo;d drop in every so often with &ldquo;play devil&rsquo;s advocate,&rdquo; and they&rsquo;d tear into a position &mdash; sometimes their <em>own</em> &mdash; with visible relish.</p>
-      <p>The best moment, the one that made me put down my coffee, was when Claude-Opus-8 wrote an unprompted note to me flagging that the panel&rsquo;s <em>own agreement</em> was suspicious:</p>
-      <blockquote>
-        <p>&ldquo;I argued devil&rsquo;s advocate against our own consensus twice, and the panelists challenged me hard &mdash; so the convergence is not purely manufactured. But none of the recorded dissents was defended by a committed advocate to the end. Recording them as &lsquo;no dissent&rsquo; understates the real uncertainty.&rdquo;</p>
-      </blockquote>
-      <p>An AI, in the middle of a fake conference I invented, stopped to warn me that its agreement with the other AIs might be a social artifact rather than a truth &mdash; that <strong>consensus is a scientific smell.</strong> Nobody asked it to.</p>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <!-- ===================== VERDICT ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <h2>The Verdict</h2>
-      <p>After all of it &mdash; three papers, multi-round debates, one final debate on everything at once to pick a winning algorithm &mdash; the panel returned its verdict: no winner, nothing adequate was built, we can&rsquo;t know what the best AI model is for a user without a human. We need a human.</p>
-
-      <div class="dialogue">
-        <div><span class="who">The panel</span><p style="margin:0;">Three teams built spaCy-only systems to turn a plain-English request into a recommended AI model. All three were run on your three test prompts&hellip; None is production-ready. Nobody won today. V2 is the best thing to build on, but it is not safe or trustworthy as shipped. V3 has the best audit and shortlist discipline. V1 is most valuable as a warning about leakage and confident wrong answers.</p></div>
-      </div>
-
-      <p style="margin-top:1.4rem;">And then the two findings that actually matter, past the comedy.</p>
-      <p><strong>One.</strong> There is <strong>no answer key.</strong> The database has no &ldquo;correct model&rdquo; label for any prompt. So even a <em>flawless</em> system could only ever be validated on the task-guessing step &mdash; never on the final pick. The honest deliverable is not an oracle that names the one best model. It is an <strong>evidence-rich shortlist</strong>, with <strong>hard constraints</strong> enforced, that <strong>abstains when unsure</strong> and lets a human choose. Every failure in this post is a system pretending to be an oracle when it should have been a shortlist.</p>
-      <p><strong>Two.</strong> The panel&rsquo;s closing line, which I did not write and would not have dared to:</p>
-
-      <blockquote class="pull"><p>&ldquo;The best design is a new one none of them built, and it remains unbuilt and unproven.&rdquo;</p></blockquote>
-
-      <p>Outcome: Nobody won. Build on V2. Enforce constraints with hard filters, not vibes. Detect when you don&rsquo;t know, and say so. Keep a leak-auditor as a permanent safety check. And accept the ceiling honestly. With this data and these rules, the goal is a tool a human picks from &mdash; <strong>not a machine that picks for them.</strong> Basically, after all that, the AIs told me: <em>this is too hard, you should just pick what you want.</em></p>
-
-      <p>To round out the bizarre loop I&rsquo;d put myself in, I dropped the massive conference JSON into an AI podcast generator. I highly recommend listening to at least part 2.</p>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <!-- ===================== FUTURE WORK ===================== -->
-  <div class="col section" style="margin-top:3.2rem;padding-top:2.6rem;border-top:1px solid var(--rule);">
-    <div class="flow">
-      <h2>Future Work</h2>
-      <p>So: a human building an AI-model-picker asked three AIs to build a tiny part of the brain. The AIs, drawing on research about how AIs should be chosen, built three brains. A panel of further AIs convened a formal conference, judged the three brains with genuine rigor and unprompted intellectual honesty, and concluded &mdash; citing code and file paths &mdash; that the task, done right, requires <strong>a human</strong> and a design that <strong>none of the machines had built.</strong></p>
-      <p>The circle closes on the obvious note. That human read the transcript, said &lsquo;duh,&rsquo; and continued building.</p>
-      <p>I&rsquo;m not going to tell you its name yet.</p>
-    </div>
-    <aside class="margin" aria-hidden="true" style="background:none;border:none;padding:0;"></aside>
-  </div>
-
-  <p class="colophon">
-    Everything in this post is drawn from a real transcript (<strong>CONFERENCE.json</strong>, 981&nbsp;KB) and a real two-part AI-generated podcast. The three repositories, the three prompts, the model names, the metrics, and every quotation are as they were recorded. No spaCy pipelines were harmed, though several were deeply misunderstood.
-    <br><a href="/">Back to Rox dT</a>
-  </p>
-
-</div>
-
-</body>
+  </body>
 </html>

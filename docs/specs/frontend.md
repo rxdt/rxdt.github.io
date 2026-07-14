@@ -1,60 +1,73 @@
-# Base Spec
+# Frontend Spec
 
-> **PRIORITY** Replace with 1–2 sentence context outlining the work to be completed.
+Build `frontend/` into a static personal GitHub Pages site for Rox dT that can
+survive the harness gate and manual visual review.
 
 ## Scope
 
-Clear definitions of what the agent should focus on. Detail APIs, frameworks, data schemas, or libraries the agent must use.
+- Static HTML/CSS/JS in `frontend/`; no backend.
+- Homepage with owner identity, project links, contact links, and blog-like
+  writeup pages.
+- Public assets under `frontend/public/` must resolve locally during browser
+  tests.
+- Use Playwright for entry-point behavior, route status, responsive rendering,
+  accessibility-facing selectors, and observable page output.
 
 ## Priorities
 
-1. Milestone <name>
+1. Gate-green static site
 
-- Description
-- Link to which [docs/plan.md](../plan.md) **Milestone** this addresses
-- Sub-tasks
-  - <sub-task-1>
-  - <sub-task-2>
-  - <additional sub-tasks>
-- Files created or updated
-- Definition of done: <command/test that exits 0 when met, e.g. `pnpm --prefix harness run test:file -- frontend/main.test.ts`>
+- Plan milestones: 1, 2, 4, 5.
+- Fix HTML, lint, accessibility, responsive, and browser failures without
+  weakening checks.
+- Definition of done: `pnpm preflight` exits 0, then `pnpm gate` exits 0.
 
-<fill in additional milestones>
+2. End-to-end page coverage
+
+- Plan milestones: 3, 4, 6.
+- Browser tests must execute the served site entry points, assert HTTP status,
+  headings, expected links, and missing local asset failures.
+- Definition of done: `pnpm --prefix frontend test:e2e` exits 0.
+
+3. Deployment readiness notes
+
+- Plan milestones: 7, 8.
+- Keep `docs/PROJECT_STATUS.md` current with checks, blockers, readiness, and
+  human-review notes.
+- Definition of done: project status is under 100 lines and matches the latest
+  checks.
 
 ## Guardrails
 
-Examples:
-
-- Structure
-- Style
-- Behavioral tests
-- Dependencies to use
-- Compatibilities to support
+- Do not edit harness, package manifests, lockfiles, tool configs, or
+  `docs/plan.md`.
+- Keep docs in `docs/` under 100 lines each.
+- Tests must assert behavior and browser-visible output, not markdown contents.
+- Do not remove tests or assertions to pass the gate.
 
 ## Acceptance Criteria
 
-Measurable criteria for success. Instead of vague quality terms like "should be fast," use verifiable metrics (e.g., "P95 latency < 100ms", or "`pnpm gate` exits 0").
-
-- <measurable criterion>
-- <measurable criterion>
-- <fill in additional criterion as needed>
+- `pnpm preflight` exits 0.
+- `pnpm gate` exits 0.
+- Homepage and writeup routes return HTTP 200 in Playwright.
+- Same-origin `/assets/` requests made by the homepage do not return 4xx/5xx.
+- Responsive Playwright projects render the homepage and writeup pages.
 
 ## Out of Scope
 
-(Features/scope the agent must not start.)
-
-- <explicit non-goal>
-- <explicit non-goal>
-- <fill in additional non-goals as needed>
+- Backend services.
+- GitHub deployment or pushing to GitHub.
+- Harness or config changes.
 
 ## Blockers
 
-- <List specific item preventing completion of this spec>
-- <List specific item preventing completion of this spec>
-- <fill in additional blockers as needed>
+- Manual owner visual approval and deployment remain human-owned.
+- Existing dirty `harness/` changes are outside this spec and must not be
+  staged by frontend work.
 
 ## Changelog
 
-_Keep brief and to the latest items to keep spec < 100 lines_
-
-- Each agent adds their name + iteration info, what the current agent tried, and what worked or did not work
+- 0001-codex 1/1: Replaced placeholder spec with plan-derived frontend scope;
+  replaced missing homepage project images with local panels; added Playwright
+  coverage for asset failures and writeup route status; cleared frontend
+  preflight, e2e, and Lighthouse issues.

@@ -435,6 +435,28 @@
         text-decoration: none;
       }
 
+      .project-image--conference {
+        display: flex;
+        align-items: end;
+        padding: 26px;
+        background:
+          linear-gradient(0deg, rgba(5, 5, 7, 0.72), rgba(5, 5, 7, 0.18)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(252, 211, 77, 0.16) 0 1px,
+            transparent 1px 52px
+          ),
+          linear-gradient(135deg, #111117, #155e75 52%, #312e81);
+        color: var(--ink);
+      }
+
+      .project-image--conference span {
+        max-width: 10ch;
+        font-size: clamp(30px, 4.4vw, 44px);
+        font-weight: 850;
+        line-height: 0.96;
+      }
+
       .project-media {
         display: block;
         background: #111117;
@@ -651,7 +673,12 @@
           </div>
         </div>
         <figure class="portrait">
-          <img src="/assets/merged.gif" alt="Animated portrait of Rox dT" />
+          <img
+            src="/assets/portrait.webp"
+            width="480"
+            height="480"
+            alt="Portrait of Rox dT"
+          />
         </figure>
       </div>
 
@@ -667,11 +694,12 @@
                 href="https://aideploymentcalculator.vercel.app/"
                 aria-label="Open the AI Deployment Calculator"
               >
-                <img
-                  class="project-image"
-                  src="/assets/caclulator.png"
-                  alt="AI Deployment Calculator screenshot"
-                />
+                <span
+                  class="project-image project-image--calc"
+                  aria-hidden="true"
+                >
+                  AI Deployment Calculator
+                </span>
               </a>
               <div class="project-body">
                 <div class="project-kicker">Web app</div>
@@ -799,14 +827,16 @@
 
             <article class="project">
               <a
+                class="project-media"
                 href="conference.html"
-                aria-label="Open the Inference Conference writeup"
+                aria-label="Open the Intent Inference Conference writeup"
               >
-                <img
-                  class="project-image"
-                  src="/assets/inference-conference.png"
-                  alt="Animated preview for the inference conference project"
-                />
+                <span
+                  class="project-image project-image--conference"
+                  aria-hidden="true"
+                >
+                  <span>Intent Inference Conference</span>
+                </span>
               </a>
               <div class="project-body">
                 <div class="project-kicker">AI eval case study</div>
