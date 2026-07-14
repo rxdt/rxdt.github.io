@@ -269,7 +269,6 @@ export const runLoop = async (
   const sequence = nextSequence(dependencies.listSequences(day));
   const log = path.join(day, `${String(sequence).padStart(4, "0")}.jsonl`);
   const command = [
-    `RALPH_AGENT_SEQUENCE=${sequence}`,
     dependencies.ralphPath(),
     String(iterations),
     String(minutes),

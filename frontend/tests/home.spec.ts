@@ -71,6 +71,32 @@ test("homepage loads project media and exposes expected links", async ({
   expect(failedAssets).toEqual([]);
 });
 
+test("homepage renders required plan media with durable playback contracts", async ({
+  page,
+}) => {
+  const response = await page.goto("/");
+
+  expect(response?.status()).toBe(200);
+
+  await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
+    "src",
+    "/assets/merged.gif",
+  );
+  await expect(
+    page.getByAltText("Intent Inference Conference project thumbnail"),
+  ).toHaveAttribute("src", "/assets/inference-conference.png");
+
+  const comfydayVideo = page.locator("video.project-video");
+  await expect(comfydayVideo.locator("source")).toHaveAttribute(
+    "src",
+    "/assets/comfyday-sample.mp4",
+  );
+  await expect(comfydayVideo).toHaveJSProperty("autoplay", true);
+  await expect(comfydayVideo).toHaveJSProperty("loop", true);
+  await expect(comfydayVideo).toHaveJSProperty("muted", true);
+  await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
+});
+
 for (const { heading, route } of writeupRoutes) {
   test(`writeup route ${route} returns the article page`, async ({ page }) => {
     const response = await page.goto(route);

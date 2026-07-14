@@ -51,6 +51,8 @@ survive the harness gate and manual visual review.
 - `pnpm gate` exits 0.
 - Homepage and writeup routes return HTTP 200 in Playwright.
 - Same-origin `/assets/` requests made by the homepage do not return 4xx/5xx.
+- Homepage uses the animated portrait asset, Comfyday sample video playback
+  contract, and Inference Conference image named in `docs/plan.md`.
 - Responsive Playwright projects render the homepage and writeup pages.
 
 ## Out of Scope
@@ -71,3 +73,6 @@ survive the harness gate and manual visual review.
   replaced missing homepage project images with local panels; added Playwright
   coverage for asset failures and writeup route status; cleared frontend
   preflight, e2e, and Lighthouse issues.
+- 0001-codex 1/1: Added end-to-end coverage for plan-required media; restored
+  animated portrait, Inference Conference PNG, and script-started Comfyday video
+  playback; moved inline page styles/scripts into external frontend scripts.

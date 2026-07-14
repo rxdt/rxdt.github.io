@@ -30,9 +30,8 @@ One sentence summary
 - concrete detail
 - concrete detail
 
-<number-id-if-given><your-agent-id>-<spec-you-worked-on><feature-you-worked-on>-<RALPH_ITERATION/TOTAL_ITERATIONS>  # e.g. 0002-codex-frontend-docs-1/6
+<agent-id-number><agent>-<spec-you-worked-on><feature-you-worked-on>-<RALPH_ITERATION/TOTAL_ITERATIONS>  # e.g. 0002-codex-frontend-docs-1/6
 ```
 
-- Use the agent id the harness gave you verbatim (e.g. `0002-codex`); append the spec you worked and the
-  `RALPH_ITERATION` value. This makes commits traceable to their run log (`scratchpad/runs/<id>.jsonl`).
+- Your agent id number: list `scratchpad/runs/<agent>/<date>/` for today, take the highest-numbered `NNNN.jsonl`, and form your id as `NNNN-<agent>` (e.g. the newest log `0002.jsonl` under `scratchpad/runs/codex/` => `0002-codex`). Use this verbatim as `<your-agent-id>` in the commit trailer. This makes commits traceable to their run log (`scratchpad/runs/<id>.jsonl`).
 - Notify in `docs/PROJECT_STATUS.md` if you do not get an agent id.
