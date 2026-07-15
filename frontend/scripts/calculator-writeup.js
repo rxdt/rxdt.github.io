@@ -9,7 +9,7 @@ sheet.replaceSync(String.raw`
   --paper-2: #efece3;
   --ink: #1a1c22;
   --slate: #5b6270;
-  --faint: #8a8f9a;
+  --faint: #676d79;
   --rule: #d8d2c6;
   --stamp: #b83227;
   --stamp-soft: #f0e2df;
@@ -28,10 +28,10 @@ sheet.replaceSync(String.raw`
     --paper-2: #1e2026;
     --ink: #ece7db;
     --slate: #a3a8b3;
-    --faint: #767b86;
+    --faint: #8b909b;
     --rule: #34363e;
     --stamp: #e15a45;
-    --stamp-soft: #2b1f1d;
+    --stamp-soft: #241a18;
     --accent-ink: #c7d0e0;
   }
 }
@@ -40,10 +40,10 @@ sheet.replaceSync(String.raw`
   --paper-2: #1e2026;
   --ink: #ece7db;
   --slate: #a3a8b3;
-  --faint: #767b86;
+  --faint: #8b909b;
   --rule: #34363e;
   --stamp: #e15a45;
-  --stamp-soft: #2b1f1d;
+  --stamp-soft: #241a18;
   --accent-ink: #c7d0e0;
 }
 :root[data-theme="light"] {
@@ -51,7 +51,7 @@ sheet.replaceSync(String.raw`
   --paper-2: #efece3;
   --ink: #1a1c22;
   --slate: #5b6270;
-  --faint: #8a8f9a;
+  --faint: #676d79;
   --rule: #d8d2c6;
   --stamp: #b83227;
   --stamp-soft: #f0e2df;

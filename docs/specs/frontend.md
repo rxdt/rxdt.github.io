@@ -66,6 +66,8 @@ survive the harness gate and manual visual review.
   playback contract, and plan-named AI Deployment Calculator plus Inference
   Conference project images.
 - Responsive Playwright projects render the homepage and writeup pages.
+- Every route passes an automated axe-core WCAG A/AA scan in light and dark
+  themes across all device projects.
 - Every page's external style module actually applies (a stylesheet is adopted
   and the page reset takes effect) with no inline `<style>` and no CSP
   violation, asserted in the browser.
@@ -84,15 +86,15 @@ survive the harness gate and manual visual review.
 
 ## Changelog
 
+- 0003-claude 1/1: Added axe-core WCAG A/AA e2e coverage for every route in
+  light+dark across all device projects; it caught and fixed real bugs the
+  homepage-only Lighthouse scan missed — writeup byline/stamp contrast and the
+  conference results table now a keyboard-focusable named `<section>` region.
 - 0002-claude 1/1: Made the LoopGate Harness tile show the full square frame
   (`object-fit: contain`) per plan, with e2e proving no cropping; corrected the
   spec's overstated "`.css` not viable" and harness-blocker framing.
 - 0003-codex 1/1: Migrated AI Deployment Calculator public links and structured
   data to `https://vram.rxdt.dev/` with browser contract coverage.
-- 0002-codex 1/1: Added the AI Deployment Calculator thumbnail asset contract
-  from `docs/plan.md` and proved it loads through browser e2e.
-- 0001-codex 1/1: Added route-level external destination contract coverage for
-  the homepage and writeups; e2e now covers 84 tests across 6 device projects.
-- Prior loops: filled frontend spec/status, fixed media asset contracts,
-  externalized CSP-safe styling/behavior, optimized media, and cleared frontend
-  preflight/e2e/Lighthouse.
+- Prior loops: added calculator thumbnail + external-destination contracts,
+  filled frontend spec/status, fixed media asset contracts, externalized
+  CSP-safe styling/behavior, optimized media, cleared preflight/e2e/Lighthouse.

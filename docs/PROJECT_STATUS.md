@@ -20,8 +20,13 @@
   `object-fit: contain` (was `cover`, which cropped ~125px top/bottom in the
   wide card), so the full frame is visible per plan requirement.
 - Browser coverage loads the homepage and writeups end to end, checks route
-  status/headings/assets/CSP-applied styles, and now preserves the exact
-  external destination set for public project, profile, and article links.
+  status/headings/assets/CSP-applied styles, and preserves the exact external
+  destination set for public project, profile, and article links.
+- Automated axe-core WCAG A/AA scans now run on every route in light and dark
+  themes across all device projects. They found and fixed real bugs that the
+  homepage-only Lighthouse a11y pass missed: low-contrast writeup byline
+  (`--faint`) and stamp chips (`--stamp-soft`), plus the conference results
+  table, which is now a keyboard-focusable named `<section>` scroll region.
 
 ## Checks
 
@@ -29,7 +34,7 @@
 - `pnpm gate`: FAIL on strict Lighthouse insights only. Format, lint,
   typecheck, harnessTypes, schema, cruise, deadcode, spelling, workflow, sast,
   secrets, audit, build, coverage, and e2e passed in the current dirty worktree.
-  - `e2e`: PASS, 95 tests across device and CSP-built projects.
+  - `e2e`: PASS, 138 tests (incl. 48 new axe WCAG scans) across device projects.
   - `lighthouse`: FAIL — cls-culprits score 0, image-delivery score 0,
     network-dependency-tree score 0, CLS warning score 0.02.
 
@@ -46,6 +51,9 @@
 
 ## Changelog
 
+- 0003-claude 1/1: Added axe-core WCAG A/AA e2e scans (every route, light+dark,
+  all device projects) and fixed the contrast + scrollable-table violations they
+  surfaced on the writeup pages. Gate still red only on Lighthouse (unchanged).
 - 0002-claude 1/1: Fixed the cropped LoopGate Harness tile (`object-fit:
   contain`), added e2e proving the full frame renders, and corrected the
   Lighthouse blocker notes (cls-culprits is frontend-fixable, not harness-owned).
