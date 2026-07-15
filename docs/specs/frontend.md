@@ -59,7 +59,8 @@ survive the harness gate and manual visual review.
 - Homepage and writeup pages preserve the expected external destination sets for
   public project, profile, and article links.
 - Homepage uses an optimized looping portrait asset, Comfyday sample video
-  playback contract, and Inference Conference image named in `docs/plan.md`.
+  playback contract, and plan-named AI Deployment Calculator plus Inference
+  Conference project images.
 - Responsive Playwright projects render the homepage and writeup pages.
 - Every page's external style module actually applies (a stylesheet is adopted
   and the page reset takes effect) with no inline `<style>` and no CSP
@@ -80,6 +81,8 @@ survive the harness gate and manual visual review.
 
 ## Changelog
 
+- 0002-codex 1/1: Added the AI Deployment Calculator thumbnail asset contract
+  from `docs/plan.md` and proved it loads through browser e2e.
 - 0001-codex 1/1: Added route-level external destination contract coverage for
   the homepage and writeups; e2e now covers 84 tests across 6 device projects.
 - Prior loops: filled frontend spec/status, fixed media asset contracts,

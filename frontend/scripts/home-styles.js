@@ -348,26 +348,9 @@ h2 {
 }
 
 .project-image--calc {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 20px;
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(167, 139, 250, 0.5),
-      transparent 42%
-    ),
-    linear-gradient(135deg, #111117, #2e1065);
-  color: var(--ink);
-  font-size: clamp(26px, 4vw, 34px);
-  font-weight: 850;
-  line-height: 1.05;
-}
-
-.project-image--calc:hover {
-  text-decoration: none;
+  object-fit: contain;
+  padding: 10px;
+  background: #050507;
 }
 
 .project-image--conference {

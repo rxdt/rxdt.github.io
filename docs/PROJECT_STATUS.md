@@ -12,6 +12,8 @@
 - Each page's CSS-injection script and the homepage behavior now live in
   external `frontend/scripts/*` modules; built HTML has no inline
   `<script>`/`<style>` and renders with zero CSP violations.
+- The AI Deployment Calculator tile now uses the plan-named
+  `frontend/public/assets/caclulator.png` as a real decoded browser image.
 - Browser coverage loads the homepage and writeups end to end, checks route
   status/headings/assets/CSP-applied styles, and now preserves the exact
   external destination set for public project, profile, and article links.
@@ -26,7 +28,8 @@
   - `e2e`: PASS, 84 tests across 6 device projects.
   - `sast`: FAIL — 2 semgrep findings, both in forbidden `harness/csp.test.ts`.
   - `lighthouse`: FAIL — cls-culprits, image-delivery, network-dependency-tree;
-    CLS warning remains 0.02.
+    CLS warning remains 0.02. Responsive-image and modern-format findings are
+    clear after optimizing the calculator PNG.
 
 ## Next
 
@@ -37,6 +40,9 @@
 
 ## Changelog
 
+- 0002-codex 1/1: Replaced the calculator project text placeholder with the
+  required PNG thumbnail, optimized it to avoid new Lighthouse image findings,
+  and added e2e coverage that asserts the asset decodes.
 - 0001-claude 1/1: Externalized inline CSS/behavior into `frontend/scripts/*`
   modules to satisfy the harness CSP check; added e2e proving external styles
   apply under CSP; coverage and e2e now pass.
