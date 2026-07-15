@@ -86,6 +86,19 @@ test("homepage renders required plan media with durable playback contracts", asy
     "fetchpriority",
     "high",
   );
+  // A malformed <img> tag (e.g. an unterminated attribute) still exposes a
+  // src/alt but never decodes; assert the browser actually loaded the bytes.
+  await expect(page.getByAltText("Portrait of Rox dT")).toHaveJSProperty(
+    "complete",
+    true,
+  );
+  expect(
+    await page
+      .getByAltText("Portrait of Rox dT")
+      .evaluate((img) =>
+        img instanceof HTMLImageElement ? img.naturalWidth : 0,
+      ),
+  ).toBeGreaterThan(0);
   await expect(
     page.getByAltText("Intent Inference Conference project thumbnail"),
   ).toHaveAttribute("src", "/assets/inference-conference.png");
