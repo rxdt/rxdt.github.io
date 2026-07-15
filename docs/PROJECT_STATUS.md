@@ -9,9 +9,11 @@
 
 ## Current State
 
-- Each page's CSS-injection script and the homepage behavior now live in
-  external `frontend/scripts/*` modules; built HTML has no inline
-  `<script>`/`<style>` and renders with zero CSP violations.
+- Styles/behavior are external same-origin files (no inline `<script>`/`<style>`,
+  zero CSP violations). The homepage sheet loads as a render-blocking classic
+  `<script>` in `<head>` (`public/scripts/home-styles.js`) so it applies before
+  first paint — this fixed the Lighthouse cls-culprits body shift (CLS 1.0 -> 0).
+  Writeup pages keep deferred style modules.
 - The AI Deployment Calculator tile uses the plan-named
   `frontend/public/assets/caclulator.png`; homepage links, calculator writeup
   links, `llms.txt`, and WebApplication structured data now use
@@ -31,26 +33,31 @@
 ## Checks
 
 - `pnpm preflight`: PASS (format, eslint, style, html) — 0 issues.
-- `pnpm gate`: FAIL on strict Lighthouse insights only. Format, lint,
+- `pnpm gate`: FAIL on Lighthouse only. Every other check passed (format, lint,
   typecheck, harnessTypes, schema, cruise, deadcode, spelling, workflow, sast,
-  secrets, audit, build, coverage, and e2e passed in the current dirty worktree.
-  - `e2e`: PASS, 138 tests (incl. 48 new axe WCAG scans) across device projects.
-  - `lighthouse`: FAIL — cls-culprits score 0, image-delivery score 0,
-    network-dependency-tree score 0, CLS warning score 0.02.
+  secrets, audit, build, coverage, e2e) in the current dirty harness worktree.
+  - `e2e`: PASS, all device projects (added a homepage render-blocking-style test).
+  - `lighthouse`: FAIL on 2 error insights — image-delivery (0) and
+    network-dependency-tree (0). cls-culprits/CLS now PASS; render-blocking is
+    a non-blocking warning.
 
 ## Next
 
-1. Owner decides on the cls-culprits fix: it is NOT harness-blocked — an
-   external `<link rel="stylesheet">` is CSP-compliant and lintable, and would
-   remove the FOUC. The cost is rewriting ~536 lines of home CSS to satisfy the
-   token-strict stylelint config, an unverifiable visual-regression risk on an
-   already-approved design. See Blockers.
+1. Owner decides the two remaining Lighthouse errors (see Blockers): accept
+   ~21 KiB `merged.webp` recompression (visible quality loss) for image-delivery,
+   and whether network-dependency-tree is worth chasing under the pinned CSP.
 2. Owner reviews the site visually and deploys when satisfied.
 3. Human reviews pre-existing forbidden `harness/` worktree edits; this loop
    left them unstaged.
+4. Dead file: `frontend/public/assets/portrait.webp` is unreferenced (the
+   homepage portrait uses `merged.webp`); owner can delete it.
 
 ## Changelog
 
+- 0004-claude 1/1: Fixed the Lighthouse cls-culprits FOUC by loading the homepage
+  style sheet as a render-blocking classic `<script>` in `<head>` (moved to
+  `public/scripts/`); applies before first paint, zero visual change, e2e proves
+  it. cls-culprits/CLS now pass; gate red only on image-delivery + network-tree.
 - 0003-claude 1/1: Added axe-core WCAG A/AA e2e scans (every route, light+dark,
   all device projects) and fixed the contrast + scrollable-table violations they
   surfaced on the writeup pages. Gate still red only on Lighthouse (unchanged).
@@ -66,32 +73,25 @@
   modules to satisfy the harness CSP check; added e2e proving external styles
   apply under CSP; coverage and e2e now pass.
 - 0005-codex 1/1: Optimized production media, replaced `merged.gif` with
-  animated `merged.webp`, inlined runtime scripts under CSP, and cleared
-  frontend preflight/e2e/Lighthouse.
-- 0001-codex 1/1: Added e2e external destination contracts for the homepage and
-  all writeup routes; targeted frontend e2e passes with 84 browser tests.
+  animated `merged.webp`, and cleared frontend preflight/e2e/Lighthouse.
 
 ## Blockers
 
-- OWNER-DECISION: `lighthouse:recommended` fails three insights at minScore 0.9.
-  - cls-culprits: the JS-adopted stylesheet applies after first paint, so the
-    `<body>` shifts once. Fixable in frontend with an external
-    `<link rel="stylesheet">` (CSP `style-src 'self'` allows same-origin CSS;
-    the file would be stylelint-linted). Cost: rewrite ~536 lines of home CSS to
-    the token-strict config; some effects (1px grid gradient, `vmax`) have no
-    compliant equivalent and would change. Unverifiable visual risk -> owner call.
-  - network-dependency-tree: critical chain is HTML -> Vite `index-*.js` +
-    `modulepreload-polyfill`. A `<link>` CSS may or may not clear it.
-  - image-delivery: `merged.webp` shows ~15 KiB savings; prior loops confirmed
-    acceptable recompression does not clear the audit without visible loss.
+- OWNER-DECISION: `lighthouse:recommended` fails two error insights at minScore
+  0.9 (cls-culprits is now fixed):
+  - image-delivery: `merged.webp` (animated, 480x480) shows ~21 KiB savings only
+    via heavier compression; prior loops confirmed this degrades the animation.
+  - network-dependency-tree: critical chain is HTML -> `home-styles.js` +
+    Vite `index-*.js`/`modulepreload-polyfill` (78ms). Inherent to external
+    scripts under the pinned CSP; no cheap fix found.
 
 ## Harness improvement notes
 
-- The token-strict stylelint config makes hand-authored CSS very painful (px
-  banned, background/-image cannot contain px/rem/em lengths, `vmax` disallowed),
-  which pushed styles into JS and caused the cls-culprits FOUC. Consider a
-  stylelint carve-out for a critical-CSS file, or relaxing the strict insight
-  assertions in `lighthouse:recommended`.
+- The pinned CSP (`style-src 'self'`, no inline/nonce) + token-strict stylelint
+  make it impossible to pass BOTH cls-culprits and render-blocking-resources:
+  FOUC-free styling must be render-blocking (now a classic script; a `.css`
+  `<link>` behaves the same), and inline critical CSS is CSP-banned. Consider a
+  stylelint carve-out for a critical-CSS file or relaxing those insight asserts.
 - `csp.test.ts` should assert on ALL pages (aggregate), not throw on the first,
   so agents see every offender in one run.
 - b7dcc00 landed harness files that fail the harness's own format and sast

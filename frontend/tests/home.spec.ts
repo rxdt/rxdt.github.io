@@ -296,6 +296,42 @@ for (const { heading, route } of writeupRoutes) {
     await expect(page.locator("body")).toHaveCSS("margin", "0px");
   });
 }
+test("homepage applies styles before first paint via a render-blocking style script", async ({
+  page,
+}) => {
+  // The homepage CSS is injected by an external same-origin script (CSP forbids
+  // inline <style>). To avoid a first-paint layout shift (Lighthouse
+  // cls-culprits flagged the whole <body> shifting by 1.0), that script must be
+  // a render-blocking CLASSIC script in <head>: it runs and adopts the sheet
+  // before the body is parsed, so first paint is already styled. A deferred
+  // type="module" applied styles after first paint and caused the shift.
+  // Assert the mechanism and its observable effect.
+  await page.addInitScript(() => {
+    document.addEventListener("securitypolicyviolation", (violationEvent) => {
+      document.documentElement.dataset.cspViolation =
+        violationEvent.violatedDirective;
+    });
+  });
+
+  const response = await page.goto("/");
+  expect(response?.status()).toBe(200);
+
+  const styleScript = page.locator(
+    'head > script[src$="/scripts/home-styles.js"]',
+  );
+  await expect(styleScript).toHaveCount(1);
+  // No `type` attribute => classic, render-blocking script (not a deferred
+  // module); this is what guarantees the sheet is adopted before first paint.
+  await expect(styleScript).not.toHaveAttribute("type");
+
+  await expect
+    .poll(async () => page.evaluate(() => document.adoptedStyleSheets.length))
+    .toBeGreaterThan(0);
+  await expect(page.locator("body")).toHaveCSS("margin", "0px");
+  await expect(page.locator("head > style")).toHaveCount(0);
+  await expect(page.locator("html")).not.toHaveAttribute("data-csp-violation");
+});
+
 test("homepage styles and script behavior load without CSP violations", async ({
   page,
 }) => {

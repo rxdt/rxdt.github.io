@@ -13,14 +13,14 @@ survive the harness gate and manual visual review.
 - Use Playwright for entry-point behavior, route status, responsive rendering,
   accessibility-facing selectors, and observable page output.
 - The harness CSP (`script-src 'self'; style-src 'self'`) forbids inline
-  `<script>`/`<style>`, so every page ships styles/behavior as external
-  `frontend/scripts/*` modules that adopt a constructable stylesheet (built HTML
-  has no `<style>`/`style=`). An external `<link rel="stylesheet">` would also be
-  CSP-compliant and avoids the JS-adopted-sheet FOUC that fails Lighthouse
-  cls-culprits, but the token-strict stylelint config makes the current
-  hand-authored CSS non-compliant without a substantial rewrite (px banned,
-  `vmax` and background lengths disallowed). The loop keeps JS-adopted sheets
-  pending an owner decision on that rewrite.
+  `<script>`/`<style>`, so styles/behavior ship as external same-origin files
+  that adopt a constructable stylesheet (built HTML has no `<style>`/`style=`).
+  The homepage's sheet loads as a render-blocking classic `<script>` in `<head>`
+  (`frontend/public/scripts/home-styles.js`) so it is adopted before first paint;
+  this clears the Lighthouse cls-culprits body-shift a deferred module caused.
+  The cost is a render-blocking-resources warning (non-blocking): under this CSP
+  any FOUC-free styling is render-blocking unless inlined, which the policy bans.
+  Writeup pages keep deferred style modules (Lighthouse only scans the homepage).
 
 ## Priorities
 
@@ -86,15 +86,15 @@ survive the harness gate and manual visual review.
 
 ## Changelog
 
+- 0004-claude 1/1: Fixed the Lighthouse cls-culprits FOUC — the homepage style
+  sheet now loads as a render-blocking classic script in `<head>` (moved to
+  `public/scripts/`) so it applies before first paint; zero visual change, e2e
+  proves the mechanism. Gate stays red only on image-delivery + network-tree.
 - 0003-claude 1/1: Added axe-core WCAG A/AA e2e coverage for every route in
   light+dark across all device projects; it caught and fixed real bugs the
   homepage-only Lighthouse scan missed — writeup byline/stamp contrast and the
   conference results table now a keyboard-focusable named `<section>` region.
-- 0002-claude 1/1: Made the LoopGate Harness tile show the full square frame
-  (`object-fit: contain`) per plan, with e2e proving no cropping; corrected the
-  spec's overstated "`.css` not viable" and harness-blocker framing.
-- 0003-codex 1/1: Migrated AI Deployment Calculator public links and structured
-  data to `https://vram.rxdt.dev/` with browser contract coverage.
-- Prior loops: added calculator thumbnail + external-destination contracts,
-  filled frontend spec/status, fixed media asset contracts, externalized
-  CSP-safe styling/behavior, optimized media, cleared preflight/e2e/Lighthouse.
+- Prior loops: LoopGate tile shown uncropped (`object-fit: contain`); migrated
+  calculator links/structured data to `https://vram.rxdt.dev/`; added thumbnail
+  + external-destination contracts, filled spec/status, fixed media contracts,
+  externalized CSP-safe styling/behavior, optimized media, cleared e2e.

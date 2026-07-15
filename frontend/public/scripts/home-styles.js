@@ -1,7 +1,14 @@
-// Page styles delivered as an external same-origin module so the
+// Page styles delivered as an external same-origin script so the
 // Content-Security-Policy (script-src 'self', style-src 'self') admits
 // them with no inline <script>/<style>. A constructable stylesheet keeps
 // the built HTML free of <style> elements and style= attributes.
+//
+// This ships from public/ and is referenced as a render-blocking classic
+// <script> in <head> (not a deferred module). It runs and adopts the sheet
+// BEFORE the body is parsed and painted, so first paint is already styled.
+// A deferred module applied styles after first paint, shifting the whole
+// <body> once (Lighthouse cls-culprits). It only touches
+// document.adoptedStyleSheets, never the DOM, so running pre-body is safe.
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(String.raw`
 :root {
