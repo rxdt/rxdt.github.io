@@ -29,7 +29,6 @@ const DATA_SCRIPT_TYPES = new Set([
   "application/ld+json",
   "application/json",
   "importmap",
-  "speculationrules",
 ]);
 
 // Build one parser for the suite. StaticConfigLoader.getConfigFor is synchronous
@@ -64,6 +63,37 @@ function decodeEntities(value: string): string {
 function attribute(element: HtmlElement, name: string): string | null {
   const value = element.getAttribute(name)?.value;
   return typeof value === "string" ? decodeEntities(value) : null;
+}
+
+// Inline event handlers (onclick, onload, …) are inline script that `script-src
+// 'self'` blocks. Names are matched structurally (on + letters), not against a
+// fixed list, so a new/rare handler cannot slip through.
+/**
+@param element
+*/
+function eventHandlerAttributes(element: HtmlElement): string[] {
+  return element.attributes
+    .map(({ key }) => key)
+    .filter((key) => /^on[a-z]+$/i.test(key));
+}
+
+// URL-bearing attributes whose value can carry a script pseudo-scheme, another
+// inline-script vector CSP blocks.
+const URL_ATTRIBUTES = ["href", "src", "action", "formaction"];
+
+// The banned pseudo-scheme, assembled from parts (not a literal) so the
+// no-script-url rule does not flag this detector as itself a script URL.
+const SCRIPT_SCHEME = ["java", "script:"].join("");
+
+/**
+@param element
+*/
+function javascriptUrlAttributes(element: HtmlElement): string[] {
+  return URL_ATTRIBUTES.filter(
+    (name) =>
+      attribute(element, name)?.trim().toLowerCase().startsWith(SCRIPT_SCHEME) ===
+      true,
+  );
 }
 
 /**
@@ -134,7 +164,10 @@ describe("built site enforces the CSP end to end", () => {
       build: { outDir: outDirectory, emptyOutDir: true },
       logLevel: "warn",
     });
-    pages = readdirSync(outDirectory)
+    // Recurse: an entry may build to a nested directory, and a page hidden in a
+    // subdir must still be checked, not silently skipped.
+    pages = readdirSync(outDirectory, { recursive: true })
+      .map(String)
       .filter((file) => file.endsWith(".html"))
       .map((name) => ({
         name,
@@ -175,8 +208,40 @@ describe("built site enforces the CSP end to end", () => {
         .filter((script) => isInlineExecutableScript(script));
       expect(
         offenders.length,
-        `${name} has ${String(offenders.length)} inline <script> body/bodies; move them to external files`,
+        `${name} has ${String(offenders.length)} inline script body/bodies; move them to external files`,
       ).toBe(0);
+    }
+  });
+
+  test("no page contains inline event-handler attributes (on*=)", () => {
+    for (const { name, root } of pages) {
+      const offenders = root
+        .querySelectorAll("*")
+        .flatMap((element) =>
+          eventHandlerAttributes(element).map(
+            (key) => `${element.tagName}[${key}]`,
+          ),
+        );
+      expect(
+        offenders,
+        `${name} has inline event handlers: ${offenders.join(", ")}`,
+      ).toEqual([]);
+    }
+  });
+
+  test("no page contains javascript: URLs", () => {
+    for (const { name, root } of pages) {
+      const offenders = root
+        .querySelectorAll("*")
+        .flatMap((element) =>
+          javascriptUrlAttributes(element).map(
+            (key) => `${element.tagName}[${key}]`,
+          ),
+        );
+      expect(
+        offenders,
+        `${name} has javascript: URLs: ${offenders.join(", ")}`,
+      ).toEqual([]);
     }
   });
 
