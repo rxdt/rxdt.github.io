@@ -12,8 +12,10 @@
 - Each page's CSS-injection script and the homepage behavior now live in
   external `frontend/scripts/*` modules; built HTML has no inline
   `<script>`/`<style>` and renders with zero CSP violations.
-- The AI Deployment Calculator tile now uses the plan-named
-  `frontend/public/assets/caclulator.png` as a real decoded browser image.
+- The AI Deployment Calculator tile uses the plan-named
+  `frontend/public/assets/caclulator.png`; homepage links, calculator writeup
+  links, `llms.txt`, and WebApplication structured data now use
+  `https://vram.rxdt.dev/`.
 - The LoopGate Harness tile now renders the square `py-ralph-frame.svg` with
   `object-fit: contain` (was `cover`, which cropped ~125px top/bottom in the
   wide card), so the full frame is visible per plan requirement.
@@ -24,32 +26,31 @@
 ## Checks
 
 - `pnpm preflight`: PASS (format, eslint, style, html) — 0 issues.
-- `pnpm gate`: FAIL on forbidden `sast` plus strict Lighthouse insights. All
-  frontend structural checks pass: typecheck, cruise, deadcode, spelling, build,
-  coverage, e2e.
-  - `coverage` (incl. `csp.test.ts`): PASS — was the blocker, now green.
-  - `e2e`: PASS, 90 tests across 6 device projects.
-  - `sast`: FAIL — 2 semgrep findings, both in forbidden `harness/csp.test.ts`.
-  - `lighthouse`: FAIL — cls-culprits (whole `<body>` shifts once, score 1),
-    image-delivery (`merged.webp`, ~15 KiB), network-dependency-tree (critical
-    chain HTML -> Vite `index-*.js` + `modulepreload-polyfill`).
+- `pnpm gate`: FAIL on strict Lighthouse insights only. Format, lint,
+  typecheck, harnessTypes, schema, cruise, deadcode, spelling, workflow, sast,
+  secrets, audit, build, coverage, and e2e passed in the current dirty worktree.
+  - `e2e`: PASS, 95 tests across device and CSP-built projects.
+  - `lighthouse`: FAIL — cls-culprits score 0, image-delivery score 0,
+    network-dependency-tree score 0, CLS warning score 0.02.
 
 ## Next
 
-1. Human fixes or approves the forbidden `harness/csp.test.ts` semgrep blocker
-   (this alone keeps `gate` red regardless of any frontend work).
-2. Owner decides on the cls-culprits fix: it is NOT harness-blocked — an
+1. Owner decides on the cls-culprits fix: it is NOT harness-blocked — an
    external `<link rel="stylesheet">` is CSP-compliant and lintable, and would
    remove the FOUC. The cost is rewriting ~536 lines of home CSS to satisfy the
    token-strict stylelint config, an unverifiable visual-regression risk on an
    already-approved design. See Blockers.
-3. Owner reviews the site visually and deploys when satisfied.
+2. Owner reviews the site visually and deploys when satisfied.
+3. Human reviews pre-existing forbidden `harness/` worktree edits; this loop
+   left them unstaged.
 
 ## Changelog
 
 - 0002-claude 1/1: Fixed the cropped LoopGate Harness tile (`object-fit:
   contain`), added e2e proving the full frame renders, and corrected the
   Lighthouse blocker notes (cls-culprits is frontend-fixable, not harness-owned).
+- 0003-codex 1/1: Migrated calculator links and WebApplication structured data
+  to `https://vram.rxdt.dev/`; e2e and preflight pass, gate reaches Lighthouse.
 - 0002-codex 1/1: Replaced the calculator project text placeholder with the
   required PNG thumbnail, optimized it to avoid new Lighthouse image findings,
   and added e2e coverage that asserts the asset decodes.
@@ -64,12 +65,7 @@
 
 ## Blockers
 
-- HARNESS-OWNED: `harness/csp.test.ts` error string `... inline <script>
-  body/bodies ...` trips semgrep `unknown-value-with-script-tag` -> `sast`
-  fails. Loop cannot edit `harness/`. Needs a semgrep-safe rewrite or
-  allow-comment. This alone keeps `gate` red no matter what the loop does.
-- OWNER-DECISION (not harness-blocked): `lighthouse:recommended` fails three
-  insights at minScore 0.9.
+- OWNER-DECISION: `lighthouse:recommended` fails three insights at minScore 0.9.
   - cls-culprits: the JS-adopted stylesheet applies after first paint, so the
     `<body>` shifts once. Fixable in frontend with an external
     `<link rel="stylesheet">` (CSP `style-src 'self'` allows same-origin CSS;

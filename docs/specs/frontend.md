@@ -69,6 +69,8 @@ survive the harness gate and manual visual review.
 - Every page's external style module actually applies (a stylesheet is adopted
   and the page reset takes effect) with no inline `<style>` and no CSP
   violation, asserted in the browser.
+- AI Deployment Calculator links and structured data use `https://vram.rxdt.dev/`;
+  its tile uses `frontend/public/assets/caclulator.png`.
 
 ## Out of Scope
 
@@ -79,16 +81,14 @@ survive the harness gate and manual visual review.
 ## Blockers
 
 - Manual owner visual approval and deployment remain human-owned.
-- Full `pnpm gate` stays red on the forbidden `harness/csp.test.ts` semgrep
-  finding (harness-owned; loop cannot edit it). The Lighthouse insight audits are
-  frontend-addressable but owner-gated (a CSS rewrite with visual-regression
-  risk). See status.
 
 ## Changelog
 
 - 0002-claude 1/1: Made the LoopGate Harness tile show the full square frame
   (`object-fit: contain`) per plan, with e2e proving no cropping; corrected the
   spec's overstated "`.css` not viable" and harness-blocker framing.
+- 0003-codex 1/1: Migrated AI Deployment Calculator public links and structured
+  data to `https://vram.rxdt.dev/` with browser contract coverage.
 - 0002-codex 1/1: Added the AI Deployment Calculator thumbnail asset contract
   from `docs/plan.md` and proved it loads through browser e2e.
 - 0001-codex 1/1: Added route-level external destination contract coverage for

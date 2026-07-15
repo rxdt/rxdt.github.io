@@ -11,5 +11,5 @@ Stylelint, HTML validation, strict TypeScript, Vitest coverage, Playwright,
 Lighthouse, dependency checks, security checks, and containment rules.
 
 Repository: https://github.com/rxdt/loopgate_js
-Sample app: https://aideploymentcalculator.vercel.app/
+Sample app: https://vram.rxdt.dev/
 Sample app source: https://github.com/rxdt/ai_deployment_calculator

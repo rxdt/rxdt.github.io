@@ -18,7 +18,6 @@ const writeupRoutes = [
 const externalLinkContracts = [
   {
     expectedDestinations: [
-      "https://aideploymentcalculator.vercel.app/",
       "https://comfyday.vercel.app/",
       "https://github.com/rxdt",
       "https://github.com/rxdt/ai_deployment_calculator",
@@ -27,6 +26,7 @@ const externalLinkContracts = [
       "https://github.com/rxdt/loopgate_harness",
       "https://github.com/rxdt/loopgate_js",
       "https://www.linkedin.com/in/roxdt/",
+      "https://vram.rxdt.dev/",
       "https://x.com/roxdtvc",
     ],
     heading: /human in the loop/i,
@@ -34,9 +34,9 @@ const externalLinkContracts = [
   },
   {
     expectedDestinations: [
-      "https://aideploymentcalculator.vercel.app/",
       "https://github.com/rxdt/ai_deployment_calculator",
       "https://github.com/rxdt/loopgate_harness",
+      "https://vram.rxdt.dev/",
     ],
     heading: /a frontend loop needs a real app/i,
     route: "/calculator-writeup.html",
@@ -64,6 +64,26 @@ const compareAlphabetically = (left: string, right: string): number =>
 
 const uniqueSorted = (values: readonly string[]): string[] =>
   [...new Set(values)].sort(compareAlphabetically);
+
+interface StructuredDataRecord {
+  readonly [key: string]: unknown;
+  readonly url?: unknown;
+}
+
+const parseJson = (text: string): unknown => JSON.parse(text) as unknown;
+
+const isStructuredDataRecord = (
+  value: unknown,
+): value is StructuredDataRecord =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isCalculatorStructuredData = (
+  value: unknown,
+): value is StructuredDataRecord & { readonly url: string } =>
+  isStructuredDataRecord(value) &&
+  value["@type"] === "WebApplication" &&
+  value.name === "AI Deployment Calculator" &&
+  typeof value.url === "string";
 
 test("homepage renders portfolio with ambient cursor and grid effects", async ({
   page,
@@ -103,7 +123,17 @@ test("homepage loads project media and exposes expected links", async ({
   ).toHaveCount(3);
   await expect(
     page.getByRole("link", { name: /open the ai deployment calculator/i }),
-  ).toHaveAttribute("href", "https://aideploymentcalculator.vercel.app/");
+  ).toHaveAttribute("href", "https://vram.rxdt.dev/");
+  // The public calculator URL is advertised both as a visible project link and
+  // as WebApplication structured data for crawlers; keep those contracts in sync.
+  const structuredDataTexts = await page
+    .locator('script[type="application/ld+json"]')
+    .allTextContents();
+  const calculatorStructuredData = structuredDataTexts
+    .map((text) => parseJson(text))
+    .find(isCalculatorStructuredData);
+
+  expect(calculatorStructuredData?.url).toBe("https://vram.rxdt.dev/");
   await expect(
     page.getByRole("link", {
       name: /open the intent inference conference writeup/i,
