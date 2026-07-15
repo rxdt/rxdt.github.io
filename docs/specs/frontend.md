@@ -31,7 +31,7 @@ survive the harness gate and manual visual review.
 
 - Plan milestones: 3, 4, 6.
 - Browser tests must execute the served site entry points, assert HTTP status,
-  headings, expected links, and missing local asset failures.
+  headings, exact external destinations, and missing local asset failures.
 - Definition of done: `pnpm --prefix frontend test:e2e` exits 0.
 
 3. Deployment readiness notes
@@ -56,6 +56,8 @@ survive the harness gate and manual visual review.
 - `pnpm gate` exits 0.
 - Homepage and writeup routes return HTTP 200 in Playwright.
 - Same-origin `/assets/` requests made by the homepage do not return 4xx/5xx.
+- Homepage and writeup pages preserve the expected external destination sets for
+  public project, profile, and article links.
 - Homepage uses an optimized looping portrait asset, Comfyday sample video
   playback contract, and Inference Conference image named in `docs/plan.md`.
 - Responsive Playwright projects render the homepage and writeup pages.
@@ -72,29 +74,14 @@ survive the harness gate and manual visual review.
 ## Blockers
 
 - Manual owner visual approval and deployment remain human-owned.
-- Full `pnpm gate` is blocked by two harness-owned issues, both in the forbidden
-  file `harness/csp.test.ts` (added by commit b7dcc00): its unformatted source
-  fails the `format` check (blocks every commit's preflight), and its error
-  string trips the semgrep `unknown-value-with-script-tag` rule (fails `sast`).
-- Lighthouse `lighthouse:recommended` fails 3 new insight audits (cls-culprits,
-  network-dependency-tree, image-delivery). CSP forbids render-blocking inline
-  styles and stylelint rejects the CSS as `.css`, so styles must be JS-applied;
-  the minor FOUC (CLS 0.02) fails cls-culprits. Harness tension, not a defect.
+- Full `pnpm gate` remains blocked by forbidden harness-owned issues:
+  `harness/csp.test.ts` semgrep findings and Lighthouse strict insight audits
+  tied to JS-applied styles/media. See status.
 
 ## Changelog
 
-- 0001-claude 1/1: Externalized every page's inline CSS-injection script and the
-  homepage behavior into `frontend/scripts/*` modules to satisfy the harness CSP
-  check (no inline `<script>`/`<style>`); added browser coverage proving each
-  page's external style module applies under CSP. Coverage/e2e now pass.
-- 0001-codex 1/1: Replaced placeholder spec with plan-derived frontend scope;
-  replaced missing homepage project images with local panels; added Playwright
-  coverage for asset failures and writeup route status; cleared frontend
-  preflight, e2e, and Lighthouse issues.
-- 0001-codex 1/1: Added end-to-end coverage for plan-required media; restored
-  animated portrait, Inference Conference PNG, and script-started Comfyday video
-  playback; moved inline page styles/scripts into external frontend scripts.
-- 0005-codex 1/1: Cleared frontend production Lighthouse by inlining runtime
-  style/behavior scripts under CSP, converting the portrait GIF to animated
-  WebP, compressing Comfyday video and the conference PNG, and extending CSP
-  e2e coverage.
+- 0001-codex 1/1: Added route-level external destination contract coverage for
+  the homepage and writeups; e2e now covers 84 tests across 6 device projects.
+- Prior loops: filled frontend spec/status, fixed media asset contracts,
+  externalized CSP-safe styling/behavior, optimized media, and cleared frontend
+  preflight/e2e/Lighthouse.

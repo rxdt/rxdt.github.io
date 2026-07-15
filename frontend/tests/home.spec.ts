@@ -15,6 +15,56 @@ const writeupRoutes = [
   },
 ] as const;
 
+const externalLinkContracts = [
+  {
+    expectedDestinations: [
+      "https://aideploymentcalculator.vercel.app/",
+      "https://comfyday.vercel.app/",
+      "https://github.com/rxdt",
+      "https://github.com/rxdt/ai_deployment_calculator",
+      "https://github.com/rxdt/comfyday-public",
+      "https://github.com/rxdt/inference_conference",
+      "https://github.com/rxdt/loopgate_harness",
+      "https://github.com/rxdt/loopgate_js",
+      "https://www.linkedin.com/in/roxdt/",
+      "https://x.com/roxdtvc",
+    ],
+    heading: /human in the loop/i,
+    route: "/",
+  },
+  {
+    expectedDestinations: [
+      "https://aideploymentcalculator.vercel.app/",
+      "https://github.com/rxdt/ai_deployment_calculator",
+      "https://github.com/rxdt/loopgate_harness",
+    ],
+    heading: /a frontend loop needs a real app/i,
+    route: "/calculator-writeup.html",
+  },
+  {
+    expectedDestinations: [
+      "https://dev.to/rxdt/stop-prompting-start-engineering-the-loop-325d",
+      "https://github.com/rxdt/loopgate_harness",
+    ],
+    heading: /stop prompting, start engineering the loop/i,
+    route: "/engineering-the-loop.html",
+  },
+  {
+    expectedDestinations: [
+      "https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5",
+      "https://spacy.io/",
+    ],
+    heading: /the first \(and last\) intent-inference conference/i,
+    route: "/conference.html",
+  },
+] as const;
+
+const compareAlphabetically = (left: string, right: string): number =>
+  left.localeCompare(right);
+
+const uniqueSorted = (values: readonly string[]): string[] =>
+  [...new Set(values)].sort(compareAlphabetically);
+
 test("homepage renders portfolio with ambient cursor and grid effects", async ({
   page,
 }) => {
@@ -113,6 +163,31 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveJSProperty("muted", true);
   await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
 });
+
+for (const { expectedDestinations, heading, route } of externalLinkContracts) {
+  test(`route ${route} preserves its external destination contract`, async ({
+    page,
+  }) => {
+    // Public project/contact/article links are part of the page contract. Load
+    // the route end to end and assert the browser-resolved destinations instead
+    // of trusting source text.
+    const response = await page.goto(route);
+
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+    expect(
+      uniqueSorted(
+        await page
+          .locator('a[href^="http"]')
+          .evaluateAll((links): string[] =>
+            links.map((link) =>
+              link instanceof HTMLAnchorElement ? link.href : "",
+            ),
+          ),
+      ),
+    ).toEqual(uniqueSorted(expectedDestinations));
+  });
+}
 
 for (const { heading, route } of writeupRoutes) {
   test(`writeup route ${route} returns the article page`, async ({ page }) => {
