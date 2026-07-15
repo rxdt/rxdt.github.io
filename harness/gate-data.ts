@@ -15,7 +15,7 @@ export const FORBIDDEN_BASENAMES = new Set(["package.json"]);
 
 export const FORBIDDEN_FILES = new Set([
   "AGENTS.md",
-  "PROMPT.md",
+  "docs/PROMPT.md",
   "harness/preferences.ts",
   // tooling/config that would weaken the gate's thresholds or its checks
   "package.json",
@@ -187,6 +187,7 @@ export const FULL_CHECKS: Record<string, string[]> = {
   ],
   cruise: [
     tool("depcruise"),
+    "frontend",
     "--config",
     "harness/.dependency-cruiser.cjs",
     "--output-type",

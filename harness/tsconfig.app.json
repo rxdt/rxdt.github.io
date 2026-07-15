@@ -21,7 +21,7 @@
     "useUnknownInCatchVariables": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["../harness/*.ts"],
+  "include": ["../harness/*.ts", "../frontend/**/*.ts", "../frontend/*.ts"],
   "exclude": [
     "../.git/**",
     "../**/.lighthouseci/**",

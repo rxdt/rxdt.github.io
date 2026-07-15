@@ -139,9 +139,10 @@ function makeRepo(): string {
     "[user]\n\temail = harness@test.local\n\tname = harness-test\n",
   );
   writeFileSync(path.join(repo, "README.md"), "seed\n");
-  // ralph reads PROMPT.md up front and fails the loop if it is missing (set -e),
+  // ralph reads docs/PROMPT.md up front and fails the loop if it is missing (set -e),
   // so every repo that runs the loop needs one.
-  writeFileSync(path.join(repo, "PROMPT.md"), "do the work\n");
+  mkdirSync(path.join(repo, "docs"), { recursive: true });
+  writeFileSync(path.join(repo, "docs", "PROMPT.md"), "do the work\n");
   runCommand(["git", "add", "README.md"], repo);
   runCommand(["git", "commit", "-q", "-m", "seed"], repo);
   return repo;
@@ -633,11 +634,11 @@ describe("main dispatch (in-process)", () => {
 
   test("aborts the iteration without running the agent when PROMPT.md is missing", () => {
     const repo = makeRepo();
-    // ralph reads PROMPT.md up front (set -e), so a missing prompt must fail the iteration before
-    // the agent runs. The stub touches a sentinel if it runs; we assert it never does.
+    // ralph reads docs/PROMPT.md up front (set -e), so a missing prompt must fail the iteration
+    // before the agent runs. The stub touches a sentinel if it runs; we assert it never does.
     const ran = path.join(repo, "agent-ran");
     writeStub(repo, "agy", `#!/bin/sh\ntouch "${ran}"\n`);
-    rmSync(path.join(repo, "PROMPT.md"));
+    rmSync(path.join(repo, "docs", "PROMPT.md"));
 
     const result = harnessCli(["loop", "agy", "1", "1"], {
       cwd: repo,
@@ -661,7 +662,7 @@ describe("main dispatch (in-process)", () => {
     const captured = path.join(repo, "stdin.txt");
     writeStub(repo, "agy", `#!/bin/sh\ncat > "${captured}"\n`);
     const marker = "PROMPT_MARKER_do_the_work";
-    writeFileSync(path.join(repo, "PROMPT.md"), `${marker}\n`);
+    writeFileSync(path.join(repo, "docs", "PROMPT.md"), `${marker}\n`);
     vi.spyOn(process.stderr, "write").mockImplementation(() => true);
     const restore = process.cwd();
     const priorPath = process.env.PATH;

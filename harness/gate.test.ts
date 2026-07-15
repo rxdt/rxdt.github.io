@@ -946,8 +946,7 @@ describe("gate constants", () => {
     expect([...FORBIDDEN_FILES]).toEqual(
       expect.arrayContaining([
         "AGENTS.md",
-        "PROMPT.md",
-        "docs/plan.md",
+        "docs/PROMPT.md",
         "pnpm-workspace.yaml",
         "package.json",
         "pnpm-lock.yaml",
@@ -1014,20 +1013,25 @@ describe("gate constants", () => {
   });
 
   test("every harness config path referenced by checks exists", () => {
+    // Derive the config paths from the check commands themselves rather than
+    // re-listing them: any `harness/…`-prefixed arg with a config extension is a
+    // file a check depends on, so it must exist. A hardcoded copy would silently
+    // drift from the real command data.
+    const configExtension = /\.(?:c?js|json|yml|yaml|prettierignore)$/;
     const configPaths = [
-      "harness/.dependency-cruiser.cjs",
-      "harness/.htmlvalidate.json",
-      "harness/.prettierignore",
-      "harness/.secretlintrc.json",
-      "harness/.spectral.yml",
-      "harness/cspell.json",
-      "harness/eslint.config.js",
-      "harness/knip.json",
-      "harness/lighthouserc.cjs",
-      "harness/playwright.config.js",
-      "harness/stylelint.config.js",
-      "harness/vitest.config.js",
+      ...new Set(
+        Object.values(FULL_CHECKS)
+          .flat()
+          .filter(
+            (argument) =>
+              argument.startsWith("harness/") &&
+              configExtension.test(argument),
+          ),
+      ),
     ];
+    // Sanity check the derivation actually found the config set (guards against a
+    // future refactor that stops passing configs as bare args).
+    expect(configPaths.length).toBeGreaterThanOrEqual(10);
     expect(
       configPaths.every((target) => existsSync(path.join(REPO, target))),
     ).toBe(true);
@@ -1499,7 +1503,7 @@ describe("loop containment (continued)", () => {
     expect(stderr.join("")).not.toContain("kept forbidden paths");
   });
 
-  test.each(["harness/preferences.ts", "PROMPT.md"])(
+  test.each(["harness/preferences.ts", "docs/PROMPT.md"])(
     "ejects exact protected file %s under the loop",
     (target) => {
       process.env.RALPH_LOOP = "1";
@@ -2256,6 +2260,7 @@ describe("frontend gate shape", () => {
         "lint",
         "loop",
         "preflight",
+        "prettier",
         "preview",
         "setup",
         "status",
@@ -2301,8 +2306,14 @@ describe("frontend gate shape", () => {
       exclude?: unknown;
       include?: unknown;
     };
-    // Paths are ../-prefixed because the config lives in harness/ but governs frontend/ source.
-    expect(config.include).toEqual(["../frontend/**/*.ts", "../frontend/*.ts"]);
+    // Paths are ../-prefixed because the config lives in harness/ but governs both harness/ and
+    // frontend/ source. The harness glob must stay: frontend/ has no source .ts yet, so a
+    // frontend-only include matches nothing and tsc fails with TS18003 (no inputs).
+    expect(config.include).toEqual([
+      "../harness/*.ts",
+      "../frontend/**/*.ts",
+      "../frontend/*.ts",
+    ]);
     expect(config.exclude).toEqual(
       expect.arrayContaining([
         "../**/node_modules/**",

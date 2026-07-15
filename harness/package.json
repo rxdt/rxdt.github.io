@@ -79,7 +79,6 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "latest",
     "vite": "latest",
-    "vite-plugin-csp-guard": "latest",
     "vitest": "latest"
   }
 }
