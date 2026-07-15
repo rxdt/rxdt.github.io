@@ -357,6 +357,14 @@ h2 {
   object-position: center;
 }
 
+/* The LoopGate Harness art is a square 1024x1024 frame; 'cover' would crop the
+   top and bottom inside the wide card. 'contain' keeps the whole frame visible
+   (plan: the LoopGate Harness image must be fully visible and not cut off). */
+.project-image--harness {
+  object-fit: contain;
+  background: #050507;
+}
+
 .project-media {
   display: block;
   background: #111117;

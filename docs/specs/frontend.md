@@ -15,8 +15,12 @@ survive the harness gate and manual visual review.
 - The harness CSP (`script-src 'self'; style-src 'self'`) forbids inline
   `<script>`/`<style>`, so every page ships styles/behavior as external
   `frontend/scripts/*` modules that adopt a constructable stylesheet (built HTML
-  has no `<style>`/`style=`). Real `.css` files are not viable: the token-strict
-  stylelint config rejects the hand-authored CSS (~1000 errors).
+  has no `<style>`/`style=`). An external `<link rel="stylesheet">` would also be
+  CSP-compliant and avoids the JS-adopted-sheet FOUC that fails Lighthouse
+  cls-culprits, but the token-strict stylelint config makes the current
+  hand-authored CSS non-compliant without a substantial rewrite (px banned,
+  `vmax` and background lengths disallowed). The loop keeps JS-adopted sheets
+  pending an owner decision on that rewrite.
 
 ## Priorities
 
@@ -75,12 +79,16 @@ survive the harness gate and manual visual review.
 ## Blockers
 
 - Manual owner visual approval and deployment remain human-owned.
-- Full `pnpm gate` remains blocked by forbidden harness-owned issues:
-  `harness/csp.test.ts` semgrep findings and Lighthouse strict insight audits
-  tied to JS-applied styles/media. See status.
+- Full `pnpm gate` stays red on the forbidden `harness/csp.test.ts` semgrep
+  finding (harness-owned; loop cannot edit it). The Lighthouse insight audits are
+  frontend-addressable but owner-gated (a CSS rewrite with visual-regression
+  risk). See status.
 
 ## Changelog
 
+- 0002-claude 1/1: Made the LoopGate Harness tile show the full square frame
+  (`object-fit: contain`) per plan, with e2e proving no cropping; corrected the
+  spec's overstated "`.css` not viable" and harness-blocker framing.
 - 0002-codex 1/1: Added the AI Deployment Calculator thumbnail asset contract
   from `docs/plan.md` and proved it loads through browser e2e.
 - 0001-codex 1/1: Added route-level external destination contract coverage for

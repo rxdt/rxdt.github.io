@@ -177,6 +177,30 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
 });
 
+test("homepage shows the full LoopGate Harness frame without cropping", async ({
+  page,
+}) => {
+  // Plan requirement: the square LoopGate Harness art must be fully visible and
+  // not cut off. The wide project card would crop a 'cover' image top/bottom, so
+  // assert the served page decodes the asset and renders it with 'contain' (the
+  // whole frame fits inside the box instead of overflowing and being clipped).
+  const response = await page.goto("/");
+
+  expect(response?.status()).toBe(200);
+
+  const harnessImage = page.getByAltText("LoopGate Harness thumbnail");
+  // The asset must actually decode (a broken <img> still exposes src/alt).
+  await expect(harnessImage).toHaveJSProperty("complete", true);
+  expect(
+    await harnessImage.evaluate((node) =>
+      node instanceof HTMLImageElement ? node.naturalWidth : 0,
+    ),
+  ).toBeGreaterThan(0);
+  // 'contain' is the browser's guarantee that the whole frame fits inside the
+  // box uncropped; the default 'cover' (base .project-image) would clip it.
+  await expect(harnessImage).toHaveCSS("object-fit", "contain");
+});
+
 for (const { expectedDestinations, heading, route } of externalLinkContracts) {
   test(`route ${route} preserves its external destination contract`, async ({
     page,
