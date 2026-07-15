@@ -124,6 +124,35 @@ for (const { heading, route } of writeupRoutes) {
       page.getByRole("link", { name: /back to rox dt/i }),
     ).toHaveAttribute("href", "/");
   });
+
+  test(`writeup route ${route} applies styles from an external module under CSP`, async ({
+    page,
+  }) => {
+    // The CSP forbids inline <script>/<style>, so each page ships its styles as
+    // an external same-origin module that adopts a constructable stylesheet.
+    // Assert the module actually ran (a sheet was adopted and the page-reset
+    // `body { margin: 0 }` took effect) with no inline <style> and no policy
+    // violation — proving the externalized styling works end to end, not just
+    // that the file was requested.
+    await page.addInitScript(() => {
+      document.addEventListener("securitypolicyviolation", (violationEvent) => {
+        document.documentElement.dataset.cspViolation =
+          violationEvent.violatedDirective;
+      });
+    });
+
+    const response = await page.goto(route);
+
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("head > style")).toHaveCount(0);
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-csp-violation",
+    );
+    await expect
+      .poll(async () => page.evaluate(() => document.adoptedStyleSheets.length))
+      .toBeGreaterThan(0);
+    await expect(page.locator("body")).toHaveCSS("margin", "0px");
+  });
 }
 test("homepage styles and script behavior load without CSP violations", async ({
   page,

@@ -1024,8 +1024,7 @@ describe("gate constants", () => {
           .flat()
           .filter(
             (argument) =>
-              argument.startsWith("harness/") &&
-              configExtension.test(argument),
+              argument.startsWith("harness/") && configExtension.test(argument),
           ),
       ),
     ];
