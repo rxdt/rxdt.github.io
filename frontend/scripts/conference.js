@@ -5,61 +5,23 @@
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(String.raw`
 :root {
-  --paper: #f7f5ef;
-  --paper-2: #efece3;
-  --ink: #1a1c22;
-  --slate: #5b6270;
-  --faint: #676d79;
-  --rule: #d8d2c6;
-  --stamp: #b83227;
-  --stamp-soft: #f0e2df;
-  --accent-ink: #2a3140;
-  --shadow: 26 28 34;
+  color-scheme: dark;
+  --paper: #0d0f12;
+  --paper-2: rgba(12, 13, 18, 0.72);
+  --ink: #f4f4f5;
+  --slate: #a1a1aa;
+  --faint: #a1a1aa;
+  --rule: rgba(255, 255, 255, 0.1);
+  --stamp: #a78bfa;
+  --stamp-soft: rgba(167, 139, 250, 0.22);
+  --accent-ink: #fcd34d;
   --measure: 66ch;
   --serif:
-    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-    Charter, Georgia, "Times New Roman", serif;
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   --mono:
     ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code",
     "Roboto Mono", Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #17181c;
-    --paper-2: #1e2026;
-    --ink: #ece7db;
-    --slate: #a3a8b3;
-    --faint: #8b909b;
-    --rule: #34363e;
-    --stamp: #e15a45;
-    --stamp-soft: #241a18;
-    --accent-ink: #c7d0e0;
-    --shadow: 0 0 0;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #17181c;
-  --paper-2: #1e2026;
-  --ink: #ece7db;
-  --slate: #a3a8b3;
-  --faint: #8b909b;
-  --rule: #34363e;
-  --stamp: #e15a45;
-  --stamp-soft: #241a18;
-  --accent-ink: #c7d0e0;
-  --shadow: 0 0 0;
-}
-:root[data-theme="light"] {
-  --paper: #f7f5ef;
-  --paper-2: #efece3;
-  --ink: #1a1c22;
-  --slate: #5b6270;
-  --faint: #676d79;
-  --rule: #d8d2c6;
-  --stamp: #b83227;
-  --stamp-soft: #f0e2df;
-  --accent-ink: #2a3140;
-  --shadow: 26 28 34;
 }
 
 * {
@@ -70,7 +32,15 @@ html {
 }
 body {
   margin: 0;
-  background: var(--paper);
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(76, 29, 149, 0.34),
+      rgba(13, 15, 18, 0.92) 42%,
+      #050507 100%
+    ),
+    var(--paper);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--serif);
   font-size: clamp(1.02rem, 0.96rem + 0.3vw, 1.16rem);
@@ -87,8 +57,8 @@ body {
 
 /* ---- Masthead ---- */
 .masthead {
-  border-top: 3px double var(--ink);
-  border-bottom: 3px double var(--ink);
+  border-top: 1px solid var(--stamp-soft);
+  border-bottom: 1px solid var(--stamp-soft);
   padding: 1.5rem 0 1.7rem;
   margin-bottom: 2.6rem;
   text-align: center;
@@ -111,7 +81,7 @@ body {
   max-width: 22ch;
 }
 .masthead .sub {
-  font-style: italic;
+  font-style: normal;
   color: var(--slate);
   font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
   max-width: 40ch;
@@ -154,13 +124,6 @@ p {
 }
 .lead {
   font-size: 1.12em;
-}
-.lead::first-letter {
-  initial-letter: 3;
-  -webkit-initial-letter: 3;
-  font-weight: 600;
-  margin-right: 0.7rem;
-  color: var(--accent-ink);
 }
 
 a {
@@ -368,7 +331,7 @@ blockquote {
   padding: 0.2rem 0 0.2rem 1.3rem;
   border-left: 2px solid var(--rule);
   color: var(--ink);
-  font-style: italic;
+  font-style: normal;
   max-width: var(--measure);
 }
 blockquote.pull {
@@ -459,7 +422,7 @@ hr.rule {
   font-size: 0.78rem;
   line-height: 1.6;
   color: var(--slate);
-  border-top: 3px double var(--ink);
+  border-top: 1px solid var(--stamp-soft);
   margin-top: 3.5rem;
   padding-top: 1.5rem;
   max-width: var(--measure);
