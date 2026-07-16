@@ -275,6 +275,22 @@ h2 em {
   display: block;
   margin-bottom: 0.3rem;
 }
+.margin pre.margin-json {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--slate);
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  margin: 0;
+  overflow-x: auto;
+  white-space: pre;
+}
+.margin pre.margin-json .k {
+  color: var(--stamp);
+}
 .margin .margin-quote {
   font-family: var(--serif);
   font-size: 1.02rem;
