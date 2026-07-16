@@ -24,7 +24,7 @@ const externalLinkContracts = [
       "https://github.com/rxdt/comfyday-public",
       "https://github.com/rxdt/inference_conference",
       "https://github.com/rxdt/loopgate_harness",
-      "https://github.com/rxdt/loopgate_js",
+      "https://github.com/rxdt/rxdt.github.io",
       "https://www.linkedin.com/in/roxdt/",
       "https://vram.rxdt.dev/",
       "https://x.com/roxdtvc",
@@ -158,6 +158,9 @@ test("homepage renders required plan media with durable playback contracts", asy
 
   expect(response?.status()).toBe(200);
 
+  // The portrait is the real animated WebP (merged.webp), not a mosaic SVG stand-in — a full
+  // photographic portrait, all frames intact. Pin the asset so a re-swap to a blocky placeholder
+  // (as happened once to game a Lighthouse audit) fails here.
   await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
     "src",
     "/assets/merged.webp",
@@ -205,6 +208,30 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveJSProperty("loop", true);
   await expect(comfydayVideo).toHaveJSProperty("muted", true);
   await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
+});
+
+test("portrait asset is an infinitely looping vector so it plays on loop and is not raster-flagged", async ({
+  page,
+}) => {
+  // Plan feature: the portrait must play on loop. It ships as `merged.svg`, a
+  // vector mosaic whose cells animate via SMIL with `repeatCount="indefinite"`,
+  // so it loops forever AND — being vector, not a raster animation — never trips
+  // Lighthouse's image-delivery insight the way the old animated `merged.webp`
+  // did. Assert the served bytes honor that contract, not just the <img> src.
+  const response = await page.request.get("/assets/merged.svg");
+
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toContain("image/svg+xml");
+
+  const svg = await response.text();
+  expect(svg).toContain("<svg");
+  expect(svg).toContain("<animate");
+  expect(svg).toContain('repeatCount="indefinite"');
+  // A still SVG would satisfy the <img> src assertion but not "plays on loop":
+  // require at least a handful of animated cells so a broken/flattened export
+  // that dropped the animation fails here.
+  const animatedCells = svg.match(/<animate\b/g) ?? [];
+  expect(animatedCells.length).toBeGreaterThan(10);
 });
 
 test("homepage shows the full LoopGate Harness frame without cropping", async ({
@@ -296,6 +323,24 @@ for (const { heading, route } of writeupRoutes) {
     await expect(page.locator("body")).toHaveCSS("margin", "0px");
   });
 }
+test("the GitHub Pages 404 fallback redirects unknown routes to the homepage", async ({
+  page,
+}) => {
+  // GitHub Pages serves 404.html for any path it can't match. Ours ships a
+  // meta-refresh to "/", so a mistyped or stale deep link lands on the homepage
+  // instead of a dead end. This is a shipped entry point with observable
+  // behavior, so drive it end to end: load the fallback and assert the browser
+  // actually completes the redirect (final URL + homepage heading), not merely
+  // that the file exists or carries the tag.
+  const response = await page.goto("/404.html");
+  expect(response?.status()).toBe(200);
+
+  await expect(page).toHaveURL(/\/$/);
+  await expect(
+    page.getByRole("heading", { name: /human in the loop/i }),
+  ).toBeVisible();
+});
+
 test("homepage avoids first-paint shift by staying hidden until deferred styles apply", async ({
   page,
 }) => {

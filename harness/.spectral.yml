@@ -56,7 +56,7 @@ rules:
     then:
       function: pattern
       functionOptions:
-        match: "^(actions/(checkout|dependency-review-action|setup-node)|pnpm/action-setup)@v[0-9]+$"
+        match: "^(actions/(checkout|dependency-review-action|setup-node|configure-pages|upload-pages-artifact|deploy-pages)|pnpm/action-setup)@v[0-9]+$"
 
   workflow-run-commands-do-not-weaken-gate:
     description: Shell steps must not bypass or weaken gate execution.

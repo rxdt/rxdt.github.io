@@ -18,12 +18,17 @@ import { preferencesViolations } from "./preferences.js";
 
 // Re-export the static data so consumers import everything gate-related from ./gate.js.
 export {
+  checkCommand,
+  COMMIT_CHECK_NAMES,
   COMMIT_CHECKS,
   FORBIDDEN_BASENAMES,
   FORBIDDEN_DIRS,
   FORBIDDEN_FILES,
   FORBIDDEN_PATTERNS,
+  FULL_CHECK_NAMES,
   FULL_CHECKS,
+  scriptsMap,
+  tokenizeCommand,
 } from "./gate-data.js";
 
 // Preflight fast checks must fail fast if they hang; the full gate has no timeout because its
@@ -92,29 +97,19 @@ interface CheckContext {
   timeoutMs: number;
 }
 
-// A missing tool is a spawn ENOENT (error.code "ENOENT"). A young template must not fail a
-// consumer who hasn't installed an external tool (semgrep/osv-scanner aren't npm) — so we SKIP
-// the check, but warn LOUDLY on every run so ignoring it is the consumer's choice.
+// A missing tool is a spawn ENOENT (error.code "ENOENT"). Every check tool is a pinned harness
+// devDependency, so on a correctly-installed repo they are all present. A missing one therefore
+// means a broken install, not an optional extra — so it FAILS the gate (matching Semgrep/Lighthouse
+// CI, which fail on a missing tool/environment). Silent skips would let a check quietly not run.
 /**
 @param result
-@param binary
 */
-function isToolMissing(
-  result: SpawnSyncReturns<string>,
-  binary: string,
-): boolean {
+function isToolMissing(result: SpawnSyncReturns<string>): boolean {
   const code =
     result.error !== undefined && "code" in result.error
       ? result.error.code
       : undefined;
-  if (code !== "ENOENT") {
-    return false;
-  }
-  process.stderr.write(
-    `\n⚠️  harness: SKIPPED — '${binary}' is not installed on this machine.\n` +
-      `   install it to enable this check; it runs on every gate.\n\n`,
-  );
-  return true;
+  return code === "ENOENT";
 }
 
 // Failure detail from a non-passing spawn; empty output falls back to the command. stdout/stderr
@@ -164,8 +159,12 @@ function runOneCheck(
       `status=${String(result.status)} signal=${String(result.signal)} ` +
       `error=${result.error === undefined ? "none" : String(result.error)}\n`,
   );
-  if (isToolMissing(result, executable)) {
-    return undefined;
+  if (isToolMissing(result)) {
+    return (
+      `${name} failed:\n'${executable}' is not installed — it is a pinned harness ` +
+      `dependency, so a missing binary means a broken install. Run the harness setup / ` +
+      `pnpm install to restore it; the gate does not skip checks.`
+    );
   }
   if (
     result.status === 0 &&
@@ -197,7 +196,7 @@ function stagedSymlinks(repo: string): string[] {
     .split("\0")
     .filter((entry) => entry.length > 0)
     .flatMap((entry) => {
-      const [meta = "", file = ""] = entry.split("\t");
+      const [meta = "", file = ""] = entry.split("\t", 2);
       return meta.startsWith("120000") ? [file] : [];
     });
 }

@@ -73,7 +73,7 @@ The repo is the only memory. Each iteration is a fresh-context agent.
 | `e2e`          | `playwright` — 6 viewports, desktop + mobile, specs in `frontend/tests`                                                                                                                               |     |
 | `lighthouse`   | `lhci` (Lighthouse) performance/a11y/best-practices/SEO against the built page                                                                                                                        |     |
 
-Shipped for your tests, not separate gate checks: **`fast-check`** (property-based testing) and **`@axe-core/playwright`** (accessibility assertions for e2e specs) are devDependencies in both packages; **`jsdom`** provides the DOM for unit tests (opt-in per file with `// @vitest-environment jsdom`, as the seed test does). On pull requests, GitHub CI additionally runs **`dependency-review-action`** (fails on moderate+ vulnerabilities and license problems).
+Shipped for your tests, not separate gate checks: **`@axe-core/playwright`** (accessibility assertions for e2e specs) is a devDependency in both packages; **`jsdom`** provides the DOM for unit tests (opt-in per file with `// @vitest-environment jsdom`, as the seed test does). Unused dependencies are themselves gate failures: the `deadcode` check runs knip with its `dependencies` checker on, so dep rot is flagged automatically. On pull requests, GitHub CI additionally runs **`dependency-review-action`** (fails on moderate+ vulnerabilities and license problems).
 
 ### Preferences: what the tools above can't check
 

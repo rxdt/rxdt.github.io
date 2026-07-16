@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rxdt.github.io/sitemap.xml
+Sitemap: https://rxdt.dev/sitemap.xml

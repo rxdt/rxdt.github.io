@@ -1,15 +1,17 @@
-# LoopGate JS
+# Rox dT — rxdt.dev
 
-LoopGate JS, also known as loopgate_js, is a TypeScript and Vite frontend
-coding-agent loop harness for Claude, Codex, Copilot, Agy, and other CLI
-agents.
+Personal site of Rox dT: agent tools, AI evaluation projects, and practical
+software including the AI Deployment Calculator, a browser tool that estimates
+GPU VRAM and hardware for AI workloads.
 
-It provides a repo-native workflow where prompts, specs, project status, tests,
-and gate checks live with the code. Agents can run fresh-context iterations,
-edit frontend code, and commit only after passing guardrails such as ESLint,
+The site is a static, multi-page TypeScript + Vite app developed by coding
+agents (Claude, Codex, and other CLI agents) running in a repo-native loop
+harness: prompts, specs, project status, tests, and gate checks live with the
+code, and agents commit only after passing guardrails such as ESLint,
 Stylelint, HTML validation, strict TypeScript, Vitest coverage, Playwright,
 Lighthouse, dependency checks, security checks, and containment rules.
 
-Repository: https://github.com/rxdt/loopgate_js
-Sample app: https://vram.rxdt.dev/
-Sample app source: https://github.com/rxdt/ai_deployment_calculator
+Site: https://rxdt.dev/
+Repository: https://github.com/rxdt/rxdt.github.io
+AI Deployment Calculator: https://vram.rxdt.dev/
+Calculator source: https://github.com/rxdt/ai_deployment_calculator

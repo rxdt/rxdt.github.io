@@ -91,8 +91,10 @@ const SCRIPT_SCHEME = ["java", "script:"].join("");
 function javascriptUrlAttributes(element: HtmlElement): string[] {
   return URL_ATTRIBUTES.filter(
     (name) =>
-      attribute(element, name)?.trim().toLowerCase().startsWith(SCRIPT_SCHEME) ===
-      true,
+      attribute(element, name)
+        ?.trim()
+        .toLowerCase()
+        .startsWith(SCRIPT_SCHEME) === true,
   );
 }
 

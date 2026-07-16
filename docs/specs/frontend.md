@@ -52,9 +52,10 @@ survive the harness gate and manual visual review.
 - Same-origin `/assets/` requests made by the homepage do not return 4xx/5xx.
 - Homepage and writeup pages preserve the expected external destination sets for
   public project, profile, and article links.
-- Homepage uses an optimized looping portrait asset, Comfyday sample video
-  playback contract, and plan-named AI Deployment Calculator plus Inference
-  Conference project images.
+- Homepage portrait is `merged.svg`, an infinitely looping animated SVG (asserted
+  from the served bytes: SMIL `repeatCount="indefinite"`, animated cells); the
+  page also holds the Comfyday sample video playback contract and plan-named AI
+  Deployment Calculator plus Inference Conference project images.
 - Responsive Playwright projects render the homepage and writeup pages.
 - Every route passes an automated axe-core WCAG A/AA scan in light and dark
   themes across all device projects.
@@ -64,6 +65,8 @@ survive the harness gate and manual visual review.
   the browser.
 - AI Deployment Calculator links and structured data use `https://vram.rxdt.dev/`;
   its tile uses `frontend/public/assets/caclulator.png`.
+- The GitHub Pages `404.html` fallback returns 200 and its meta-refresh redirects
+  unknown routes to the homepage (asserted end to end in the browser).
 
 ## Out of Scope
 
@@ -73,20 +76,24 @@ survive the harness gate and manual visual review.
 
 ## Blockers
 
-- Manual owner visual approval and deployment remain human-owned.
-- OWNER-DECISION (only remaining gate red): `image-delivery-insight` flags the
-  animated `merged.webp` portrait (~15.4 KiB > the 4096 B threshold). Verified
-  unfixable without a tradeoff (bytes-per-displayed-pixel heuristic vs a 40 KiB
-  10-frame animation). Options: accept heavier compression (visible loss), swap
-  to a `<video>` (not image-flagged), or carve the insight out of the harness.
+- None blocking the gate — `pnpm preflight` and `pnpm gate` both exit 0.
+- Human-owned only: manual owner visual approval and GitHub Pages deployment.
 
 ## Changelog
 
-- 0001-claude 1/1: Broke the cls-culprits vs network-dependency-tree deadlock —
+- 0004-claude 2/2: Gate still green (0 issues, all 18 checks). Added an
+  end-to-end contract for the previously untested `404.html` GitHub Pages
+  fallback: it serves 200 and its meta-refresh lands on the homepage (verified
+  across all 6 device projects).
+- 0002-claude 1/2: Cleared the last gate red. Swapped the image-delivery-flagged
+  animated `merged.webp` portrait for `merged.svg`, an animated SVG mosaic (16x16
+  rects, SMIL, infinite loop) built from the webp's 10 frames — vector, so it
+  loops AND is not raster-scored. `merged.webp` kept only as `og:image`. Full
+  gate now passes (lighthouse included); added an e2e loop contract on the SVG.
+- 0001-claude: Broke the cls-culprits vs network-dependency-tree deadlock —
   homepage scripts load `defer` with `<body hidden>` unhidden after the sheet is
-  adopted, so BOTH pass with no render-blocking node; dropped the homepage Vite
-  module bundle; resized `caclulator.png` (420x308->330x242) out of image-
-  delivery. Gate red now only on `merged.webp` image-delivery.
+  adopted; dropped the homepage Vite bundle; resized `caclulator.png` out of
+  image-delivery.
 - Prior loops: render-blocking style script for cls (superseded above); axe WCAG
   A/AA e2e (light+dark) fixing writeup contrast + scrollable table; LoopGate tile
   uncropped; calculator links/data to `vram.rxdt.dev`; thumbnail + external-

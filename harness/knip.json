@@ -1,21 +1,27 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreDependencies": ["@secretlint/secretlint-rule-preset-recommend"],
-  "ignoreBinaries": ["semgrep"],
-  "include": ["files", "exports", "nsExports", "types", "nsTypes"],
+  "$schema": "./node_modules/knip/schema.json",
+  "include": [
+    "files",
+    "exports",
+    "nsExports",
+    "types",
+    "nsTypes",
+    "dependencies"
+  ],
   "workspaces": {
     "frontend": {
-      "entry": ["src/**/*.test.ts"],
-      "project": ["src/**/*.ts"]
+      "entry": ["tests/**/*.spec.ts", "scripts/*.js", "public/scripts/*.js"]
     },
     "harness": {
-      "entry": [
-        "cli.ts",
-        "*.config.{js,cjs,mjs,ts}",
-        "*.test.ts",
-        "lighthouserc.cjs"
-      ],
-      "project": ["*.ts", "*.{js,cjs,mjs}"]
+      "entry": ["*.test.ts", "lighthouserc.cjs"],
+      "ignoreDependencies": [
+        "@axe-core/playwright",
+        "@secretlint/secretlint-rule-preset-recommend",
+        "ajv",
+        "ajv-formats",
+        "ajv-keywords",
+        "lighthouse"
+      ]
     }
   }
 }

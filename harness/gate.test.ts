@@ -20,11 +20,14 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 import {
+  checkCommand as deriveCheckCommand,
+  COMMIT_CHECK_NAMES,
   COMMIT_CHECKS,
   FORBIDDEN_BASENAMES,
   FORBIDDEN_DIRS,
   FORBIDDEN_FILES,
   FORBIDDEN_PATTERNS,
+  FULL_CHECK_NAMES,
   FULL_CHECKS,
   gitSafeEnvironment,
   isForbiddenPath,
@@ -33,6 +36,8 @@ import {
   runGate,
   runGit,
   runPreflight,
+  scriptsMap,
+  tokenizeCommand,
 } from "./gate.js";
 import { addRootScripts } from "./cli.js";
 
@@ -63,8 +68,6 @@ const requiredForbiddenPattern = (pattern: string): string => {
   return pattern;
 };
 
-// Harness-owned tools are invoked by bare name; the gate puts harness/node_modules/.bin on PATH.
-const harnessTool = (name: string): string => name;
 const commandText = (command: string[]): string => command.join(" ");
 const withEmptyPath = <T>(callback: () => T): T => {
   const originalPath = process.env.PATH;
@@ -320,32 +323,32 @@ const REQUIRED_INSTALLED_GATE_TOOLS: readonly {
   {
     dependency: "prettier",
     check: "format",
-    commandFragment: harnessTool("prettier"),
+    commandFragment: "prettier",
   },
   {
     dependency: "eslint",
     check: "eslint",
-    commandFragment: harnessTool("eslint"),
+    commandFragment: "eslint",
   },
   {
     dependency: "stylelint",
     check: "style",
-    commandFragment: harnessTool("stylelint"),
+    commandFragment: "stylelint",
   },
   {
     dependency: "html-validate",
     check: "html",
-    commandFragment: harnessTool("html-validate"),
+    commandFragment: "html-validate",
   },
   {
     dependency: "typescript",
     check: "typecheck",
-    commandFragment: harnessTool("tsc"),
+    commandFragment: "tsc",
   },
   {
     dependency: "ajv-cli",
     check: "schema",
-    commandFragment: harnessTool("ajv"),
+    commandFragment: "ajv",
   },
   {
     dependency: "ajv-formats",
@@ -360,27 +363,27 @@ const REQUIRED_INSTALLED_GATE_TOOLS: readonly {
   {
     dependency: "dependency-cruiser",
     check: "cruise",
-    commandFragment: harnessTool("depcruise"),
+    commandFragment: "depcruise",
   },
   {
     dependency: "knip",
     check: "deadcode",
-    commandFragment: harnessTool("knip"),
+    commandFragment: "knip",
   },
   {
     dependency: "cspell",
     check: "spelling",
-    commandFragment: harnessTool("cspell"),
+    commandFragment: "cspell",
   },
   {
     dependency: "@stoplight/spectral-cli",
     check: "workflow",
-    commandFragment: harnessTool("spectral"),
+    commandFragment: "spectral",
   },
   {
     dependency: "secretlint",
     check: "secrets",
-    commandFragment: harnessTool("secretlint"),
+    commandFragment: "secretlint",
   },
   {
     dependency: "vite",
@@ -390,7 +393,7 @@ const REQUIRED_INSTALLED_GATE_TOOLS: readonly {
   {
     dependency: "vitest",
     check: "coverage",
-    commandFragment: harnessTool("vitest"),
+    commandFragment: "vitest",
   },
   {
     dependency: "@vitest/coverage-v8",
@@ -400,7 +403,7 @@ const REQUIRED_INSTALLED_GATE_TOOLS: readonly {
   {
     dependency: "@playwright/test",
     check: "e2e",
-    commandFragment: harnessTool("playwright"),
+    commandFragment: "playwright",
   },
   {
     dependency: "@axe-core/playwright",
@@ -410,187 +413,12 @@ const REQUIRED_INSTALLED_GATE_TOOLS: readonly {
   {
     dependency: "@lhci/cli",
     check: "lighthouse",
-    commandFragment: harnessTool("lhci"),
+    commandFragment: "lhci",
   },
   { dependency: "lighthouse", check: "lighthouse" },
 ];
 
-const REQUIRED_CHECK_POLICIES: readonly {
-  check: string;
-  fragments: readonly string[];
-}[] = [
-  {
-    check: "format",
-    fragments: [
-      harnessTool("prettier"),
-      "frontend/",
-      "harness/",
-      "--check",
-      "harness/.prettierignore",
-      "--cache",
-      ".cache_prettier",
-    ],
-  },
-  {
-    check: "eslint",
-    fragments: [
-      harnessTool("eslint"),
-      ".",
-      "harness/eslint.config.js",
-      "--max-warnings=0",
-    ],
-  },
-  {
-    check: "style",
-    fragments: [
-      harnessTool("stylelint"),
-      "frontend/**/*.css",
-      "harness/stylelint.config.js",
-      "--ignore-path",
-      "harness/.stylelintignore",
-      "--max-warnings=0",
-      "--allow-empty-input",
-    ],
-  },
-  {
-    check: "html",
-    fragments: [
-      harnessTool("html-validate"),
-      "harness/.htmlvalidate.json",
-      "**/*.html",
-    ],
-  },
-  {
-    check: "typecheck",
-    fragments: [
-      harnessTool("tsc"),
-      "harness/tsconfig.app.json",
-      "--noEmit",
-      "--incremental",
-      ".cache_tsbuildinfo_app",
-    ],
-  },
-  {
-    check: "harnessTypes",
-    fragments: [
-      harnessTool("tsc"),
-      "harness/tsconfig.harness.json",
-      "--noEmit",
-      "--incremental",
-      ".cache_tsbuildinfo_harness",
-    ],
-  },
-  {
-    check: "schema",
-    fragments: [
-      harnessTool("ajv"),
-      "compile",
-      "frontend/schemas/**/*.schema.json",
-      "--strict=true",
-      "ajv-formats",
-      "ajv-keywords",
-    ],
-  },
-  {
-    check: "cruise",
-    fragments: [
-      harnessTool("depcruise"),
-      "frontend",
-      "harness/.dependency-cruiser.cjs",
-      "err",
-    ],
-  },
-  { check: "deadcode", fragments: [harnessTool("knip"), "harness/knip.json"] },
-  {
-    check: "spelling",
-    fragments: [harnessTool("cspell"), ".", "harness/cspell.json"],
-  },
-  {
-    check: "workflow",
-    fragments: [
-      harnessTool("spectral"),
-      ".github/workflows/ci.yml",
-      "harness/.spectral.yml",
-      "--fail-severity=warn",
-    ],
-  },
-  {
-    check: "sast",
-    fragments: [
-      "semgrep",
-      "scan",
-      "p/typescript",
-      "p/javascript",
-      "p/security-audit",
-      "--error",
-    ],
-  },
-  {
-    check: "secrets",
-    fragments: [
-      harnessTool("secretlint"),
-      "**/*",
-      "harness/.secretlintrc.json",
-    ],
-  },
-  {
-    check: "audit",
-    fragments: ["pnpm", "--dir", "frontend", "audit", "--audit-level", "high"],
-  },
-  // Disabled with the osv check (see FULL_CHECKS in gate-data.ts):
-  // {
-  //   check: "osv",
-  //   fragments: [
-  //     "osv-scanner",
-  //     "scan",
-  //     "source",
-  //     "--lockfile=frontend/pnpm-lock.yaml",
-  //     "--lockfile=harness/pnpm-lock.yaml",
-  //   ],
-  // },
-  {
-    check: "build",
-    fragments: ["pnpm", "--dir", "frontend", "run", "build"],
-  },
-  {
-    check: "coverage",
-    fragments: [
-      harnessTool("vitest"),
-      "harness/vitest.config.js",
-      "--cache",
-      "--coverage",
-    ],
-  },
-  {
-    check: "e2e",
-    fragments: [
-      harnessTool("playwright"),
-      "test",
-      "harness/playwright.config.js",
-    ],
-  },
-  {
-    check: "lighthouse",
-    fragments: [harnessTool("lhci"), "autorun", "harness/lighthouserc.cjs"],
-  },
-];
-
 const COMMIT_POLICY_CHECKS = new Set(["format", "eslint", "style", "html"]);
-
-const pickChecks = (
-  checks: Record<string, string[]>,
-  names: readonly string[],
-): Record<string, string[]> => {
-  const picked: Record<string, string[]> = {};
-  for (const name of names) {
-    const command = checks[name];
-    if (command === undefined) {
-      throw new Error(`missing check ${name}`);
-    }
-    picked[name] = command;
-  }
-  return picked;
-};
 
 const checkCommand = (
   checks: Record<string, string[]>,
@@ -626,6 +454,17 @@ const readHarnessPackageJsonInRepo = (repo: string): PackageJson =>
   parsePackageJson(
     readFileSync(path.join(repo, "harness", "package.json"), "utf8"),
   );
+
+// The raw on-disk script string for a check name (or undefined). Used to prove gate-data derives
+// each gate check faithfully from its harness/package.json script — the single source of truth.
+const rawScript = (name: string): string | undefined => {
+  const { scripts } = readHarnessPackageJsonInRepo(REPO);
+  if (!isPlainObject(scripts)) {
+    throw new TypeError("harness package.json has no scripts object");
+  }
+  const raw = scripts[name];
+  return typeof raw === "string" ? raw : undefined;
+};
 
 const makeInstallRepo = (scripts: Record<string, string>): string => {
   const repo = makeRepo();
@@ -876,30 +715,27 @@ describe("runChecks", () => {
     expect(failureFor(failures, "empty").toLowerCase()).toContain("empty");
   });
 
-  test("skips a missing binary (ENOENT) instead of failing, and warns loudly", () => {
-    const stderr: string[] = [];
-    vi.spyOn(process.stderr, "write").mockImplementation((chunk) => {
-      stderr.push(String(chunk));
-      return true;
-    });
+  test("FAILS on a missing binary (ENOENT) — a check must never silently not run", () => {
     const failures = runChecks(makeRepo(), {
       missing: ["definitely-not-a-real-gate-binary"],
     });
-    // A young template must not fail a consumer who hasn't installed an external tool: the check
-    // is skipped (no problem), but the skip is announced loudly so it can never pass silently.
-    expect(failures).toEqual([]);
-    const warning = stderr.join("");
-    expect(warning).toContain("SKIPPED");
-    expect(warning).toContain("definitely-not-a-real-gate-binary");
+    // Every check tool is a pinned harness dependency: a missing binary means a broken install, so
+    // the gate FAILS rather than skip (matching Semgrep/Lighthouse CI). Silent skips would let a
+    // check quietly not run — the exact gap this refactor closes.
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toMatch(/^missing failed:/u);
+    expect(failures[0]).toContain("definitely-not-a-real-gate-binary");
+    expect(failures[0]).toContain("not installed");
   });
 
-  test("skips a missing harness tool (ENOENT) regardless of staged packages", () => {
+  test("FAILS on a missing harness tool (ENOENT) regardless of staged packages", () => {
     const repo = makeRepo();
     stageFile(repo, "harness/package.json", '{"private":true}\n');
     const failures = runChecks(repo, {
-      harnessToolCheck: [harnessTool("definitely-missing")],
+      harnessToolCheck: ["definitely-missing"],
     });
-    expect(failures).toEqual([]);
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toMatch(/^harnessToolCheck failed:/u);
   });
 
   test("fails closed when a present tool exits non-zero (not ENOENT)", () => {
@@ -912,7 +748,7 @@ describe("runChecks", () => {
   });
 
   test.each(["semgrep", "osv-scanner"])(
-    "skips external gate tool %s when it is not installed (ENOENT)",
+    "FAILS on external gate tool %s when it is not installed (ENOENT)",
     (tool) => {
       const repo = makeRepo();
       const failures = withEmptyPath(() =>
@@ -920,7 +756,8 @@ describe("runChecks", () => {
           external: [tool, "--version"],
         }),
       );
-      expect(failures).toEqual([]);
+      expect(failures).toHaveLength(1);
+      expect(failures[0]).toMatch(/^external failed:/u);
     },
   );
 });
@@ -977,31 +814,85 @@ describe("gate constants", () => {
   test("commit checks are a strict fast subset of full checks", () => {
     expect(new Set(Object.keys(COMMIT_CHECKS))).toEqual(COMMIT_POLICY_CHECKS);
     for (const [name, command] of Object.entries(COMMIT_CHECKS)) {
-      expect(checkCommand(FULL_CHECKS, name)).toBe(command);
+      // Both are derived from the same script, so compare by value (not identity).
+      expect(checkCommand(FULL_CHECKS, name)).toEqual(command);
     }
     expect(Object.keys(FULL_CHECKS).length).toBeGreaterThan(
       Object.keys(COMMIT_CHECKS).length,
     );
   });
 
-  test.each(REQUIRED_CHECK_POLICIES)(
-    "full gate includes %s with required scope and policy flags",
-    ({ check, fragments }) => {
-      const command = checkCommand(FULL_CHECKS, check);
-      const text = commandText(command);
-      for (const fragment of fragments) {
-        expect(text, `${check} missing ${fragment}`).toContain(fragment);
-      }
+  // The raw script string on disk for a check (or undefined). The gate no longer holds a second
+  // copy of any command — it DERIVES each from these scripts — so there is no gate-vs-script string
+  // to drift. What these tests protect instead: every gate check HAS a parseable single-command
+  // script, and gate-data's parse of it is faithful (root-return prefix stripped, quotes handled,
+  // first token is the real tool). A shell-chained or missing script would throw at derivation.
+  test.each([...FULL_CHECK_NAMES])(
+    "gate check %s derives faithfully from its harness/package.json script",
+    (name) => {
+      const script = rawScript(name);
+      expect(
+        script,
+        `no harness script for gate check "${name}"`,
+      ).toBeDefined();
+      const argv = checkCommand(FULL_CHECKS, name);
+      // The derived argv must equal gate-data's own exported derivation, and be a clean command:
+      // no leftover shell tokens, no surrounding quotes, and it reconstructs the script body.
+      expect(argv).toEqual(deriveCheckCommand(name));
+      expect(argv).not.toContain("cd");
+      expect(argv).not.toContain("&&");
+      expect(argv.every((token) => !token.startsWith('"'))).toBe(true);
+      const body = (script ?? "").replace(/^\s*cd\s+\.\.\s+&&\s*/, "");
+      expect(argv.join(" ")).toBe(body.replaceAll('"', ""));
     },
   );
 
-  test("full gate has no unclassified checks", () => {
-    const classified = new Set(
-      REQUIRED_CHECK_POLICIES.map(({ check }) => check),
+  test("gate check names exactly match the harness check-script set", () => {
+    // The gate keys, the exported name list, and the actual package.json scripts must agree — so a
+    // check can neither exist without a script nor a script be silently dropped from the gate.
+    const { scripts } = readHarnessPackageJsonInRepo(REPO);
+    if (!isPlainObject(scripts)) {
+      throw new TypeError("harness package.json has no scripts object");
+    }
+    expect(Object.keys(FULL_CHECKS)).toEqual([...FULL_CHECK_NAMES]);
+    expect(Object.keys(COMMIT_CHECKS)).toEqual([...COMMIT_CHECK_NAMES]);
+    for (const name of FULL_CHECK_NAMES) {
+      expect(
+        typeof scripts[name],
+        `no harness script for gate check "${name}"`,
+      ).toBe("string");
+    }
+  });
+
+  test("a shell-chained or missing check script is rejected at derivation", () => {
+    // The parser must refuse to silently mis-derive: a chained command (`a && b`) or an absent
+    // script throws rather than producing a truncated/empty argv the gate would run.
+    expect(() => deriveCheckCommand("lint")).toThrow(/chains commands/u);
+    expect(() => deriveCheckCommand("does-not-exist")).toThrow(
+      /no harness script/u,
     );
-    expect(
-      Object.keys(FULL_CHECKS).filter((check) => !classified.has(check)),
-    ).toEqual([]);
+  });
+
+  test("scriptsMap narrows a valid package.json and rejects malformed shapes", () => {
+    // Keeps only string-valued scripts; ignores non-string entries defensively.
+    const map = scriptsMap({ scripts: { a: "x", b: 1, c: "y" } });
+    expect(Object.fromEntries(map)).toEqual({ a: "x", c: "y" });
+    // A package.json without a scripts object, or whose scripts is not an object, must throw rather
+    // than silently yield an empty check set (which would make the gate run nothing).
+    expect(() => scriptsMap(null)).toThrow(/no scripts object/u);
+    expect(() => scriptsMap({})).toThrow(/no scripts object/u);
+    expect(() => scriptsMap({ scripts: "nope" })).toThrow(/not an object/u);
+    expect(() => scriptsMap({ scripts: null })).toThrow(/not an object/u);
+  });
+
+  test("tokenizeCommand splits args, unquotes globs, and handles an empty command", () => {
+    expect(tokenizeCommand('tool "a/**/*.css" --flag')).toEqual([
+      "tool",
+      "a/**/*.css",
+      "--flag",
+    ]);
+    // An empty command body (e.g. a script that is only the `cd .. &&` prefix) yields no argv.
+    expect(tokenizeCommand("")).toEqual([]);
   });
 
   test("commit checks do not include slow gate-only tools", () => {
@@ -2063,185 +1954,67 @@ describe("frontend gate shape", () => {
     }
   });
 
-  test("full gate selects heavy, networked, and browser checks for package repos", () => {
+  test("full gate runs every configured full check (no hidden selection)", () => {
+    // runGate runs ALL of FULL_CHECKS — there is no subset-selection logic. Assert the runner is
+    // handed exactly the full check set, so a check can't silently be excluded from the gate. The
+    // per-command content is proven by the drift test above (each == its harness script).
     const repo = makePackageRootsRepo();
-    let selected: Record<string, string[]> | undefined;
+    let seenChecks: Record<string, string[]> | undefined;
     let seenRepo: string | undefined;
     const failures = runGate(repo, (runnerRepo, checks) => {
       seenRepo = runnerRepo;
-      selected = pickChecks(checks, [
-        "audit",
-        "build",
-        "coverage",
-        "e2e",
-        "lighthouse",
-        // "osv", // disabled in gate-data.ts
-        "sast",
-      ]);
+      seenChecks = checks;
       return [];
     });
     expect(failures).toEqual([]);
     expect(seenRepo).toBe(repo);
-    if (selected === undefined) {
-      throw new Error("runGate did not invoke the runner");
-    }
-    const chosen = selected;
-    expect(Object.keys(chosen).toSorted((a, b) => a.localeCompare(b))).toEqual([
-      "audit",
-      "build",
-      "coverage",
-      "e2e",
-      "lighthouse",
-      // "osv", // disabled in gate-data.ts
-      "sast",
-    ]);
-    expect(commandText(checkCommand(chosen, "build"))).toBe(
-      "pnpm --dir frontend run build",
-    );
-    expect(commandText(checkCommand(chosen, "coverage"))).toContain(
-      "harness/vitest.config.js --cache --coverage",
-    );
-    expect(commandText(checkCommand(chosen, "e2e"))).toContain(
-      "harness/playwright.config.js",
-    );
-    expect(commandText(checkCommand(chosen, "lighthouse"))).toContain(
-      "harness/lighthouserc.cjs",
-    );
-    expect(commandText(checkCommand(chosen, "audit"))).toBe(
-      "pnpm --dir frontend audit --audit-level high",
-    );
-    expect(commandText(checkCommand(chosen, "sast"))).toContain(
-      "semgrep scan --config=p/typescript --config=p/javascript --config=p/security-audit --error --metrics=off",
-    );
-    // Disabled in gate-data.ts:
-    // expect(commandText(checkCommand(chosen, "osv"))).toBe(
-    //   "osv-scanner scan source --lockfile=frontend/pnpm-lock.yaml --lockfile=harness/pnpm-lock.yaml",
-    // );
+    expect(seenChecks).toBe(FULL_CHECKS);
+    expect(Object.keys(seenChecks ?? {})).toEqual([...FULL_CHECK_NAMES]);
   });
-
-  test.each([
-    {
-      check: "format",
-      tool: "prettier",
-      required: [
-        "frontend/",
-        "harness/",
-        "--check",
-        "harness/.prettierignore",
-        "--cache",
-        ".cache_prettier",
-      ],
-    },
-    {
-      check: "eslint",
-      tool: "eslint",
-      required: [".", "--config harness/eslint.config.js", "--max-warnings=0"],
-    },
-    {
-      check: "style",
-      tool: "stylelint",
-      required: [
-        "frontend/**/*.css",
-        "--config harness/stylelint.config.js",
-        "--max-warnings=0",
-        "--allow-empty-input",
-      ],
-    },
-    {
-      check: "html",
-      tool: "html-validate",
-      required: ["--config harness/.htmlvalidate.json", "**/*.html"],
-    },
-    {
-      check: "typecheck",
-      tool: "tsc",
-      required: [
-        "-p harness/tsconfig.app.json",
-        "--noEmit",
-        "--incremental",
-        ".cache_tsbuildinfo_app",
-      ],
-    },
-    {
-      check: "schema",
-      tool: "ajv",
-      required: [
-        "compile",
-        "frontend/schemas/**/*.schema.json",
-        "--strict=true",
-        "ajv-formats",
-        "ajv-keywords",
-      ],
-    },
-    {
-      check: "cruise",
-      tool: "depcruise",
-      required: [
-        "frontend",
-        "--config harness/.dependency-cruiser.cjs",
-        "--output-type err",
-      ],
-    },
-    {
-      check: "workflow",
-      tool: "spectral",
-      required: [
-        "lint",
-        ".github/workflows/ci.yml",
-        "--ruleset harness/.spectral.yml",
-        "--fail-severity=warn",
-      ],
-    },
-    {
-      check: "secrets",
-      tool: "secretlint",
-      required: ["**/*", "--secretlintrc harness/.secretlintrc.json"],
-    },
-    {
-      check: "spelling",
-      tool: "cspell",
-      required: [".", "--config harness/cspell.json"],
-    },
-  ])(
-    "$check command is scoped to $tool policy inputs",
-    ({ check, required }) => {
-      const text = commandText(checkCommand(FULL_CHECKS, check));
-      for (const fragment of required) {
-        expect(text, `${check} missing ${fragment}`).toContain(fragment);
-      }
-    },
-  );
 
   test("knip scans repo TypeScript and JavaScript entrypoints", () => {
     const config = parseJsonObject("harness/knip.json");
-    expect(config.ignoreDependencies).toEqual([
+    // ignoreDependencies lists deps knip's import graph cannot see but the gate REQUIRES:
+    //  - @axe-core/playwright: harness owns ALL gate tooling (owner design); its importer is a
+    //    frontend spec, so the harness copy is unused-by-import but required-by-design.
+    //  - secretlint preset: loaded by NAME inside harness/.secretlintrc.json.
+    //  - ajv / ajv-formats / ajv-keywords: consumed by the schema check via ajv-cli CLI args.
+    //  - lighthouse: resolved at runtime by @lhci/cli.
+    // Removing an entry here must be a conscious act: knip itself hints when one stops matching.
+    const harnessIgnoreDependencies = [
+      "@axe-core/playwright",
       "@secretlint/secretlint-rule-preset-recommend",
-    ]);
-    expect(config.ignoreBinaries).toEqual(["semgrep"]);
+      "ajv",
+      "ajv-formats",
+      "ajv-keywords",
+      "lighthouse",
+    ];
+    // (The workspaces toEqual below pins ignoreDependencies as part of the whole object.)
+    // No ignoreBinaries: knip's script parser sees the semgrep invocation in the sast check script
+    // (single-source refactor), so the old semgrep ignore became an obsolete suppression.
+    expect(config.ignoreBinaries).toBeUndefined();
     expect(config.include).toEqual([
       "files",
       "exports",
       "nsExports",
       "types",
       "nsTypes",
+      "dependencies",
     ]);
-    // knip maps each pnpm workspace so imports resolve to the right package.json; the harness
-    // workspace names cli.ts, its configs, tests, and the lighthouse config as entrypoints.
-    // The frontend workspace names its unit tests as entrypoints so knip does not report
-    // test-only exports (or the test files themselves) as unused.
+    // Each workspace declares ONLY the entries knip cannot infer: the frontend's Playwright specs
+    // and its HTML-loaded scripts (knip does not parse <script src>), and the harness's vitest
+    // files + the lighthouse rc no plugin claims. Everything else (cli.ts via the manifest bin
+    // chain, tool configs via knip's plugins) is auto-detected — verified empirically by removing
+    // each entry and observing false positives. `project` is omitted on purpose: knip's default is
+    // a RECURSIVE glob, the maximal scan surface; the old top-level-only project globs were what
+    // let a dead harness/bin/ file go unnoticed.
     expect(config.workspaces).toEqual({
       frontend: {
-        entry: ["src/**/*.test.ts"],
-        project: ["src/**/*.ts"],
+        entry: ["tests/**/*.spec.ts", "scripts/*.js", "public/scripts/*.js"],
       },
       harness: {
-        entry: [
-          "cli.ts",
-          "*.config.{js,cjs,mjs,ts}",
-          "*.test.ts",
-          "lighthouserc.cjs",
-        ],
-        project: ["*.ts", "*.{js,cjs,mjs}"],
+        entry: ["*.test.ts", "lighthouserc.cjs"],
+        ignoreDependencies: harnessIgnoreDependencies,
       },
     });
     expect(existsSync(path.join(HARNESS, "tmprepo.ts"))).toBe(false);
@@ -2274,25 +2047,22 @@ describe("frontend gate shape", () => {
     expect(scripts.preflight).toBe("node harness/harness.mjs preflight");
   });
 
-  test("harness package scripts use bounded repo file targets", () => {
+  test("gate-check scripts run from repo root and are bounded", () => {
+    // The scripts ARE the source of truth (the derivation tests prove gate == script), so we assert
+    // PROPERTIES here, not a copied command string. Every gate-check script must (a) prefix
+    // `cd .. &&` so it runs from the repo root where the gate spawns, and (b) name a bounded target
+    // or its harness-owned config — never an unbounded bare-`.` walk that would descend into
+    // node_modules. Only ESLint legitimately scopes with `.` (its config's ignores bound it).
     const scripts = readPackageScripts("harness/package.json");
-    // Harness npm scripts run via `pnpm run`, which puts the workspace node_modules/.bin on PATH,
-    // so tools are invoked by bare name (the pnpm-idiomatic form) — no hard-coded .bin path.
-    expect(scripts.eslint).toBe(
-      "cd .. && eslint . --config harness/eslint.config.js --cache --cache-location . --max-warnings=0 --debug",
-    );
-    expect(scripts.style).toBe(
-      'cd .. && stylelint "frontend/**/*.css" --config harness/stylelint.config.js --ignore-path harness/.stylelintignore --max-warnings=0 --allow-empty-input --formatter verbose',
-    );
-    expect(scripts.html).toBe(
-      'cd .. && html-validate --config harness/.htmlvalidate.json "**/*.html"',
-    );
-    expect(scripts.typecheck).toBe(
-      "pnpm typecheck:harness && pnpm typecheck:project",
-    );
-    expect(scripts["typecheck:project"]).toBe(
-      "cd .. && tsc -p harness/tsconfig.app.json --noEmit",
-    );
+    for (const name of FULL_CHECK_NAMES) {
+      const script = scripts[name];
+      expect(typeof script, `${name} has no script`).toBe("string");
+      expect(script, `${name} must run from repo root`).toMatch(/^cd \.\. &&/u);
+    }
+    // Style/html/spelling target frontend or a rooted glob, not a bare directory walk.
+    expect(scripts.style).toContain('"frontend/**/*.css"');
+    expect(scripts.spelling).toContain('"frontend/*"');
+    // The two-step human typecheck alias and the frontend alias stay indirection-only.
     expect(scripts["typecheck:frontend"]).toBe("pnpm typecheck:project");
     expect(scripts["typecheck:frontend"]).not.toContain(
       "frontend/tsconfig.json",
