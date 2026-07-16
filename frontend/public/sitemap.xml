@@ -6,10 +6,20 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
-  <!-- conference.html and engineering-the-loop.html are canonicalized to dev.to,
-       so they are intentionally absent: a sitemap must only list canonical URLs. -->
   <url>
     <loc>https://rxdt.dev/calculator-writeup.html</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rxdt.dev/conference.html</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rxdt.dev/engineering-the-loop.html</loc>
     <lastmod>2026-07-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
