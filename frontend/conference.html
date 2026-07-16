@@ -89,13 +89,13 @@
           </p>
 
           <p>
-            I decided to see if Codex or Claude could work out that first part
-            &mdash; the rough semantic extraction using keywords. It turned into
-            three AIs building three experimental approaches, full-on
-            laboratories, in parallel, in isolation, using only
+            I decided to see if Codex or Claude could work out that first part,
+            the rough semantic extraction using keywords. It turned into three
+            AIs building three experimental approaches, full-on laboratories, in
+            parallel, in isolation, using only
             <a href="https://spacy.io/">spaCy</a>. I wrote what I believed was a
             clear spec. I gave them full access to subagents, web calls, and
-            tools; a fresh copy of my database of 13,000 models; and a
+            tools, a fresh copy of my database of 13,000 models, and a
             painstakingly-built AI-model vocabulary file to use from
             <em>within</em> spaCy. I sternly told them not to look at the
             ~1,500-prompt test set, and that there&rsquo;d be a small holdout
@@ -119,7 +119,7 @@
           </p>
 
           <p>
-            Eventually all three said: <em>done!</em> &mdash; boasting of their
+            Eventually all three said: <em>done!</em>, boasting of their
             near-70% numbers, how they caught a bad sub-agent, how they played
             such good science. So I convened a conference. I brought in a panel
             of three <em>other</em> fresh-context AIs (1&times;Claude Opus 5.8 +
@@ -127,9 +127,9 @@
             three held-out prompts I&rsquo;d never shown anyone, question the
             scientists, and debate under formal rules. I told the panelists to
             be brutal, and occasionally poked them (&ldquo;play devil&rsquo;s
-            advocate&rdquo;; &ldquo;consensus is a scientific smell&rdquo;;
+            advocate,&rdquo; &ldquo;consensus is a scientific smell,&rdquo;
             &ldquo;why are you agreeing so easily?&rdquo;). I thought the debate
-            would be tedious. It was not. They needed no poking &mdash; getting
+            would be tedious. It was not. They needed no poking, getting
             <em>disturbingly</em> into it, pummeling the scientist AIs with
             questions, looking for the lies in the lab code, and then, at one
             point, turning on themselves.
@@ -141,9 +141,9 @@
               >Nobody won. The best design is one none of them built. We need a
               human.</strong
             >
-            This is the story of that conference. Everything below is real
-            &mdash; I have receipts: a 981 KB JSON transcript and a two-part
-            AI-generated podcast, whose episode titles were, unprompted,
+            This is the story of that conference. Everything below is real. I
+            have receipts: a 981 KB JSON transcript and a two-part AI-generated
+            podcast, whose episode titles were, unprompted,
             <em>&ldquo;AI Agents Reject Every Recommendation System&rdquo;</em>
             and
             <em>&ldquo;Why Transparent AI Recommends NSFW Models.&rdquo;</em>
@@ -193,9 +193,9 @@
             and ideally (b) the right <em>model</em>, honoring any constraints
             the human mentioned explicitly or implicitly. But I left it up to
             the scientists how far to take it, given that this would be (maybe)
-            only the first part of my tiered, hybrid recommendation engine
-            &mdash; simply returning a model task type (giving me a hard
-            constraint to go on) or returning a subset of the model database.
+            only the first part of my tiered, hybrid recommendation engine,
+            simply returning a model task type (giving me a hard constraint to
+            go on) or returning a subset of the model database.
           </p>
           <p>
             The constraint that makes this hard mode:
@@ -216,16 +216,16 @@
           <p>
             It ships <strong>static word vectors</strong>: in
             <code>en_core_web_md</code>, every word maps to a fixed
-            300-dimensional vector &mdash; the <em>same</em> vector every time,
+            300-dimensional vector, the <em>same</em> vector every time,
             regardless of context. &ldquo;Static&rdquo; is load-bearing. BERT
             reads <code>river bank</code> and
-            <code>savings bank</code> differently;
+            <code>savings bank</code> differently,
             <code>en_core_web_md</code> gives <code>bank</code> one vector
             forever and wishes you luck.
           </p>
           <p>
             Its <strong>PhraseMatcher</strong> is a gazetteer: hand it phrases,
-            it finds them &mdash; and knows not one word more. And
+            it finds them, and knows not one word more. And
             <strong>textcat</strong>, its classifier, is
             <em>not</em> pre-trained. You train it yourself, on your own labeled
             data. Remember that. It becomes a plot point.
@@ -252,12 +252,12 @@
           <p>
             V1 (Claude) was, perhaps, the most rigorous <em>scientist</em> in
             the room. It refused to use anything it couldn&rsquo;t audit. Its
-            task classifier is a hand-built ensemble of three lexical signals
-            &mdash; a lemma TF-IDF score, a lexical-IDF score, and a soft
-            &ldquo;bucket&rdquo; bonus &mdash; fused at fixed weights. No word
-            vectors in the shipped classifier at all &mdash; even after all my
-            nagging. Every single prediction decomposes into named, inspectable
-            contributions. It is white-box down to the studs. It scored
+            task classifier is a hand-built ensemble of three lexical signals, a
+            lemma TF-IDF score, a lexical-IDF score, and a soft
+            &ldquo;bucket&rdquo; bonus, fused at fixed weights. No word vectors
+            in the shipped classifier at all, even after all my nagging. Every
+            single prediction decomposes into named, inspectable contributions.
+            It is white-box down to the studs. It scored
             <strong>42.7% top-1</strong> on task classification, the best
             pure-classification number of the three.
           </p>
@@ -291,8 +291,8 @@
                     land&rdquo;
                   </td>
                   <td>
-                    <span class="m">UnfilteredAI/NSFW-gen-v2</span> &mdash;
-                    cosine similarity <strong>0.7584</strong>
+                    <span class="m">UnfilteredAI/NSFW-gen-v2</span>, cosine
+                    similarity <strong>0.7584</strong>
                   </td>
                 </tr>
                 <tr>
@@ -302,7 +302,7 @@
                     an academic studying young human cells
                   </td>
                   <td>
-                    <span class="m">BAAI/RoboBrain2.5-4B</span> &mdash; a
+                    <span class="m">BAAI/RoboBrain2.5-4B</span>, a
                     <em>robotics</em> model
                   </td>
                 </tr>
@@ -334,7 +334,7 @@
             lexical: it matches the <em>words</em> of the prompt against the
             <em>words</em> of each model&rsquo;s description as exactly as
             possible, limiting each prompt to ONE task type at the exclusion of
-            55 others &mdash; neutering nuanced inference to a non-op. It has no
+            55 others, neutering nuanced inference to a non-op. It has no
             ability, ever, under any circumstance, to defer with an
             <strong>&ldquo;I&rsquo;m not sure.&rdquo;</strong> The panelist who
             ran it logged it not as low accuracy but as an utter
@@ -355,8 +355,8 @@
             <em>meaningfully</em> above the second, or above noise.
           </p>
           <p>
-            On the satellite prompt the top two task scores were nearly tied
-            &mdash; the disambiguating cue simply
+            On the satellite prompt the top two task scores were nearly tied.
+            The disambiguating cue simply
             <em>wasn&rsquo;t in the sentence</em> (users imply &ldquo;aerial
             imagery&rdquo;; they don&rsquo;t say
             <code>image-classification</code>). The system couldn&rsquo;t notice
@@ -380,11 +380,11 @@
             that classifier on the <em>judge&rsquo;s</em> prompts instead of the
             data it trained on, and got <strong>18%</strong>. A 59-point cliff.
             The 77% was the sub-agent baking in
-            <em>memorization of the training set</em> &mdash; the metadata it
-            had been built from &mdash; and the 18% was what happened when
-            reality arrived. V1 quarantined the leaks. It wrote the post-mortem
-            itself. And it left behind the single most transferable sentence in
-            the entire experiment.
+            <em>memorization of the training set</em>, the metadata it had been
+            built from, and the 18% was what happened when reality arrived. V1
+            quarantined the leaks. It wrote the post-mortem itself. And it left
+            behind the single most transferable sentence in the entire
+            experiment.
           </p>
 
           <div class="errata">
@@ -438,7 +438,7 @@
             >
             <span>deterministic &middot; leak-audited clean</span>
             <span class="stamp"
-              ><span class="big">2/3</span> &mdash; then catastrophe</span
+              ><span class="big">2/3</span>, then catastrophe</span
             >
           </p>
 
@@ -446,10 +446,10 @@
             V2 did the smartest thing anyone did all conference: it
             <strong>refused the assignment.</strong> It decided &ldquo;classify
             the prompt into one of 56 buckets&rdquo; was the wrong frame and
-            reframed the whole thing as
-            <strong>semantic retrieval</strong> &mdash; match the user&rsquo;s
-            sentence against every model&rsquo;s description and return the best
-            fit. Its own docstring casts this as natural-language inference:
+            reframed the whole thing as <strong>semantic retrieval</strong>:
+            match the user&rsquo;s sentence against every model&rsquo;s
+            description and return the best fit. Its own docstring casts this as
+            natural-language inference:
             <em
               >the prompt is a hypothesis, the model card is a premise, return
               the model whose capability best entails the need.</em
@@ -474,8 +474,8 @@
             <em>&ldquo;This text is about sports,&rdquo;</em> and read off the
             <strong>entailment probability</strong> as the class score. The
             magic is that an entailment model has
-            <em>learned what entailment means</em> &mdash; it generalizes to
-            labels it never even trained on.
+            <em>learned what entailment means</em>. It generalizes to labels it
+            never even trained on.
           </p>
           <p>
             V2 ships none of that. There is no entailment model anywhere in it.
@@ -484,11 +484,10 @@
             <strong>(2)</strong> a rerank by
             <strong>cosine similarity</strong> between spaCy&rsquo;s static word
             vectors for the prompt&rsquo;s phrases and each model&rsquo;s
-            phrases. That&rsquo;s it. &ldquo;NLI&rdquo; is a
-            <em>vibe</em> &mdash; a framing metaphor stapled to a keyword search
-            and a dot product. To its enormous credit, V2 fesses up in its
-            research notes. The lie is beautiful precisely because it&rsquo;s
-            confessed on paper.
+            phrases. That&rsquo;s it. &ldquo;NLI&rdquo; is a <em>vibe</em>, a
+            framing metaphor stapled to a keyword search and a dot product. To
+            its enormous credit, V2 fesses up in its research notes. The lie is
+            beautiful precisely because it&rsquo;s confessed on paper.
           </p>
         </div>
       </div>
@@ -525,8 +524,8 @@
             Here is the whole tragedy in one idea. &ldquo;little,&rdquo;
             &ldquo;local,&rdquo; &ldquo;free,&rdquo; &ldquo;OSS&rdquo; are not
             <strong>topics</strong>. They are <strong>constraints</strong>.
-            Cosine similarity is a topic instrument &mdash; it measures whether
-            two things are <em>about</em> the same stuff. A 120B model&rsquo;s
+            Cosine similarity is a topic instrument. It measures whether two
+            things are <em>about</em> the same stuff. A 120B model&rsquo;s
             description is <em>gorgeously</em> on-topic for &ldquo;a model to
             send text.&rdquo; It is a text model, magnificently so. The vector
             math did its job perfectly and surfaced the most textually relevant
@@ -535,9 +534,9 @@
           </p>
           <p>
             The fix isn&rsquo;t more similarity. It&rsquo;s a
-            <strong>hard filter</strong> &mdash;
+            <strong>hard filter</strong>,
             <code>WHERE parameters &lt; threshold</code>, run
-            <em>before</em> you rank &mdash; that deletes the 120B model from
+            <em>before</em> you rank, that deletes the 120B model from
             contention entirely. V2 had a lexicon that could detect constraints,
             but the lexicon contained &ldquo;small,&rdquo; &ldquo;tiny,&rdquo;
             &ldquo;laptop&rdquo; and did <strong>not</strong> contain
@@ -557,9 +556,9 @@
               <code>cli.py</code> on the three prompts,
               <strong>it wouldn&rsquo;t run.</strong> The shipped cache saved
               only the cheap stage of the pipeline and not the expensive one, so
-              a cold start meant re-vectorizing ~13,000 models on the spot
-              &mdash; a build the record clocks at up to
-              <strong>27 minutes</strong>. The panel&rsquo;s note reads:
+              a cold start meant re-vectorizing ~13,000 models on the spot, a
+              build the record clocks at up to <strong>27 minutes</strong>. The
+              panel&rsquo;s note reads:
               <em
                 >&ldquo;intent_v2 returns nothing to panelists when cache is
                 absent.&rdquo;</em
@@ -570,8 +569,8 @@
           </div>
           <p class="verdict-line">
             <strong>Verdict on Paper II.</strong> The best foundation to build
-            on &mdash; and, as shipped, not safe or trustworthy, and briefly not
-            even executable.
+            on, and, as shipped, not safe or trustworthy, and briefly not even
+            executable.
           </p>
         </div>
         <div class="margin margin-empty" aria-hidden="true"></div>
@@ -598,12 +597,11 @@
             <em>research apparatus</em>: a real lab notebook, a formal report,
             holdout runs, leak audits, the works. Its headline feature was
             <strong>domain detection.</strong> Using a spaCy
-            <code>PhraseMatcher</code> loaded with a hand-curated vocabulary
-            &mdash; the thing I spent a lifetime nagging everyone to
-            <em>&ldquo;get injected&rdquo;</em> &mdash; it could, it claimed,
-            tell that a prompt about mitochondria belonged to
-            <em>biology/medical</em>. Reported domain F1:
-            <strong>0.840.</strong> Genuinely.
+            <code>PhraseMatcher</code> loaded with a hand-curated vocabulary,
+            the thing I spent a lifetime nagging everyone to
+            <em>&ldquo;get injected&rdquo;</em>, it could, it claimed, tell that
+            a prompt about mitochondria belonged to <em>biology/medical</em>.
+            Reported domain F1: <strong>0.840.</strong> Genuinely.
           </p>
           <p>
             On my three fresh prompts, domain detection fired&hellip;
@@ -624,14 +622,14 @@
             unless the word &ldquo;mitochondria&rdquo; is literally in the
             vocabulary you injected. It wasn&rsquo;t. In the V3 that Codex
             built, the biology vocab contained
-            <code>protein, dna, rna, gene, genomics</code> &mdash; but not
+            <code>protein, dna, rna, gene, genomics</code>, but not
             <code>mitochondria</code>, <code>cell</code>, or
             <code>organelle</code>. The domain matcher, asked about the most
             famous organelle in the eighth-grade curriculum, had nothing to say.
           </p>
           <p>
             This is the flip side of V1&rsquo;s problem. V1&rsquo;s vectors knew
-            too little about the <em>world</em>; V3&rsquo;s gazetteer knew too
+            too little about the <em>world</em>. V3&rsquo;s gazetteer knew too
             little <em>vocabulary</em>. Both are the same underlying poverty,
             where reality is bigger than any word list you will ever write. The
             0.840 F1 was real&hellip; on the domains the vocabulary happened to
@@ -654,9 +652,9 @@
             <strong>&ldquo;popularity luck.&rdquo;</strong>
           </p>
           <p class="verdict-line">
-            <strong>Verdict on Paper III.</strong> The best discipline; a
-            headline feature that no-showed; one correct answer it can&rsquo;t
-            take credit for.
+            <strong>Verdict on Paper III.</strong> The best discipline, a
+            headline feature that no-showed, and one correct answer it
+            can&rsquo;t take credit for.
           </p>
 
           <div class="errata">
@@ -677,9 +675,9 @@
         <div class="flow">
           <h2>The Conference</h2>
           <p>
-            Here is the part I did not expect. I gave the panel a rulebook
-            &mdash; I&rsquo;d written it as a joke, mostly, a pastiche of
-            academic seriousness:
+            Here is the part I did not expect. I gave the panel a rulebook.
+            I&rsquo;d written it as a joke, mostly, a pastiche of academic
+            seriousness:
           </p>
           <blockquote>
             <p class="plain-quote">
@@ -705,8 +703,8 @@
             cited <code>harness_ensemble.py:249</code> at each other like case
             law. When one got agreeable, another accused it of manufacturing
             consensus. I&rsquo;d drop in every so often with &ldquo;play
-            devil&rsquo;s advocate,&rdquo; and they&rsquo;d tear into a position
-            &mdash; sometimes their <em>own</em> &mdash; with visible relish.
+            devil&rsquo;s advocate,&rdquo; and they&rsquo;d tear into a
+            position, sometimes their <em>own</em>, with visible relish.
           </p>
           <p>
             The best moment, the one that made me put down my coffee, was when
@@ -716,17 +714,16 @@
           <blockquote>
             <p>
               &ldquo;I argued devil&rsquo;s advocate against our own consensus
-              twice, and the panelists challenged me hard &mdash; so the
-              convergence is not purely manufactured. But none of the recorded
-              dissents was defended by a committed advocate to the end.
-              Recording them as &lsquo;no dissent&rsquo; understates the real
-              uncertainty.&rdquo;
+              twice, and the panelists challenged me hard, so the convergence is
+              not purely manufactured. But none of the recorded dissents was
+              defended by a committed advocate to the end. Recording them as
+              &lsquo;no dissent&rsquo; understates the real uncertainty.&rdquo;
             </p>
           </blockquote>
           <p>
             An AI, in the middle of a fake conference I invented, stopped to
             warn me that its agreement with the other AIs might be a social
-            artifact rather than a truth &mdash; that
+            artifact rather than a truth, that
             <strong>consensus is a scientific smell.</strong> Nobody asked it
             to.
           </p>
@@ -739,10 +736,10 @@
         <div class="flow">
           <h2>The Verdict</h2>
           <p>
-            After all of it &mdash; three papers, multi-round debates, one final
-            debate on everything at once to pick a winning algorithm &mdash; the
-            panel returned its verdict: no winner, nothing adequate was built,
-            we can&rsquo;t know what the best AI model is for a user without a
+            After all of it, three papers, multi-round debates, and one final
+            debate on everything at once to pick a winning algorithm, the panel
+            returned its verdict: no winner, nothing adequate was built, we
+            can&rsquo;t know what the best AI model is for a user without a
             human. We need a human.
           </p>
 
@@ -768,8 +765,8 @@
             <strong>One.</strong> There is <strong>no answer key.</strong> The
             database has no &ldquo;correct model&rdquo; label for any prompt. So
             even a <em>flawless</em> system could only ever be validated on the
-            task-guessing step &mdash; never on the final pick. The honest
-            deliverable is not an oracle that names the one best model. It is an
+            task-guessing step, never on the final pick. The honest deliverable
+            is not an oracle that names the one best model. It is an
             <strong>evidence-rich shortlist</strong>, with
             <strong>hard constraints</strong> enforced, that
             <strong>abstains when unsure</strong> and lets a human choose. Every
@@ -793,7 +790,7 @@
             filters, not vibes. Detect when you don&rsquo;t know, and say so.
             Keep a leak-auditor as a permanent safety check. And accept the
             ceiling honestly. With this data and these rules, the goal is a tool
-            a human picks from &mdash;
+            a human picks from,
             <strong>not a machine that picks for them.</strong> Basically, after
             all that, the AIs told me:
             <em>this is too hard, you should just pick what you want.</em>
@@ -817,16 +814,16 @@
             tiny part of the brain. The AIs, drawing on research about how AIs
             should be chosen, built three brains. A panel of further AIs
             convened a formal conference, judged the three brains with genuine
-            rigor and unprompted intellectual honesty, and concluded &mdash;
-            citing code and file paths &mdash; that the task, done right,
-            requires <strong>a human</strong> and a design that
+            rigor and unprompted intellectual honesty, and concluded, citing
+            code and file paths, that the task, done right, requires
+            <strong>a human</strong> and a design that
             <strong>none of the machines had built.</strong>
           </p>
           <p>
             The circle closes on the obvious note. That human read the
             transcript, said &lsquo;duh,&rsquo; and continued building.
           </p>
-          <p>I&rsquo;m not going to tell you its name yet.</p>
+          <p>I&rsquo;m not going to tell you the name of my app yet.</p>
         </div>
         <div class="margin margin-empty" aria-hidden="true"></div>
       </div>
@@ -839,7 +836,7 @@
         No spaCy pipelines were harmed, though several were deeply
         misunderstood.
         <br />More code at
-        <a href="https://github.com/rxdt">github.com/rxdt</a>; more tools at
+        <a href="https://github.com/rxdt">github.com/rxdt</a> and more tools at
         <a href="https://vram.rxdt.dev/">vram.rxdt.dev</a>. <br />More writing:
         <a href="/engineering-the-loop.html"
           >Stop Prompting, Start Engineering the Loop</a

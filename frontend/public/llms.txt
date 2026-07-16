@@ -1,4 +1,4 @@
-# Rox dT — rxdt.dev
+# Rox dT, rxdt.dev
 
 Personal site of Rox dT: agent tools, AI evaluation projects, and practical
 software including the AI Deployment Calculator, a browser tool that estimates

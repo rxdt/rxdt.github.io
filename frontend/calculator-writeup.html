@@ -6,13 +6,13 @@
     <title>A Frontend Loop Needs a Real App</title>
     <meta
       name="description"
-      content="Why an AI VRAM calculator — not a todo list — is the right target for an agent loop that writes frontend code."
+      content="Why an AI VRAM calculator, and not a todo list, is the right target for an agent loop that writes frontend code."
     />
     <link rel="canonical" href="https://rxdt.dev/calculator-writeup.html" />
     <meta property="og:title" content="A Frontend Loop Needs a Real App" />
     <meta
       property="og:description"
-      content="Why an AI VRAM calculator — not a todo list — is the right target for an agent loop that writes frontend code."
+      content="Why an AI VRAM calculator, and not a todo list, is the right target for an agent loop that writes frontend code."
     />
     <meta property="og:type" content="article" />
     <meta
@@ -27,7 +27,7 @@
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": "A Frontend Loop Needs a Real App",
-        "description": "Why an AI VRAM calculator — not a todo list — is the right target for an agent loop that writes frontend code.",
+        "description": "Why an AI VRAM calculator, and not a todo list, is the right target for an agent loop that writes frontend code.",
         "url": "https://rxdt.dev/calculator-writeup.html",
         "image": "https://rxdt.dev/assets/merged.webp",
         "author": {
@@ -73,15 +73,15 @@
         <p>
           The app is live at
           <a href="https://vram.rxdt.dev/">vram.rxdt.dev</a>. You give it a
-          model size, precision, workload, and deployment mode; it gives you a
-          VRAM estimate, a hardware tier, a rough speed, and the assumptions it
-          used to get there. Everything runs in the browser. There is no
+          model size, precision, workload, and deployment mode, and it gives you
+          a VRAM estimate, a hardware tier, a rough speed, and the assumptions
+          it used to get there. Everything runs in the browser. There is no
           backend.
         </p>
 
         <p>
-          This post is about why that app &mdash; and not a todo list &mdash; is
-          the right target for an agent loop that writes frontend code.
+          This post is about why that app, and not a todo list, is the right
+          target for an agent loop that writes frontend code.
         </p>
 
         <h2>
@@ -98,11 +98,11 @@
           <em>naturally</em> interacting inputs: model size, precision,
           quantization overhead, context window, batch size, KV-cache precision,
           execution mode (inference vs LoRA vs QLoRA vs full training), MoE
-          routing, memory sharding. These aren&rsquo;t invented complexity
-          &mdash; they&rsquo;re the actual variables of the actual problem, and
-          they interact. QLoRA pins you to 4-bit. Training modes hide
-          inference-only fields. MoE changes speed but not resident memory. A
-          Local/Edge profile that outgrows every consumer card needs to
+          routing, memory sharding. These aren&rsquo;t invented complexity.
+          They&rsquo;re the actual variables of the actual problem, and they
+          interact. QLoRA pins you to 4-bit. Training modes hide inference-only
+          fields. MoE changes speed but not resident memory. A Local/Edge
+          profile that outgrows every consumer card needs to
           <em>say so</em> instead of cheerfully recommending a datacenter
           accelerator.
         </p>
@@ -121,18 +121,17 @@
         <ul class="notes">
           <li>
             <strong>Incorrect math is visible.</strong> 70B at fp16 is 140 GB of
-            weights; AdamW mixed precision is ~16 bytes per parameter. Anyone in
-            the field can eyeball the output &mdash; and so does the parity
-            suite, which drives four canonical scenarios through real browser
-            controls.
+            weights. AdamW mixed precision is ~16 bytes per parameter. Anyone in
+            the field can eyeball the output, and so does the parity suite,
+            which drives four canonical scenarios through real browser controls.
           </li>
           <li>
             <strong>The UI complexity is natural.</strong> The uncheck path of a
             checkbox whose default is <code>true</code> was a real bug: HTML
             forms omit unchecked boxes, normalization fell back to the default,
             and Gradient Checkpointing could never be turned off. Tests passed,
-            the gate was green, and the bug shipped &mdash; because nobody wrote
-            the <em>uncheck</em> test.
+            the gate was green, and the bug shipped, because nobody wrote the
+            <em>uncheck</em> test.
           </li>
           <li>
             <strong>Tests matter because money does.</strong> People may buy
@@ -154,14 +153,14 @@
         <ul class="notes">
           <li>
             <strong>Specs beat vibes.</strong> Every behavior worth having was
-            written down before it was generated; the ones that weren&rsquo;t
+            written down before it was generated. The ones that weren&rsquo;t
             are the ones that churned.
           </li>
           <li>
-            <strong>Gates catch boring, real issues.</strong> Eighteen checks
-            &mdash; prettier, eslint, stylelint, typecheck, semgrep,
-            100%-coverage units, the full Playwright matrix, Lighthouse budgets.
-            Almost nothing it rejected was interesting. All of it was real.
+            <strong>Gates catch boring, real issues.</strong> Eighteen checks:
+            prettier, eslint, stylelint, typecheck, semgrep, 100%-coverage
+            units, the full Playwright matrix, Lighthouse budgets. Almost
+            nothing it rejected was interesting. All of it was real.
           </li>
           <li>
             <strong>Copy is product logic when numbers are uncertain.</strong>
@@ -183,9 +182,9 @@
         <p>
           Good frontend agent loops need a product-shaped target: something with
           state that interacts, math that can be checked, copy that carries
-          meaning, and users who would notice. A calculator is a cheat code
-          &mdash; the domain supplies the rigor, and the loop either meets it or
-          fails visibly.
+          meaning, and users who would notice. A calculator is a cheat code. The
+          domain supplies the rigor, and the loop either meets it or fails
+          visibly.
         </p>
         <p>
           This one ended up as both: a tool I actually use before recommending
@@ -198,7 +197,7 @@
       <p class="colophon">
         The calculator is live at
         <a href="https://vram.rxdt.dev/"><strong>vram.rxdt.dev</strong></a
-        >; source at
+        >. Source at
         <a href="https://github.com/rxdt/ai_deployment_calculator"
           >rxdt/ai_deployment_calculator</a
         >. The harness it hardened:
