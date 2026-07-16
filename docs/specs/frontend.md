@@ -15,36 +15,26 @@ survive the harness gate and manual visual review.
 - The harness CSP (`script-src 'self'; style-src 'self'`) forbids inline
   `<script>`/`<style>`, so styles/behavior ship as external same-origin files
   that adopt a constructable stylesheet (built HTML has no `<style>`/`style=`).
-  The homepage's sheet loads as a render-blocking classic `<script>` in `<head>`
-  (`frontend/public/scripts/home-styles.js`) so it is adopted before first paint;
-  this clears the Lighthouse cls-culprits body-shift a deferred module caused.
-  The cost is a render-blocking-resources warning (non-blocking): under this CSP
-  any FOUC-free styling is render-blocking unless inlined, which the policy bans.
-  Writeup pages keep deferred style modules (Lighthouse only scans the homepage).
+  The homepage scripts (`frontend/public/scripts/*.js`) load `defer` (non-render-
+  blocking), so neither is a Lighthouse critical-dependency node (empty network-
+  dependency-tree). To still avoid a first-paint shift (cls-culprits), the page
+  ships `<body hidden>`; `home-styles.js` adopts the sheet THEN unhides (first
+  paint already styled), and `home.js` repeats the unhide as a load-failure
+  backstop. This passes BOTH cls-culprits and network-dependency-tree under the
+  pinned CSP. The homepage has no `type="module"` script, so Vite emits no
+  `index-*.js` bundle. Writeups keep deferred style modules (Lighthouse scans
+  only the homepage).
 
 ## Priorities
 
-1. Gate-green static site
-
-- Plan milestones: 1, 2, 4, 5.
-- Fix HTML, lint, accessibility, responsive, and browser failures without
-  weakening checks.
-- Definition of done: `pnpm preflight` exits 0, then `pnpm gate` exits 0.
-
-2. End-to-end page coverage
-
-- Plan milestones: 3, 4, 6.
-- Browser tests must execute the served site entry points, assert HTTP status,
-  headings, exact external destinations, and missing local asset failures.
-- Definition of done: `pnpm --prefix frontend test:e2e` exits 0.
-
-3. Deployment readiness notes
-
-- Plan milestones: 7, 8.
-- Keep `docs/PROJECT_STATUS.md` current with checks, blockers, readiness, and
-  human-review notes.
-- Definition of done: project status is under 100 lines and matches the latest
-  checks.
+1. Gate-green static site (plan 1,2,4,5): fix HTML, lint, a11y, responsive, and
+   browser failures without weakening checks. Done: `pnpm preflight` then
+   `pnpm gate` exit 0.
+2. End-to-end page coverage (plan 3,4,6): browser tests execute served entry
+   points and assert HTTP status, headings, exact external destinations, and
+   missing-asset failures. Done: `pnpm --prefix frontend test:e2e` exits 0.
+3. Deployment readiness (plan 7,8): keep `docs/PROJECT_STATUS.md` current with
+   checks, blockers, readiness, human-review notes, under 100 lines.
 
 ## Guardrails
 
@@ -68,9 +58,10 @@ survive the harness gate and manual visual review.
 - Responsive Playwright projects render the homepage and writeup pages.
 - Every route passes an automated axe-core WCAG A/AA scan in light and dark
   themes across all device projects.
-- Every page's external style module actually applies (a stylesheet is adopted
-  and the page reset takes effect) with no inline `<style>` and no CSP
-  violation, asserted in the browser.
+- Every page's external style module applies (a stylesheet is adopted, the page
+  reset takes effect) with no inline `<style>`/CSP violation; the homepage stays
+  `<body hidden>` until its deferred sheet applies, then reveals — asserted in
+  the browser.
 - AI Deployment Calculator links and structured data use `https://vram.rxdt.dev/`;
   its tile uses `frontend/public/assets/caclulator.png`.
 
@@ -83,18 +74,20 @@ survive the harness gate and manual visual review.
 ## Blockers
 
 - Manual owner visual approval and deployment remain human-owned.
+- OWNER-DECISION (only remaining gate red): `image-delivery-insight` flags the
+  animated `merged.webp` portrait (~15.4 KiB > the 4096 B threshold). Verified
+  unfixable without a tradeoff (bytes-per-displayed-pixel heuristic vs a 40 KiB
+  10-frame animation). Options: accept heavier compression (visible loss), swap
+  to a `<video>` (not image-flagged), or carve the insight out of the harness.
 
 ## Changelog
 
-- 0004-claude 1/1: Fixed the Lighthouse cls-culprits FOUC — the homepage style
-  sheet now loads as a render-blocking classic script in `<head>` (moved to
-  `public/scripts/`) so it applies before first paint; zero visual change, e2e
-  proves the mechanism. Gate stays red only on image-delivery + network-tree.
-- 0003-claude 1/1: Added axe-core WCAG A/AA e2e coverage for every route in
-  light+dark across all device projects; it caught and fixed real bugs the
-  homepage-only Lighthouse scan missed — writeup byline/stamp contrast and the
-  conference results table now a keyboard-focusable named `<section>` region.
-- Prior loops: LoopGate tile shown uncropped (`object-fit: contain`); migrated
-  calculator links/structured data to `https://vram.rxdt.dev/`; added thumbnail
-  + external-destination contracts, filled spec/status, fixed media contracts,
-  externalized CSP-safe styling/behavior, optimized media, cleared e2e.
+- 0001-claude 1/1: Broke the cls-culprits vs network-dependency-tree deadlock —
+  homepage scripts load `defer` with `<body hidden>` unhidden after the sheet is
+  adopted, so BOTH pass with no render-blocking node; dropped the homepage Vite
+  module bundle; resized `caclulator.png` (420x308->330x242) out of image-
+  delivery. Gate red now only on `merged.webp` image-delivery.
+- Prior loops: render-blocking style script for cls (superseded above); axe WCAG
+  A/AA e2e (light+dark) fixing writeup contrast + scrollable table; LoopGate tile
+  uncropped; calculator links/data to `vram.rxdt.dev`; thumbnail + external-
+  destination contracts; CSP-safe externalized styling; optimized media.

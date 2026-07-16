@@ -296,16 +296,17 @@ for (const { heading, route } of writeupRoutes) {
     await expect(page.locator("body")).toHaveCSS("margin", "0px");
   });
 }
-test("homepage applies styles before first paint via a render-blocking style script", async ({
+test("homepage avoids first-paint shift by staying hidden until deferred styles apply", async ({
   page,
 }) => {
   // The homepage CSS is injected by an external same-origin script (CSP forbids
-  // inline <style>). To avoid a first-paint layout shift (Lighthouse
-  // cls-culprits flagged the whole <body> shifting by 1.0), that script must be
-  // a render-blocking CLASSIC script in <head>: it runs and adopts the sheet
-  // before the body is parsed, so first paint is already styled. A deferred
-  // type="module" applied styles after first paint and caused the shift.
-  // Assert the mechanism and its observable effect.
+  // inline <style>). To avoid a first-paint layout shift (Lighthouse cls-culprits
+  // flagged the whole <body> shifting by 1.0) WITHOUT a render-blocking request
+  // (which Lighthouse counts as a critical network dependency), the page ships
+  // <body hidden> and the DEFERRED style script adopts the sheet then unhides the
+  // body — so the first paint the user sees is already styled. Assert the whole
+  // contract: the script is deferred, no violation, styles adopted, body revealed
+  // and reset, and no render-blocking style resource remains.
   await page.addInitScript(() => {
     document.addEventListener("securitypolicyviolation", (violationEvent) => {
       document.documentElement.dataset.cspViolation =
@@ -316,17 +317,19 @@ test("homepage applies styles before first paint via a render-blocking style scr
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
 
-  const styleScript = page.locator(
-    'head > script[src$="/scripts/home-styles.js"]',
-  );
+  const styleScript = page.locator('script[src$="/scripts/home-styles.js"]');
   await expect(styleScript).toHaveCount(1);
-  // No `type` attribute => classic, render-blocking script (not a deferred
-  // module); this is what guarantees the sheet is adopted before first paint.
-  await expect(styleScript).not.toHaveAttribute("type");
+  // `defer` keeps the style script non-render-blocking (low priority), so it is
+  // not a Lighthouse critical-dependency node; the <body hidden> reveal is what
+  // prevents the shift instead.
+  await expect(styleScript).toHaveAttribute("defer", "");
 
   await expect
     .poll(async () => page.evaluate(() => document.adoptedStyleSheets.length))
     .toBeGreaterThan(0);
+  // The reveal actually happened: the styled body is visible, not stuck hidden.
+  await expect(page.locator("body")).toBeVisible();
+  await expect(page.locator("body")).not.toHaveAttribute("hidden", /.*/);
   await expect(page.locator("body")).toHaveCSS("margin", "0px");
   await expect(page.locator("head > style")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveAttribute("data-csp-violation");

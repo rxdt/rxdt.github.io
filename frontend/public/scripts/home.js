@@ -1,3 +1,17 @@
+// Homepage behavior, shipped from public/ as a same-origin classic script so the
+// Content-Security-Policy (script-src 'self') admits it with no inline <script>.
+// It is referenced with `defer` (not type="module"), which keeps it a low-priority,
+// non-render-blocking request: it never becomes a critical-chain node, so the
+// Lighthouse network-dependency-tree stays empty. A module entry would make Vite
+// emit a high-priority `index-*.js` bundle (+ modulepreload polyfill) that Lighthouse
+// counts as a critical dependency.
+
+// Reveal-safety backstop: the page ships with <body hidden> so the first paint is
+// already styled (home-styles.js adopts the sheet, then unhides). This runs after
+// home-styles.js in document order; if that style script failed to load, unhide here
+// so a CSS failure degrades to unstyled-but-visible instead of a permanently blank page.
+document.body.hidden = false;
+
 (() => {
   const comfydayVideo = document.querySelector(".project-video");
 

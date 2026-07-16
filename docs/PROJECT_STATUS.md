@@ -10,13 +10,16 @@
 ## Current State
 
 - Styles/behavior are external same-origin files (no inline `<script>`/`<style>`,
-  zero CSP violations). The homepage sheet loads as a render-blocking classic
-  `<script>` in `<head>` (`public/scripts/home-styles.js`) so it applies before
-  first paint — this fixed the Lighthouse cls-culprits body shift (CLS 1.0 -> 0).
-  Writeup pages keep deferred style modules.
+  zero CSP violations). The homepage now loads `home-styles.js` + `home.js` with
+  `defer` (non-render-blocking) and ships `<body hidden>`; `home-styles.js` adopts
+  the sheet then unhides, so first paint is already styled. This passes BOTH
+  cls-culprits (no shift) AND network-dependency-tree (empty critical chain) — the
+  homepage no longer emits a Vite `index-*.js`/modulepreload bundle. Writeup pages
+  keep deferred style modules.
 - The AI Deployment Calculator tile uses the plan-named
-  `frontend/public/assets/caclulator.png`; homepage links, calculator writeup
-  links, `llms.txt`, and WebApplication structured data now use
+  `frontend/public/assets/caclulator.png`, resized 420x308 -> 330x242 so
+  image-delivery no longer flags it as oversized; homepage links, calculator
+  writeup links, `llms.txt`, and WebApplication structured data use
   `https://vram.rxdt.dev/`.
 - The LoopGate Harness tile now renders the square `py-ralph-frame.svg` with
   `object-fit: contain` (was `cover`, which cropped ~125px top/bottom in the
@@ -36,17 +39,21 @@
 - `pnpm gate`: FAIL on Lighthouse only. Every other check passed (format, lint,
   typecheck, harnessTypes, schema, cruise, deadcode, spelling, workflow, sast,
   secrets, audit, build, coverage, e2e) in the current dirty harness worktree.
-  - `e2e`: PASS, all device projects (added a homepage render-blocking-style test).
-  - `lighthouse`: FAIL on 2 error insights — image-delivery (0) and
-    network-dependency-tree (0). cls-culprits/CLS now PASS; render-blocking is
-    a non-blocking warning.
+  - `e2e`: PASS, all device projects (updated the homepage style test to the new
+    hidden-until-styled mechanism).
+  - `lighthouse`: FAIL on ONE error insight — image-delivery (0), from
+    `merged.webp` only. network-dependency-tree and cls-culprits now PASS (score
+    1 across all 3 runs); render-blocking is now not-applicable. perf/a11y = 1.0.
 
 ## Next
 
-1. Owner decides the two remaining Lighthouse errors (see Blockers): accept
-   ~21 KiB `merged.webp` recompression (visible quality loss) for image-delivery,
-   and whether network-dependency-tree is worth chasing under the pinned CSP.
-2. Owner reviews the site visually and deploys when satisfied.
+1. Owner decides the ONE remaining Lighthouse error (see Blockers): the animated
+   `merged.webp` portrait fails image-delivery and can only pass with a quality
+   tradeoff, a `<video>` swap, or a harness carve-out.
+2. Owner reviews the site visually and deploys when satisfied. Note: the portrait
+   currently renders 318x480 (non-square) because the `height` attribute defeats
+   its `aspect-ratio: 1/1`; left as-is (design choice, and squaring it would only
+   worsen image-delivery) — flag for the owner.
 3. Human reviews pre-existing forbidden `harness/` worktree edits; this loop
    left them unstaged.
 4. Dead file: `frontend/public/assets/portrait.webp` is unreferenced (the
@@ -54,45 +61,39 @@
 
 ## Changelog
 
-- 0004-claude 1/1: Fixed the Lighthouse cls-culprits FOUC by loading the homepage
-  style sheet as a render-blocking classic `<script>` in `<head>` (moved to
-  `public/scripts/`); applies before first paint, zero visual change, e2e proves
-  it. cls-culprits/CLS now pass; gate red only on image-delivery + network-tree.
-- 0003-claude 1/1: Added axe-core WCAG A/AA e2e scans (every route, light+dark,
-  all device projects) and fixed the contrast + scrollable-table violations they
-  surfaced on the writeup pages. Gate still red only on Lighthouse (unchanged).
-- 0002-claude 1/1: Fixed the cropped LoopGate Harness tile (`object-fit:
-  contain`), added e2e proving the full frame renders, and corrected the
-  Lighthouse blocker notes (cls-culprits is frontend-fixable, not harness-owned).
-- 0003-codex 1/1: Migrated calculator links and WebApplication structured data
-  to `https://vram.rxdt.dev/`; e2e and preflight pass, gate reaches Lighthouse.
-- 0002-codex 1/1: Replaced the calculator project text placeholder with the
-  required PNG thumbnail, optimized it to avoid new Lighthouse image findings,
-  and added e2e coverage that asserts the asset decodes.
-- 0001-claude 1/1: Externalized inline CSS/behavior into `frontend/scripts/*`
-  modules to satisfy the harness CSP check; added e2e proving external styles
-  apply under CSP; coverage and e2e now pass.
-- 0005-codex 1/1: Optimized production media, replaced `merged.gif` with
-  animated `merged.webp`, and cleared frontend preflight/e2e/Lighthouse.
+- 0001-claude 1/1: Broke the cls-culprits vs network-dependency-tree deadlock.
+  Homepage scripts now load `defer` (non-render-blocking) with `<body hidden>`
+  unhidden after the sheet is adopted; dropped the homepage Vite module bundle;
+  resized `caclulator.png` out of image-delivery. Verified via a full gate run:
+  netdep=1, cls=1, perf/a11y=1 across all 3 Lighthouse runs; gate red now ONLY on
+  `merged.webp` image-delivery. Updated the homepage style e2e test accordingly.
+- 0004-claude: (superseded) fixed cls via a render-blocking style script.
+- 0003-claude: axe WCAG A/AA e2e fixing writeup contrast + scrollable table.
+- 0002-claude: uncropped LoopGate tile (`object-fit: contain`) with e2e.
+- codex + earlier claude loops: calculator links/data to `vram.rxdt.dev`; PNG
+  thumbnail; optimized media, `merged.gif` -> `merged.webp`; externalized inline
+  CSS/behavior for the CSP check.
 
 ## Blockers
 
-- OWNER-DECISION: `lighthouse:recommended` fails two error insights at minScore
-  0.9 (cls-culprits is now fixed):
-  - image-delivery: `merged.webp` (animated, 480x480) shows ~21 KiB savings only
-    via heavier compression; prior loops confirmed this degrades the animation.
-  - network-dependency-tree: critical chain is HTML -> `home-styles.js` +
-    Vite `index-*.js`/`modulepreload-polyfill` (78ms). Inherent to external
-    scripts under the pinned CSP; no cheap fix found.
+- OWNER-DECISION: `lighthouse:recommended` fails ONE error insight at minScore
+  0.9 — image-delivery, from the animated `merged.webp` portrait (~15.4 KiB >
+  the 4096 B per-image threshold). The insight judges bytes-per-displayed-pixel,
+  so a 40 KiB 10-frame animation shown at ~318x480 CSS on Lighthouse mobile
+  always exceeds it (confirmed: gif2webp/img2webp re-encodes ≥ 40 KiB without
+  visible loss; downscaling hurts desktop). Options: accept heavier compression
+  (visible loss), swap the portrait to a `<video>` (not image-flagged), or carve
+  the insight out of the harness. network-dependency-tree is now GREEN.
 
 ## Harness improvement notes
 
-- The pinned CSP (`style-src 'self'`, no inline/nonce) + token-strict stylelint
-  make it impossible to pass BOTH cls-culprits and render-blocking-resources:
-  FOUC-free styling must be render-blocking (now a classic script; a `.css`
-  `<link>` behaves the same), and inline critical CSS is CSP-banned. Consider a
-  stylelint carve-out for a critical-CSS file or relaxing those insight asserts.
-- `csp.test.ts` should assert on ALL pages (aggregate), not throw on the first,
-  so agents see every offender in one run.
+- CORRECTION to a prior note: passing BOTH cls-culprits and network-dependency-
+  tree under the pinned CSP IS possible without inlining — ship `<body hidden>`
+  and reveal it from a `defer` (non-render-blocking) script after the sheet is
+  adopted. No render-blocking node, no shift. (The old note claimed this was
+  impossible.)
+- image-delivery penalizes any animated raster portrait regardless of encoding
+  effort (per-displayed-pixel heuristic). If an animated portrait is intended,
+  consider a harness carve-out for it, or expect a `<video>`.
 - b7dcc00 landed harness files that fail the harness's own format and sast
   checks; a pre-merge run of `pnpm gate` on harness changes would catch this.

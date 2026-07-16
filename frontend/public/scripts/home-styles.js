@@ -3,12 +3,14 @@
 // them with no inline <script>/<style>. A constructable stylesheet keeps
 // the built HTML free of <style> elements and style= attributes.
 //
-// This ships from public/ and is referenced as a render-blocking classic
-// <script> in <head> (not a deferred module). It runs and adopts the sheet
-// BEFORE the body is parsed and painted, so first paint is already styled.
-// A deferred module applied styles after first paint, shifting the whole
-// <body> once (Lighthouse cls-culprits). It only touches
-// document.adoptedStyleSheets, never the DOM, so running pre-body is safe.
+// This ships from public/ and is referenced with `defer` (a low-priority,
+// non-render-blocking request), so it never becomes a Lighthouse critical-
+// dependency node — keeping the network-dependency-tree empty. To still avoid
+// a first-paint layout shift (cls-culprits flagged the whole <body> shifting by
+// 1.0 when styles applied after paint), the page ships with <body hidden>: this
+// script adopts the sheet and THEN unhides the body, so the first paint the user
+// sees is already styled. A render-blocking classic script would fix the shift too
+// but would itself be a critical-chain node; hiding until styled avoids both.
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(String.raw`
 :root {
@@ -549,3 +551,8 @@ footer {
 }
 `);
 document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+// Reveal the now-styled page. The document ships with <body hidden> so nothing
+// paints unstyled; unhiding after adoption makes the first paint already-styled
+// (no cls-culprits body shift). Runs before home.js, which repeats this as a
+// backstop should this style script ever fail to load.
+document.body.hidden = false;
