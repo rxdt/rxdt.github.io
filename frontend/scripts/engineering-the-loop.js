@@ -272,7 +272,7 @@ h2 {
   display: block;
   margin-bottom: 0.3rem;
 }
-.margin h3 {
+.margin .margin-quote {
   font-family: var(--serif);
   font-size: 1.02rem;
   line-height: 1.25;
