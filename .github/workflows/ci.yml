@@ -61,6 +61,11 @@ jobs:
       - name: Install browsers
         run: pnpm --prefix harness run setup:e2e
 
+      # The gate's sast check spawns the semgrep binary; a missing tool FAILS the gate (no
+      # silent skip). Install per the Semgrep docs (docs.semgrep.dev/semgrep-ci/sample-ci-configs).
+      - name: Install semgrep
+        run: pip install semgrep
+
       - name: Run checks
         run: node harness/harness.mjs gate
 
