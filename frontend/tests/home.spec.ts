@@ -52,7 +52,9 @@ const externalLinkContracts = [
   {
     expectedDestinations: [
       "https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5",
+      "https://github.com/rxdt",
       "https://spacy.io/",
+      "https://vram.rxdt.dev/",
     ],
     heading: /the first \(and last\) intent-inference conference/i,
     route: "/conference.html",
