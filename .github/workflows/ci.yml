@@ -21,6 +21,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/dependency-review-action@v5
         with:
+          base-ref: ${{ github.event.pull_request.base.sha || github.event.before }}
+          head-ref: ${{ github.event.pull_request.head.sha || github.event.after }}
           fail-on-severity: moderate
           fail-on-scopes: runtime, development
           license-check: true
@@ -60,11 +62,6 @@ jobs:
 
       - name: Install browsers
         run: pnpm --prefix harness run setup:e2e
-
-      # The gate's sast check spawns the semgrep binary; a missing tool FAILS the gate (no
-      # silent skip). Install per the Semgrep docs (docs.semgrep.dev/semgrep-ci/sample-ci-configs).
-      - name: Install semgrep
-        run: pip install semgrep
 
       - name: Run checks
         run: node harness/harness.mjs gate
