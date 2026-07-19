@@ -81,6 +81,7 @@ export const FORBIDDEN_PATTERNS = [
   "skipLibCheck",
   "coverage=false",
   "lighthouse:skip",
+  "@ts-ignore",
 ] as const;
 
 // SINGLE SOURCE OF TRUTH. Every gate check's command lives ONLY in harness/package.json scripts

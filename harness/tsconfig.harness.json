@@ -6,7 +6,6 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "skipLibCheck": true,
     "types": ["vitest", "node"],
     "strict": true,
     "noUnusedLocals": true,

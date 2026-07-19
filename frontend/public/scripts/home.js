@@ -6,12 +6,6 @@
 // emit a high-priority `index-*.js` bundle (+ modulepreload polyfill) that Lighthouse
 // counts as a critical dependency.
 
-// Reveal-safety backstop: the page ships with <body hidden> so the first paint is
-// already styled (home-styles.js adopts the sheet, then unhides). This runs after
-// home-styles.js in document order; if that style script failed to load, unhide here
-// so a CSS failure degrades to unstyled-but-visible instead of a permanently blank page.
-document.body.hidden = false;
-
 (() => {
   const comfydayVideo = document.querySelector(".project-video");
 

@@ -65,14 +65,15 @@
         }
       }
     </script>
-    <!-- Styles and behavior load deferred (low-priority, non-render-blocking) so
-         they never become Lighthouse critical-dependency nodes. The document ships
-         <body hidden>; home-styles.js adopts the sheet then unhides, so first paint
-         is already styled (no cls-culprits shift) without a render-blocking request. -->
-    <script defer src="/scripts/home-styles.js"></script>
+    <!-- Styles are real stylesheets linked in <head>: they apply at parse time
+         with no script in the critical path, so a blocked or stale script can
+         never leave the page unstyled. Behavior (video autoplay, cursor trail)
+         loads deferred and is not required for a styled first paint. -->
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/styles/home.css" />
     <script defer src="/scripts/home.js"></script>
   </head>
-  <body hidden>
+  <body>
     <div class="background-grid" aria-hidden="true"></div>
 
     <header>

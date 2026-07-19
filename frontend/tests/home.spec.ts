@@ -296,15 +296,15 @@ for (const { heading, route } of writeupRoutes) {
     ).toHaveAttribute("href", "/");
   });
 
-  test(`writeup route ${route} applies styles from an external module under CSP`, async ({
+  test(`writeup route ${route} applies styles from a linked stylesheet under CSP`, async ({
     page,
   }) => {
-    // The CSP forbids inline <script>/<style>, so each page ships its styles as
-    // an external same-origin module that adopts a constructable stylesheet.
-    // Assert the module actually ran (a sheet was adopted and the page-reset
-    // `body { margin: 0 }` took effect) with no inline <style> and no policy
-    // violation — proving the externalized styling works end to end, not just
-    // that the file was requested.
+    // Styles ship as real same-origin <link rel="stylesheet"> files (allowed by
+    // style-src 'self'), not assembled in JS. They apply at parse time with no
+    // script in the critical path, so a blocked or stale script can never leave
+    // the page unstyled. Assert the stylesheet is linked, the page-reset
+    // `body { margin: 0 }` actually took effect, and there is no inline <style>
+    // or CSP violation — proving the styling works end to end.
     await page.addInitScript(() => {
       document.addEventListener("securitypolicyviolation", (violationEvent) => {
         document.documentElement.dataset.cspViolation =
@@ -316,12 +316,12 @@ for (const { heading, route } of writeupRoutes) {
 
     expect(response?.status()).toBe(200);
     await expect(page.locator("head > style")).toHaveCount(0);
+    await expect(
+      page.locator('head > link[rel="stylesheet"]'),
+    ).not.toHaveCount(0);
     await expect(page.locator("html")).not.toHaveAttribute(
       "data-csp-violation",
     );
-    await expect
-      .poll(async () => page.evaluate(() => document.adoptedStyleSheets.length))
-      .toBeGreaterThan(0);
     await expect(page.locator("body")).toHaveCSS("margin", "0px");
   });
 }
@@ -343,17 +343,15 @@ test("the GitHub Pages 404 fallback redirects unknown routes to the homepage", a
   ).toBeVisible();
 });
 
-test("homepage avoids first-paint shift by staying hidden until deferred styles apply", async ({
+test("homepage is styled at first paint via a linked stylesheet, not a script", async ({
   page,
 }) => {
-  // The homepage CSS is injected by an external same-origin script (CSP forbids
-  // inline <style>). To avoid a first-paint layout shift (Lighthouse cls-culprits
-  // flagged the whole <body> shifting by 1.0) WITHOUT a render-blocking request
-  // (which Lighthouse counts as a critical network dependency), the page ships
-  // <body hidden> and the DEFERRED style script adopts the sheet then unhides the
-  // body — so the first paint the user sees is already styled. Assert the whole
-  // contract: the script is deferred, no violation, styles adopted, body revealed
-  // and reset, and no render-blocking style resource remains.
+  // The homepage CSS ships as real same-origin <link rel="stylesheet"> files
+  // (tokens + page styles), applied at parse time. No <body hidden>, no
+  // constructable stylesheet, no script in the styling critical path — so the
+  // page can never render as raw unstyled HTML if a script is blocked or stale.
+  // Assert the stylesheet is linked, the body is visible and reset, and there is
+  // no inline <style> or CSP violation.
   await page.addInitScript(() => {
     document.addEventListener("securitypolicyviolation", (violationEvent) => {
       document.documentElement.dataset.cspViolation =
@@ -364,17 +362,8 @@ test("homepage avoids first-paint shift by staying hidden until deferred styles 
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
 
-  const styleScript = page.locator('script[src$="/scripts/home-styles.js"]');
-  await expect(styleScript).toHaveCount(1);
-  // `defer` keeps the style script non-render-blocking (low priority), so it is
-  // not a Lighthouse critical-dependency node; the <body hidden> reveal is what
-  // prevents the shift instead.
-  await expect(styleScript).toHaveAttribute("defer", "");
-
-  await expect
-    .poll(async () => page.evaluate(() => document.adoptedStyleSheets.length))
-    .toBeGreaterThan(0);
-  // The reveal actually happened: the styled body is visible, not stuck hidden.
+  await expect(page.locator('head > link[rel="stylesheet"]')).not.toHaveCount(0);
+  // The body is styled and visible with no reveal step and no hidden gate.
   await expect(page.locator("body")).toBeVisible();
   await expect(page.locator("body")).not.toHaveAttribute("hidden", /.*/);
   await expect(page.locator("body")).toHaveCSS("margin", "0px");

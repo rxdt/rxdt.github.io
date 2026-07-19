@@ -193,7 +193,6 @@ export default defineConfig([
 
       complexity: ["error", 10], // Low carb
       "sonarjs/cognitive-complexity": ["error", 10],
-      "security/detect-object-injection": "off",
       "max-statements": ["error", { max: 25 }],
       "no-inner-declarations": "error", // Prevent fracturing code into tiny pieces
       "unicorn/prefer-spread": "error",
@@ -309,10 +308,6 @@ export default defineConfig([
       // Turn ON rules that actually prevent broken code documentation
       "jsdoc/check-param-names": "error", // Comment names match actual code variables
       "jsdoc/check-tag-names": "error", // No typos in tags like writing @paramm
-      // NOISY
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-param-description": "off",
-      "jsdoc/check-alignment": "off",
     },
   },
   // TypeScript test files.
@@ -330,7 +325,6 @@ export default defineConfig([
       "unicorn/no-unsafe-dom-html": "off",
       "unicorn/prefer-dom-node-html-methods": "off",
       "sonarjs/no-floating-point-equality": "error",
-      "no-control-regex": "error",
       "security/detect-unsafe-regex": "error",
     },
   },
