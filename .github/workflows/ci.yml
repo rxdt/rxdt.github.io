@@ -109,3 +109,30 @@ jobs:
 
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Smoke-test the live deploy
+        # Catches stale/partial deploys: the page HTML updated but its hashed
+        # /assets/*.css|js did not, so the referenced bundle 404s and the page
+        # renders unstyled. Fetch each page and assert every same-origin asset it
+        # references resolves 200 on the live site.
+        run: |
+          set -euo pipefail
+          base="${{ steps.deployment.outputs.page_url }}"
+          base="${base%/}"
+          fail=0
+          for page in "" calculator-writeup.html engineering-the-loop.html conference.html; do
+            url="$base/$page"
+            html="$(curl -fsSL "$url")"
+            for asset in $(printf '%s' "$html" | grep -oE '/assets/[A-Za-z0-9._-]+\.(css|js)' | sort -u); do
+              code="$(curl -s -o /dev/null -w '%{http_code}' "$base$asset")"
+              if [ "$code" != "200" ]; then
+                echo "BROKEN: $url references $asset -> HTTP $code"
+                fail=1
+              fi
+            done
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "Live deploy is serving pages whose assets 404 (stale deploy)."
+            exit 1
+          fi
+          echo "Live deploy assets all resolve."
