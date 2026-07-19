@@ -48,7 +48,8 @@ const UNSAFE_ENV_PREFIXES = ["GIT_"];
 // process.env minus GIT_* and code-injection vars, so a poisoned env can't redirect our Git calls
 // or run arbitrary code inside the checks. PATH/HOME/NODE_* the toolchain needs are preserved.
 /**
-
+Build the environment for Git calls: process.env with the code-injection keys and every GIT_* variable removed.
+@returns The filtered environment, safe to pass to Git subprocesses.
 */
 export function gitSafeEnvironment(): NodeJS.ProcessEnv {
   return Object.fromEntries(
@@ -65,7 +66,9 @@ export function gitSafeEnvironment(): NodeJS.ProcessEnv {
 // what `pnpm run` does and resolves the tools wherever pnpm links them, while external tools
 // (semgrep, osv-scanner, pnpm) still resolve from the machine's own PATH.
 /**
-@param repo
+Build the environment for check subprocesses: the safe Git env with the harness's node_modules/.bin prepended to PATH.
+@param repo - Repository root; its harness/node_modules/.bin is added to PATH.
+@returns The environment used to spawn each check.
 */
 function checkEnvironment(repo: string): NodeJS.ProcessEnv {
   const environment = gitSafeEnvironment();
@@ -76,8 +79,10 @@ function checkEnvironment(repo: string): NodeJS.ProcessEnv {
 
 // Run a Git command in the repo and return its stdout.
 /**
-@param repo
-@param args
+Run a Git command in the repo and return its stdout, throwing if Git exits non-zero.
+@param repo - Repository root, passed to Git via -C.
+@param args - Git arguments following the -C flag.
+@returns The command's stdout.
 */
 export function runGit(repo: string, args: string[]): string {
   const result = spawnSync("git", ["-C", repo, ...args], {
@@ -102,7 +107,9 @@ interface CheckContext {
 // means a broken install, not an optional extra — so it FAILS the gate (matching Semgrep/Lighthouse
 // CI, which fail on a missing tool/environment). Silent skips would let a check quietly not run.
 /**
-@param result
+Report whether a spawn failed because the tool binary was missing (ENOENT).
+@param result - The spawnSync return value to inspect.
+@returns True when the spawn error code is "ENOENT".
 */
 function isToolMissing(result: SpawnSyncReturns<string>): boolean {
   const code =
@@ -115,8 +122,10 @@ function isToolMissing(result: SpawnSyncReturns<string>): boolean {
 // Failure detail from a non-passing spawn; empty output falls back to the command. stdout/stderr
 // are typed string but are undefined at runtime on ENOENT, so coalesce each.
 /**
-@param result
-@param command
+Build failure detail from a non-passing spawn: joined stdout/stderr/signal plus any error, falling back to the command line when the output is empty.
+@param result - The spawnSync return value describing the failure.
+@param command - The command tokens, used as the fallback message.
+@returns The failure detail string.
 */
 function describeFailure(
   result: SpawnSyncReturns<string>,
@@ -131,9 +140,11 @@ function describeFailure(
 }
 
 /**
-@param context
-@param name
-@param command
+Run one named check command and report its outcome. Spawns the command in the repo, logs start/finish to stderr, and returns undefined on success.
+@param context - Shared run invariants: repo, environment, and per-check timeout.
+@param name - Human-readable check name used in log and failure messages.
+@param command - The executable and its arguments to run.
+@returns A failure message, or undefined when the check passes.
 */
 function runOneCheck(
   context: CheckContext,
@@ -177,7 +188,9 @@ function runOneCheck(
 }
 
 /**
-@param repo
+List the paths of all files staged in the index.
+@param repo - Repository root.
+@returns The staged file paths, empty entries removed.
 */
 function stagedNames(repo: string): string[] {
   return runGit(repo, ["diff", "--cached", "--name-only"])
@@ -188,8 +201,9 @@ function stagedNames(repo: string): string[] {
 // Staged symlinks (Git mode 120000). A symlink's path may look like ordinary source but
 // point at a protected file or outside the repo, so the loop must unstage it, not read it
 /**
-
-* @param repo
+List the paths of staged symlinks (Git mode 120000) in the index.
+@param repo - Repository root.
+@returns The staged symlink paths.
 */
 function stagedSymlinks(repo: string): string[] {
   return runGit(repo, ["ls-files", "--stage", "-z"])
@@ -210,15 +224,18 @@ interface StagedChange {
 
 // How many path fields follow a `-z` status token: 2 for a rename/copy (R/C), else 1.
 /**
-@param status
+Report how many path fields follow a `-z` name-status token: 2 for a rename/copy (R/C), else 1.
+@param status - The name-status token (e.g. "M", "R100", "C075").
+@returns 2 for rename/copy statuses, otherwise 1.
 */
 function pathCountFor(status: string): number {
   return status.startsWith("R") || status.startsWith("C") ? 2 : 1;
 }
 
 /**
-
-* @param repo
+Parse the staged name-status diff (rename/copy detection on) into per-change records of status plus paths.
+@param repo - Repository root.
+@returns One record per staged change, each with its status and one or two paths.
 */
 function stagedChanges(repo: string): StagedChange[] {
   const fields = runGit(repo, [
@@ -258,7 +275,9 @@ function stagedChanges(repo: string): StagedChange[] {
 // Match case-insensitively (both sides lowercased) so a case-insensitive filesystem (macOS:
 // `Harness/gate.ts`) cannot slip a forbidden path past the FORBIDDEN_* sets.
 /**
-@param file
+Report whether a path is forbidden, matching the FORBIDDEN_FILES, FORBIDDEN_BASENAMES, and FORBIDDEN_DIRS sets case-insensitively.
+@param file - The path to test.
+@returns True when the path (or its basename or a parent directory) is forbidden.
 */
 export function isForbiddenPath(file: string): boolean {
   const lower = file.toLowerCase();
@@ -274,9 +293,10 @@ export function isForbiddenPath(file: string): boolean {
 }
 
 /**
-
-* @param repo
-* @param paths
+Collect the added lines (leading "+", excluding the "+++" header) from the staged diff of the given paths.
+@param repo - Repository root.
+@param paths - Paths to restrict the diff to.
+@returns The added diff lines.
 */
 function stagedDiffAddedLines(
   repo: string,
@@ -288,9 +308,10 @@ function stagedDiffAddedLines(
 }
 
 /**
-
-* @param repo
-* @param file
+Read the staged (index) content of a file via `Git show :<file>`.
+@param repo - Repository root.
+@param file - Path of the staged file to read.
+@returns The staged content, or undefined when the Git show command fails (e.g. path not staged).
 */
 function stagedContent(repo: string, file: string): string | undefined {
   const result = spawnSync("git", ["-C", repo, "show", `:${file}`], {
@@ -304,8 +325,10 @@ function stagedContent(repo: string, file: string): string | undefined {
 // stays staged so the author sees exactly where the escape hatch is and must remove it themselves.
 // A non-empty problem list fails preflight (and later the push), naming the pattern and its file.
 /**
-@param repo
-@param change
+Report each forbidden pattern found in a staged change's added lines, one problem per matched pattern, named against the change's destination path.
+@param repo - Repository root.
+@param change - The staged change whose added lines are scanned.
+@returns One message per forbidden pattern occurrence.
 */
 function bannedPatternProblems(repo: string, change: StagedChange): string[] {
   // For a rename/copy, Git emits [source, destination]; the added lines live in the
@@ -323,9 +346,10 @@ function bannedPatternProblems(repo: string, change: StagedChange): string[] {
 }
 
 /**
-
-* @param repo
-* @param files
+Check each staged .ts file's content against the human-preference rules, sorted by path.
+@param repo - Repository root.
+@param files - Staged file paths to check.
+@returns One entry per preference violation found across the files.
 */
 export function preferenceProblems(
   repo: string,
@@ -343,10 +367,11 @@ export function preferenceProblems(
 
 // Run each named check; one failure entry per command that fails.
 /**
-
-* @param repo
-* @param checks
-* @param timeoutMs
+Run each named check command in the repo; one failure entry per command that fails.
+@param repo - Repository root the checks run in.
+@param checks - Map of check name to its command tokens.
+@param timeoutMs - Per-check timeout in milliseconds; 0 disables the timeout. Defaults to PREFLIGHT_TIMEOUT_MS.
+@returns The failure messages, empty when every check passes.
 */
 export function runChecks(
   repo: string,
@@ -367,9 +392,10 @@ export function runChecks(
 // Pre-commit: fast lint/format for everyone. For agents in the loop (RALPH_LOOP) also
 // drop forbidden staged paths and flag banned patterns + human-preference breaks.
 /**
-
-* @param repo
-* @param runner
+Run pre-commit checks: fast lint/format for everyone, plus (under RALPH_LOOP) agent containment that unstages forbidden paths and symlinks, flags banned patterns, and reports human-preference breaks.
+@param repo - Repository root.
+@param runner - Check runner, injectable for tests; defaults to runChecks.
+@returns The preflight problems, empty when preflight passes.
 */
 export function runPreflight(
   repo: string,
@@ -410,9 +436,10 @@ export function runPreflight(
 
 // Pre-push / CI: lint, format, types, security, build, 100% tests, browser checks.
 /**
-
-* @param repo
-* @param runner
+Run the full pre-push / CI gate (FULL_CHECKS) with no per-check timeout, so long browser/build/coverage checks can complete.
+@param repo - Repository root.
+@param runner - Check runner, injectable for tests; defaults to runChecks.
+@returns The gate problems, empty when the gate passes.
 */
 export function runGate(
   repo: string,

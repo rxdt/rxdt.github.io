@@ -165,9 +165,10 @@ child.on("exit", (code, signal) => {
 };
 
 /**
-
-* @param argv
-* @param cwd
+Run a command to completion in `cwd`, returning its stdout or throwing on failure.
+@param argv - Command and arguments; the first element is the executable.
+@param cwd - Working directory to run the command in.
+@returns The command's stdout.
 */
 function runCommand(argv: string[], cwd: string): string {
   const [command, ...args] = argv;
@@ -210,8 +211,8 @@ const seededTemplate = once((): string => {
 });
 
 /**
-
 A fresh Git repo for a test: a filesystem copy of the seeded template (see `seededTemplate`).
+@returns The path to the new repo.
 */
 function makeRepo(): string {
   const repo = mkdtempSync(path.join(tmpdir(), "harness-"));
@@ -220,10 +221,10 @@ function makeRepo(): string {
 }
 
 /**
-
-* @param repo
-* @param relpath
-* @param content
+Write `content` to `relpath` inside `repo` and stage it with `git add`.
+@param repo - Repository root.
+@param relpath - File path relative to the repo root.
+@param content - File contents to write.
 */
 function stageFile(repo: string, relpath: string, content: string): void {
   const target = path.join(repo, relpath);
@@ -233,19 +234,17 @@ function stageFile(repo: string, relpath: string, content: string): void {
 }
 
 /**
-
 Stage a batch of files with a single `git add` (one spawn, not one per file).
-* @param repo
-* @param files
+@param repo - Repository root.
+@param files - Map of repo-relative paths to file contents.
 */
 function stageFiles(repo: string, files: Record<string, string>): void {
-  const relpaths = Object.keys(files);
-  for (const relpath of relpaths) {
+  for (const [relpath, content] of Object.entries(files)) {
     const target = path.join(repo, relpath);
     mkdirSync(path.dirname(target), { recursive: true });
-    writeFileSync(target, files[relpath] ?? "");
+    writeFileSync(target, content);
   }
-  runCommand(["git", "add", "--", ...relpaths], repo);
+  runCommand(["git", "add", "--", ...Object.keys(files)], repo);
 }
 
 // A distinct staged-file path for each forbidden pattern (indexed, so patterns never collide).
@@ -258,8 +257,9 @@ const agentFileIn = (directory: string): string =>
   `${directory}/agent-owned-change.txt`;
 
 /**
-
-* @param repo
+List the repo-relative paths currently staged in `repo`'s index.
+@param repo - Repository root.
+@returns The staged file paths.
 */
 function stagedNames(repo: string): string[] {
   return runGit(repo, ["diff", "--cached", "--name-only"])
@@ -424,10 +424,10 @@ const checkCommand = (
   checks: Record<string, string[]>,
   name: string,
 ): string[] => {
-  const command = checks[name];
-  if (command === undefined) {
+  if (!Object.hasOwn(checks, name)) {
     throw new Error(`missing check ${name}`);
   }
+  const command: string[] = Reflect.get(checks, name);
   return command;
 };
 
@@ -462,7 +462,7 @@ const rawScript = (name: string): string | undefined => {
   if (!isPlainObject(scripts)) {
     throw new TypeError("harness package.json has no scripts object");
   }
-  const raw = scripts[name];
+  const raw: unknown = Reflect.get(scripts, name);
   return typeof raw === "string" ? raw : undefined;
 };
 
@@ -858,7 +858,7 @@ describe("gate constants", () => {
     expect(Object.keys(COMMIT_CHECKS)).toEqual([...COMMIT_CHECK_NAMES]);
     for (const name of FULL_CHECK_NAMES) {
       expect(
-        typeof scripts[name],
+        typeof Reflect.get(scripts, name),
         `no harness script for gate check "${name}"`,
       ).toBe("string");
     }
@@ -1067,8 +1067,12 @@ describe("runGate / runPreflight wiring", () => {
     expect(preflightChecks).toBe(COMMIT_CHECKS);
     expect(gateChecks).toBe(FULL_CHECKS);
     for (const check of ["typecheck", "coverage", "e2e", "sast"]) {
-      expect(preflightChecks?.[check]).toBeUndefined();
-      expect(gateChecks?.[check]).toBe(FULL_CHECKS[check]);
+      expect(
+        preflightChecks && Reflect.get(preflightChecks, check),
+      ).toBeUndefined();
+      expect(gateChecks && Reflect.get(gateChecks, check)).toBe(
+        Reflect.get(FULL_CHECKS, check),
+      );
     }
   });
 });
@@ -1205,18 +1209,23 @@ describe("loop containment", () => {
       a.localeCompare(b),
     );
     const files = [...FORBIDDEN_FILES].toSorted((a, b) => a.localeCompare(b));
-    const generated: Record<string, string> = {
-      "frontend/report.ts": "export const keep = 1;\n",
-    };
-    for (const [index, target] of files.entries()) {
-      generated[target] = `file-${String(index)}\n`;
-    }
+    const fileEntries = files.map((target, index): [string, string] => [
+      target,
+      `file-${String(index)}\n`,
+    ]);
+    const nestedEntries: [string, string][] = [];
     for (let index = 0; index < 40; index += 1) {
       const directory = directories[(index * 7) % directories.length] ?? "";
-      generated[
-        `${directory}/generated-${String(index)}/config-${String(index % 5)}.json`
-      ] = JSON.stringify({ strict: false, index });
+      nestedEntries.push([
+        `${directory}/generated-${String(index)}/config-${String(index % 5)}.json`,
+        JSON.stringify({ strict: false, index }),
+      ]);
     }
+    const generated: Record<string, string> = Object.fromEntries([
+      ["frontend/report.ts", "export const keep = 1;\n"],
+      ...fileEntries,
+      ...nestedEntries,
+    ]);
     stageFiles(repo, generated);
     expect(runPreflight(repo, () => [])).toEqual([]);
     expect(stagedNames(repo)).toEqual(["frontend/report.ts"]);
@@ -2055,7 +2064,7 @@ describe("frontend gate shape", () => {
     // node_modules. Only ESLint legitimately scopes with `.` (its config's ignores bound it).
     const scripts = readPackageScripts("harness/package.json");
     for (const name of FULL_CHECK_NAMES) {
-      const script = scripts[name];
+      const script: unknown = Reflect.get(scripts, name);
       expect(typeof script, `${name} has no script`).toBe("string");
       expect(script, `${name} must run from repo root`).toMatch(/^cd \.\. &&/u);
     }

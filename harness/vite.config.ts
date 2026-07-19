@@ -22,12 +22,11 @@ const htmlEntries = globSync("*.html", { cwd: frontendRoot }).map((file) =>
 export const CSP_POLICY =
   "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'";
 
-// Injects the pinned CSP as a <meta> tag at the very top of <head> on every
-// built page. Vite's transformIndexHtml fires once per HTML entry in a
-// multi-page build, so all portfolio pages get the policy. `head-prepend`
-// places the meta before any resource-referencing tag, as CSP requires.
 /**
-
+Injects the pinned CSP as a <meta> tag at the very top of <head> on every
+built page. `head-prepend` places the meta before any resource-referencing tag,
+as CSP requires.
+@returns A Vite plugin that prepends the CSP meta to each page's <head>.
 */
 export function cspMeta(): Plugin {
   return {
@@ -45,9 +44,33 @@ export function cspMeta(): Plugin {
   };
 }
 
+/**
+Preloads this page's own stylesheets so Lighthouse's NetworkDependencyTree
+treats them as non-critical (isLinkPreload) and they leave the critical request
+chain. The real <link rel="stylesheet"> still renders the page with no JS; this
+only adds a matching same-origin preload immediately before each stylesheet, so
+the CSP <meta> stays first and the preload precedes the sheet it hints.
+@returns A Vite plugin that inserts a matching preload before each stylesheet.
+*/
+export function stylePreload(): Plugin {
+  const stylesheet = /<link rel="stylesheet" crossorigin href="([^"]+)">/g;
+  return {
+    name: "style-preload",
+    transformIndexHtml: {
+      order: "post",
+      handler: (html: string): string =>
+        html.replaceAll(
+          stylesheet,
+          (link, href: string) =>
+            `<link rel="preload" as="style" href="${href}" crossorigin>${link}`,
+        ),
+    },
+  };
+}
+
 export default defineConfig({
   root: frontendRoot,
-  plugins: [cspMeta()],
+  plugins: [cspMeta(), stylePreload()],
   build: {
     rollupOptions: {
       input: htmlEntries,

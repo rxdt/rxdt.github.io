@@ -94,11 +94,12 @@ import { readFileSync } from "node:fs";
 
 const packageJsonUrl = new URL("package.json", import.meta.url);
 
-// Narrow a parsed package.json (unknown) to its scripts map without an unsafe assertion, keeping
-// only string-valued entries (the only kind a script can be). Exported and pure so its malformed
-// -input branches are unit-testable (the module-load caller below always passes valid JSON).
 /**
-@param parsed
+Narrows a parsed package.json (unknown) to its scripts map without an unsafe
+assertion, keeping only string-valued entries (the only kind a script can be).
+Exported and pure so its malformed-input branches are unit-testable.
+@param parsed - The parsed package.json value to read `scripts` from.
+@returns A map of script name to command string.
 */
 export function scriptsMap(parsed: unknown): Map<string, string> {
   if (typeof parsed !== "object" || parsed === null || !("scripts" in parsed)) {
@@ -121,10 +122,11 @@ const harnessScripts = scriptsMap(
   JSON.parse(readFileSync(packageJsonUrl, "utf8")),
 );
 
-// Tokenize a single shell command into argv, keeping `"quoted globs"` intact and unquoting them.
-// Exported and pure so its empty-command branch is unit-testable. An empty string yields [].
 /**
-@param command
+Tokenizes a single shell command into argv, keeping `"quoted globs"` intact and
+unquoting them. Exported and pure so its empty-command branch is unit-testable.
+@param command - The shell command string to tokenize. An empty string yields [].
+@returns The command split into argv tokens.
 */
 export function tokenizeCommand(command: string): string[] {
   return (command.match(/"[^"]*"|\S+/g) ?? []).map((token) =>
@@ -132,11 +134,12 @@ export function tokenizeCommand(command: string): string[] {
   );
 }
 
-// Parse one package.json script into the argv the gate spawns: drop the leading `cd .. &&`
-// root-return prefix, reject any remaining shell operator (a check must be ONE command, not a
-// chained alias like `lint`), then tokenize.
 /**
-@param name
+Parses one package.json script into the argv the gate spawns: drops the leading
+`cd .. &&` root-return prefix, rejects any remaining shell operator (a check must
+be ONE command, not a chained alias like `lint`), then tokenizes.
+@param name - The harness script name to resolve into a check command.
+@returns The check command as argv tokens.
 */
 export function checkCommand(name: string): string[] {
   const raw = harnessScripts.get(name);
@@ -152,9 +155,11 @@ export function checkCommand(name: string): string[] {
   return tokenizeCommand(command);
 }
 
-// Build a check record by deriving each named check's command from its harness script.
 /**
-@param names
+Builds a check record by deriving each named check's command from its harness
+script.
+@param names - The check names to resolve into commands.
+@returns A record mapping each check name to its argv command.
 */
 function checksFrom(names: readonly string[]): Record<string, string[]> {
   return Object.fromEntries(names.map((name) => [name, checkCommand(name)]));

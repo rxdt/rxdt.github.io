@@ -73,7 +73,7 @@ export const formatTokenCount = (value: number | undefined): string => {
 
 const numberFrom = (source: Rec, keys: readonly string[]): number | undefined =>
   keys
-    .map((key) => source[key])
+    .map((key): unknown => Reflect.get(source, key))
     .find(
       (value): value is number =>
         typeof value === "number" && Number.isFinite(value) && value >= 0,
@@ -270,7 +270,7 @@ const discoverLogFiles = (runsRoot: string): readonly LogFile[] => {
 };
 
 const row = (cells: readonly string[], limits: readonly number[]): string =>
-  cells.map((cell, index) => clip(cell, Number(limits[index]))).join(" | ");
+  cells.map((cell, index) => clip(cell, Number(limits.at(index)))).join(" | ");
 
 const section = (
   title: string,

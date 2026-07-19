@@ -136,7 +136,9 @@ export const run = (
     return { code: 2, lines: [USAGE] };
   const repo = dependencies.repoRoot(process.cwd());
   process.stderr.write(`cli: received ${command}; start in ${repo}\n`);
-  const problems = dependencies[command](repo);
+  const check =
+    command === "preflight" ? dependencies.preflight : dependencies.gate;
+  const problems = check(repo);
   process.stderr.write(
     `cli: done ${command}: ${String(problems.length)} issues\n`,
   );
@@ -160,6 +162,9 @@ const isStringRecord = (value: unknown): value is Record<string, string> =>
   isObjectRecord(value) &&
   Object.values(value).every((entry) => typeof entry === "string");
 
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((entry) => typeof entry === "string");
+
 // Merge the harness root scripts into an existing scripts map (mutates + returns it). A `lint`/
 // `test` name the project already defines is kept; the harness command is added under a
 // `harness:<name>` alias instead so the project's own script wins.
@@ -167,12 +172,12 @@ export const mergeRootScripts = (
   scripts: Record<string, string>,
 ): Record<string, string> => {
   for (const [name, command] of Object.entries(ROOT_SCRIPTS)) {
-    if (!Object.hasOwn(scripts, name)) scripts[name] = command;
+    if (!Object.hasOwn(scripts, name)) Reflect.set(scripts, name, command);
     else if (
       (name === "lint" || name === "test") &&
       !Object.hasOwn(scripts, `harness:${name}`)
     )
-      scripts[`harness:${name}`] = command;
+      Reflect.set(scripts, `harness:${name}`, command);
   }
   return scripts;
 };
@@ -250,7 +255,8 @@ export const runLoop = async (
 ): Promise<{ code: number; lines: string[] }> => {
   const [agentArgument = ""] = cliArgs;
   const agent = agentArgument.toLowerCase();
-  const agentCommand = AGENTS[agent];
+  const resolved: unknown = Reflect.get(AGENTS, agent);
+  const agentCommand = isStringArray(resolved) ? resolved : undefined;
   if (agentCommand === undefined) {
     const choices = Object.keys(AGENTS).join(", ");
     return {

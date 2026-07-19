@@ -159,18 +159,17 @@ test("homepage renders required plan media with durable playback contracts", asy
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
-
-  // The portrait is the real animated WebP (merged.webp), not a mosaic SVG stand-in — a full
-  // photographic portrait, all frames intact. Pin the asset so a re-swap to a blocky placeholder
-  // (as happened once to game a Lighthouse audit) fails here.
-  await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
-    "src",
-    "/assets/merged.webp",
+  const portrait = page.getByAltText("Portrait of Rox dT");
+  await expect(portrait).toHaveAttribute("src", "/assets/merged.webp");
+  await expect(portrait).toHaveAttribute("width", "480");
+  await expect(portrait).toHaveAttribute("height", "480");
+  await expect(portrait).toHaveAttribute("fetchpriority", "high");
+  // The portrait is served as a single animated WebP (no <picture>/AVIF): the
+  // AVIF variant had zero per-frame delay and rendered frozen, so it was dropped.
+  const portraitSource = await portrait.evaluate((image) =>
+    image instanceof HTMLImageElement ? image.currentSrc : "",
   );
-  await expect(page.getByAltText("Portrait of Rox dT")).toHaveAttribute(
-    "fetchpriority",
-    "high",
-  );
+  expect(portraitSource).toMatch(/\/assets\/merged\.webp$/);
   await expect(
     page.getByAltText("AI Deployment Calculator project thumbnail"),
   ).toHaveAttribute("src", "/assets/caclulator.png");
@@ -186,16 +185,11 @@ test("homepage renders required plan media with durable playback contracts", asy
   ).toBeGreaterThan(0);
   // A malformed <img> tag (e.g. an unterminated attribute) still exposes a
   // src/alt but never decodes; assert the browser actually loaded the bytes.
-  await expect(page.getByAltText("Portrait of Rox dT")).toHaveJSProperty(
-    "complete",
-    true,
-  );
+  await expect(portrait).toHaveJSProperty("complete", true);
   expect(
-    await page
-      .getByAltText("Portrait of Rox dT")
-      .evaluate((img) =>
-        img instanceof HTMLImageElement ? img.naturalWidth : 0,
-      ),
+    await portrait.evaluate((img) =>
+      img instanceof HTMLImageElement ? img.naturalWidth : 0,
+    ),
   ).toBeGreaterThan(0);
   await expect(
     page.getByAltText("Intent Inference Conference project thumbnail"),
@@ -212,28 +206,10 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
 });
 
-test("portrait asset is an infinitely looping vector so it plays on loop and is not raster-flagged", async ({
-  page,
-}) => {
-  // Plan feature: the portrait must play on loop. It ships as `merged.svg`, a
-  // vector mosaic whose cells animate via SMIL with `repeatCount="indefinite"`,
-  // so it loops forever AND — being vector, not a raster animation — never trips
-  // Lighthouse's image-delivery insight the way the old animated `merged.webp`
-  // did. Assert the served bytes honor that contract, not just the <img> src.
-  const response = await page.request.get("/assets/merged.svg");
-
-  expect(response.status()).toBe(200);
-  expect(response.headers()["content-type"]).toContain("image/svg+xml");
-
-  const svg = await response.text();
-  expect(svg).toContain("<svg");
-  expect(svg).toContain("<animate");
-  expect(svg).toContain('repeatCount="indefinite"');
-  // A still SVG would satisfy the <img> src assertion but not "plays on loop":
-  // require at least a handful of animated cells so a broken/flattened export
-  // that dropped the animation fails here.
-  const animatedCells = svg.match(/<animate\b/g) ?? [];
-  expect(animatedCells.length).toBeGreaterThan(10);
+test("portrait asset serves an animated WebP", async ({ page }) => {
+  const webpResponse = await page.request.get("/assets/merged.webp");
+  expect(webpResponse.status()).toBe(200);
+  expect(webpResponse.headers()["content-type"]).toContain("image/webp");
 });
 
 test("homepage shows the full LoopGate Harness frame without cropping", async ({
@@ -316,9 +292,9 @@ for (const { heading, route } of writeupRoutes) {
 
     expect(response?.status()).toBe(200);
     await expect(page.locator("head > style")).toHaveCount(0);
-    await expect(
-      page.locator('head > link[rel="stylesheet"]'),
-    ).not.toHaveCount(0);
+    await expect(page.locator('head > link[rel="stylesheet"]')).not.toHaveCount(
+      0,
+    );
     await expect(page.locator("html")).not.toHaveAttribute(
       "data-csp-violation",
     );
@@ -362,7 +338,9 @@ test("homepage is styled at first paint via a linked stylesheet, not a script", 
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
 
-  await expect(page.locator('head > link[rel="stylesheet"]')).not.toHaveCount(0);
+  await expect(page.locator('head > link[rel="stylesheet"]')).not.toHaveCount(
+    0,
+  );
   // The body is styled and visible with no reveal step and no hidden gate.
   await expect(page.locator("body")).toBeVisible();
   await expect(page.locator("body")).not.toHaveAttribute("hidden", /.*/);

@@ -13,7 +13,15 @@
       "entry": ["tests/**/*.spec.ts", "scripts/*.js", "public/scripts/*.js"]
     },
     "harness": {
-      "entry": ["*.test.ts", "lighthouserc.cjs"]
+      "entry": ["*.test.ts", "lighthouserc.cjs"],
+      "ignoreDependencies": [
+        "@axe-core/playwright",
+        "@secretlint/secretlint-rule-preset-recommend",
+        "ajv",
+        "ajv-formats",
+        "ajv-keywords",
+        "lighthouse"
+      ]
     }
   }
 }

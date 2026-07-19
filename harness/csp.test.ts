@@ -34,7 +34,8 @@ const DATA_SCRIPT_TYPES = new Set([
 // Build one parser for the suite. StaticConfigLoader.getConfigFor is synchronous
 // but typed as possibly-async, so await it once.
 /**
-
+Build one html-validate parser configured for the suite.
+@returns A parser resolved with the loader's page.html config.
 */
 async function makeParser(): Promise<Parser> {
   return new Parser(await new StaticConfigLoader().getConfigFor("page.html"));
@@ -44,7 +45,9 @@ async function makeParser(): Promise<Parser> {
 // (unlike a browser DOM, which decodes them). The CSP policy only contains
 // apostrophes, so decode the apostrophe references before comparing.
 /**
-@param value
+Decode the apostrophe and ampersand HTML character references html-validate leaves intact.
+@param value - Attribute value with character references still encoded.
+@returns The value with apostrophe and ampersand references decoded.
 */
 function decodeEntities(value: string): string {
   return value
@@ -57,8 +60,10 @@ function decodeEntities(value: string): string {
 // Read a string attribute value; html-validate returns an Attribute whose value
 // may be a DynamicValue, which built (static) HTML never contains.
 /**
-@param element
-@param name
+Read a static string attribute value off an element, decoding its character references.
+@param element - The element to read from.
+@param name - The attribute name.
+@returns The decoded attribute value, or null when absent or non-string.
 */
 function attribute(element: HtmlElement, name: string): string | null {
   const value = element.getAttribute(name)?.value;
@@ -69,7 +74,9 @@ function attribute(element: HtmlElement, name: string): string | null {
 // 'self'` blocks. Names are matched structurally (on + letters), not against a
 // fixed list, so a new/rare handler cannot slip through.
 /**
-@param element
+Collect an element's inline event-handler attribute names (on* keys).
+@param element - The element to inspect.
+@returns The names of attributes matching the on-handler pattern.
 */
 function eventHandlerAttributes(element: HtmlElement): string[] {
   return element.attributes
@@ -86,7 +93,9 @@ const URL_ATTRIBUTES = ["href", "src", "action", "formaction"];
 const SCRIPT_SCHEME = ["java", "script:"].join("");
 
 /**
-@param element
+Find URL-bearing attributes whose value uses the banned script pseudo-scheme.
+@param element - The element to inspect.
+@returns The names of URL attributes carrying a script-scheme value.
 */
 function javascriptUrlAttributes(element: HtmlElement): string[] {
   return URL_ATTRIBUTES.filter(
@@ -99,7 +108,9 @@ function javascriptUrlAttributes(element: HtmlElement): string[] {
 }
 
 /**
-@param script
+Decide whether a script element is an inline body the browser would execute.
+@param script - The script element to classify.
+@returns True when it has inline JS content and is not a data-script type.
 */
 function isInlineExecutableScript(script: HtmlElement): boolean {
   if (script.hasAttribute("src")) {

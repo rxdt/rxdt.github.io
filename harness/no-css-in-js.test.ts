@@ -12,8 +12,7 @@
 // element.style.* assignments: setting an individual element's inline style at
 // runtime (e.g. positioning a cursor-trail dot) is normal DOM work, not a
 // stylesheet, and the CSP gate governs page-level inline styles separately.
-import { readFileSync } from "node:fs";
-import { globSync } from "node:fs";
+import { globSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { describe, expect, test } from "vitest";
@@ -27,6 +26,10 @@ const BANNED_PATTERNS: readonly { label: string; pattern: RegExp }[] = [
   { label: "CSSStyleSheet.replaceSync()", pattern: /\.replaceSync\s*\(/ },
 ];
 
+/**
+Lists hand-written frontend source .js files, excluding the generated dist/.
+@returns Absolute paths of the frontend source scripts to scan.
+*/
 function sourceJsFiles(): string[] {
   return globSync("**/*.js", { cwd: frontendRoot })
     .filter((file) => !file.startsWith("dist/"))

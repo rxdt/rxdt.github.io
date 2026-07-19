@@ -282,6 +282,9 @@ export default defineConfig([
       "@typescript-eslint/prefer-nullish-coalescing": "error",
       // TypeScript typecheck owns missing-import resolution across TS/ESM layouts.
       "import-x/no-unresolved": "off",
+      // Same reason: the node resolver can't read packages' `exports` maps (e.g.
+      // @playwright/test), so named-export checks false-positive. tsc owns this.
+      "import-x/named": "off",
       "n/no-missing-import": "off",
 
       "@typescript-eslint/prefer-readonly-parameter-types": "off",
@@ -308,6 +311,11 @@ export default defineConfig([
       // Turn ON rules that actually prevent broken code documentation
       "jsdoc/check-param-names": "error", // Comment names match actual code variables
       "jsdoc/check-tag-names": "error", // No typos in tags like writing @paramm
+      // OFF: conflicts with unicorn/no-asterisk-prefix-in-documentation-comments.
+      // check-alignment wants aligned `*`-prefixed lines; no-asterisk-prefix bans
+      // them. With both on, no multi-line JSDoc can pass. The harness uses the
+      // flush-left no-asterisk style, so alignment is not applicable.
+      "jsdoc/check-alignment": "off",
     },
   },
   // TypeScript test files.

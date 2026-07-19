@@ -86,10 +86,10 @@ const csiSequenceEnd = (value: string, start: number): number => {
 };
 
 /**
-
-* Strip ANSI CSI escape sequences without a control-character regex literal;
-* plain text passes through unchanged.
-* @param value
+Strip ANSI CSI escape sequences without a control-character regex literal;
+plain text passes through unchanged.
+@param value - Text that may contain CSI escape sequences.
+@returns The text with any CSI escape sequences removed.
 */
 function withoutAnsi(value: string): string {
   let result = "";
@@ -107,9 +107,10 @@ function withoutAnsi(value: string): string {
 }
 
 /**
-
-* @param argv
-* @param cwd
+Run a command synchronously in a working directory, throwing on a nonzero exit.
+@param argv - The command and its arguments.
+@param cwd - The working directory to run in.
+@returns The command's stdout.
 */
 function runCommand(argv: string[], cwd: string): string {
   const [command, ...args] = argv;
@@ -128,7 +129,8 @@ function runCommand(argv: string[], cwd: string): string {
 }
 
 /**
-
+Create a seeded temporary Git repo with an identity, a README, and docs/PROMPT.md.
+@returns The absolute path to the new repository.
 */
 function makeRepo(): string {
   const repo = mkdtempSync(path.join(tmpdir(), "harness-"));

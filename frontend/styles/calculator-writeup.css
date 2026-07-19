@@ -36,8 +36,8 @@
     inter, ui-sans-serif, system-ui, -apple-system, blinkmacsystemfont,
     "Segoe UI", sans-serif;
   --font-family-mono-full:
-    ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code",
-    "Roboto Mono", menlo, consolas, monospace;
+    ui-monospace, "SF Mono", "SFMono-Regular", "Cascadia Code", "Roboto Mono",
+    menlo, consolas, monospace;
 
   /* Spacing with no shared-token match. */
   --space-1p1: 1.1rem;
@@ -94,9 +94,7 @@ html {
 
 body {
   margin: 0;
-  background:
-    var(--background-paper),
-    var(--color-paper);
+  background: var(--background-paper), var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-family-serif);
   font-size: var(--font-body-fluid);

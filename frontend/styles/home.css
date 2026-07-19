@@ -69,8 +69,10 @@
   /* Non-token grid track lists (fr is banned even inside tokens, so these use
    * percentage tracks). Equal-track grids reproduce fr exactly; the hero and
    * contact ratio grids approximate fr with proportional percentages. */
-  --layout-hero-columns: minmax(0, 59.0909%) minmax(var(--layout-hero-col-min), 40.9091%);
-  --layout-contact-columns: minmax(0, 47.3684%) minmax(var(--layout-contact-col-min), 52.6316%);
+  --layout-hero-columns: minmax(0, 59.0909%)
+    minmax(var(--layout-hero-col-min), 40.9091%);
+  --layout-contact-columns: minmax(0, 47.3684%)
+    minmax(var(--layout-contact-col-min), 52.6316%);
   --layout-focus-columns: repeat(3, minmax(0, 33.3333%));
 
   /* Circle radius (50% is not a gate ignoreValue; token keeps it strict-clean). */
@@ -149,11 +151,7 @@ body {
       var(--color-cyan-wash-soft),
       transparent 24%
     ),
-    radial-gradient(
-      circle at 68% 42%,
-      var(--color-amber-wash),
-      transparent 20%
-    );
+    radial-gradient(circle at 68% 42%, var(--color-amber-wash), transparent 20%);
   mix-blend-mode: screen;
 }
 
@@ -504,7 +502,8 @@ h3 {
   border-left: var(--space-xs) solid var(--color-violet);
   border-radius: var(--radius-sm);
   background: var(--color-panel-soft);
-  padding: var(--space-lg-sm) var(--space-lg-sm) var(--space-lg-sm) var(--space-lg-md);
+  padding: var(--space-lg-sm) var(--space-lg-sm) var(--space-lg-sm)
+    var(--space-lg-md);
   backdrop-filter: blur(var(--layout-blur-sm));
 }
 
