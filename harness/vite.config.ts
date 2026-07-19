@@ -49,11 +49,14 @@ Preloads this page's own stylesheets so Lighthouse's NetworkDependencyTree
 treats them as non-critical (isLinkPreload) and they leave the critical request
 chain. The real <link rel="stylesheet"> still renders the page with no JS; this
 only adds a matching same-origin preload immediately before each stylesheet, so
-the CSP <meta> stays first and the preload precedes the sheet it hints.
+the CSP <meta> stays first and the preload precedes the sheet it hints. The
+stylesheets ship from public/styles/, so their /styles/*.css hrefs are stable
+(unhashed) and served as real text/css by both the dev server and the build.
 @returns A Vite plugin that inserts a matching preload before each stylesheet.
 */
 export function stylePreload(): Plugin {
-  const stylesheet = /<link rel="stylesheet" crossorigin href="([^"]+)">/g;
+  const stylesheet =
+    /<link rel="stylesheet" href="(\/styles\/[\w-]+\.css)"\s*\/?>/g;
   return {
     name: "style-preload",
     transformIndexHtml: {
@@ -62,7 +65,7 @@ export function stylePreload(): Plugin {
         html.replaceAll(
           stylesheet,
           (link, href: string) =>
-            `<link rel="preload" as="style" href="${href}" crossorigin>${link}`,
+            `<link rel="preload" as="style" href="${href}">${link}`,
         ),
     },
   };

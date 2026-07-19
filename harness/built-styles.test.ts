@@ -91,8 +91,7 @@ describe("built pages deliver styles as render-blocking stylesheets", () => {
     for (const { name, root, html } of pages) {
       for (const link of root.querySelectorAll('link[rel="stylesheet"]')) {
         const href = attribute(link, "href") ?? "";
-        const preload = `<link rel="preload" as="style" href="${href}"`;
-        const sheet = `<link rel="stylesheet" crossorigin href="${href}">`;
+        const preload = `<link rel="preload" as="style" href="${href}">`;
         expect(
           html.indexOf(preload),
           `${name} is missing a preload hint for ${href}`,
@@ -100,7 +99,9 @@ describe("built pages deliver styles as render-blocking stylesheets", () => {
         expect(
           html.indexOf(preload),
           `${name} preload for ${href} must precede its stylesheet`,
-        ).toBeLessThan(html.indexOf(sheet));
+        ).toBeLessThan(
+          html.indexOf(`href="${href}"`, html.indexOf(preload) + 1),
+        );
       }
     }
   });

@@ -27,19 +27,19 @@ const BANNED_PATTERNS: readonly { label: string; pattern: RegExp }[] = [
 ];
 
 /**
-Lists hand-written frontend source .js files, excluding the generated dist/.
+Lists hand-written frontend source .js and .ts files, excluding generated dist/.
 @returns Absolute paths of the frontend source scripts to scan.
 */
-function sourceJsFiles(): string[] {
-  return globSync("**/*.js", { cwd: frontendRoot })
+function sourceScriptFiles(): string[] {
+  return globSync("**/*.{js,ts}", { cwd: frontendRoot })
     .filter((file) => !file.startsWith("dist/"))
     .map((file) => path.join(frontendRoot, file));
 }
 
 describe("no CSS-in-JS in frontend source", () => {
-  test("no source .js builds a stylesheet (use <link rel=stylesheet> instead)", () => {
+  test("no source .js or .ts builds a stylesheet (use <link rel=stylesheet> instead)", () => {
     const offenders: string[] = [];
-    for (const file of sourceJsFiles()) {
+    for (const file of sourceScriptFiles()) {
       const text = readFileSync(file, "utf8");
       for (const { label, pattern } of BANNED_PATTERNS) {
         if (pattern.test(text)) {

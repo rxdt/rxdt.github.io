@@ -258,12 +258,8 @@ export default defineConfig([
           message: "Avoid implied object spread, pass explicit properties.",
         },
         {
-          selector: "AssignmentExpression[left.property.name='style']",
-          message: "Do not assign inline styles. Use CSS classes.",
-        },
-        {
-          selector: "AssignmentExpression[left.object.property.name='style']",
-          message: "Do not mutate inline styles. Use CSS classes.",
+          selector: "MemberExpression[property.name='style']",
+          message: "Do not use inline styles. Use CSS classes or canvas.",
         },
         {
           selector:
@@ -349,6 +345,40 @@ export default defineConfig([
     files: configTypeScriptFiles,
     rules: {
       "no-console": "off",
+    },
+  },
+  {
+    files: ["**/*.js"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "MemberExpression[property.name='style']",
+          message: "Do not use inline styles. Use CSS classes or canvas.",
+        },
+        {
+          selector:
+            "CallExpression[callee.property.name='setAttribute'][arguments.0.value='style']",
+          message: "Do not set inline styles. Use CSS classes or canvas.",
+        },
+        {
+          selector: "AssignmentExpression[left.property.name='innerHTML']",
+          message: "Do not assign innerHTML.",
+        },
+        {
+          selector: "AssignmentExpression[left.property.name='outerHTML']",
+          message: "Do not assign outerHTML.",
+        },
+        {
+          selector: "CallExpression[callee.property.name='insertAdjacentHTML']",
+          message: "Do not inject HTML with insertAdjacentHTML.",
+        },
+        {
+          selector:
+            "CallExpression[callee.object.name='document'][callee.property.name='write']",
+          message: "Do not use document.write.",
+        },
+      ],
     },
   },
   {
