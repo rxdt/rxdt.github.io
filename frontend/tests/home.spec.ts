@@ -104,8 +104,8 @@ test("homepage renders portfolio with ambient cursor and grid effects", async ({
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches`,
   );
 
-  await expect(page.locator(".cursor-gold-dot")).toHaveCount(
-    shouldExpectCursorTrail ? 30 : 0,
+  await expect(page.locator("canvas.cursor-canvas")).toHaveCount(
+    shouldExpectCursorTrail ? 1 : 0,
   );
 });
 
@@ -161,8 +161,8 @@ test("homepage renders required plan media with durable playback contracts", asy
   expect(response?.status()).toBe(200);
   const portrait = page.getByAltText("Portrait of Rox dT");
   await expect(portrait).toHaveAttribute("src", "/assets/merged.webp");
-  await expect(portrait).toHaveAttribute("width", "480");
-  await expect(portrait).toHaveAttribute("height", "480");
+  await expect(portrait).toHaveAttribute("width", "174");
+  await expect(portrait).toHaveAttribute("height", "174");
   await expect(portrait).toHaveAttribute("fetchpriority", "high");
   // The portrait is served as a single animated WebP (no <picture>/AVIF): the
   // AVIF variant had zero per-frame delay and rendered frozen, so it was dropped.
@@ -203,7 +203,10 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveJSProperty("autoplay", true);
   await expect(comfydayVideo).toHaveJSProperty("loop", true);
   await expect(comfydayVideo).toHaveJSProperty("muted", true);
-  await expect(comfydayVideo).toHaveJSProperty("playsInline", true);
+  // Assert the playsinline attribute, not the JS property: Firefox honors the
+  // attribute but does not expose the `playsInline` reflected property, so the
+  // property check fails there while the inline-playback intent still holds.
+  await expect(comfydayVideo).toHaveAttribute("playsinline", "");
 });
 
 test("portrait asset serves an animated WebP", async ({ page }) => {
@@ -369,4 +372,125 @@ test("homepage styles and script behavior load without CSP violations", async ({
     true,
   );
   await expect(page.locator("html")).not.toHaveAttribute("data-csp-violation");
+});
+
+/* Layout regression guards. The structural checks above stay green even when
+   the hero breaks, mobile overflows sideways, or section dividers return, so
+   each of those visual invariants is asserted explicitly below. */
+
+test("homepage never scrolls horizontally at the project viewport", async ({
+  page,
+}) => {
+  await page.goto("/");
+  // WCAG reflow: content must fit the viewport width with no sideways scroll.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("hero H1 stays in its intended size band on desktop", async ({ page }) => {
+  await page.goto("/");
+  // Guards the hero type scale both ways: a shrunk H1 (too small, ~56px) and a
+  // ballooned one (billboard, ~76px+) have both regressed here before. On wide
+  // desktop the rendered H1 must land in a sane band.
+  const size = await page.evaluate(() => {
+    if (window.innerWidth < 1200) {
+      return null;
+    }
+    const h1 = document.querySelector("h1");
+    return h1 === null
+      ? null
+      : Number(getComputedStyle(h1).fontSize.replace("px", ""));
+  });
+  if (size === null) {
+    return;
+  }
+  expect(size).toBeGreaterThanOrEqual(56);
+  expect(size).toBeLessThanOrEqual(70);
+});
+
+test("hero keeps the portrait beside the copy, not drifting far right", async ({
+  page,
+}) => {
+  await page.goto("/");
+  // On viewports below 900px the portrait wraps below the copy (gap is null),
+  // so the side-by-side geometry is only asserted where the row layout applies.
+  const geometry = await page.evaluate(() => {
+    if (window.innerWidth < 900) {
+      return null;
+    }
+    const copy = document.querySelector(".hero-copy");
+    const portrait = document.querySelector(".portrait");
+    const hero = document.querySelector(".hero");
+    if (copy === null || portrait === null || hero === null) {
+      return null;
+    }
+    const copyBox = copy.getBoundingClientRect();
+    const portraitBox = portrait.getBoundingClientRect();
+    const heroBox = hero.getBoundingClientRect();
+    return {
+      gap: portraitBox.left - copyBox.right,
+      centerSkew: Math.abs(heroBox.left - (window.innerWidth - heroBox.right)),
+    };
+  });
+  if (geometry === null) {
+    return;
+  }
+  // The portrait must hug the copy (no dead gap like the far-right drift bug).
+  expect(geometry.gap).toBeGreaterThanOrEqual(0);
+  expect(geometry.gap).toBeLessThanOrEqual(96);
+  // The hero row is centered: left and right margins match within a few px.
+  expect(geometry.centerSkew).toBeLessThanOrEqual(2);
+});
+
+test("homepage sections have no horizontal divider rules", async ({ page }) => {
+  await page.goto("/");
+  const borderedSections = await page.evaluate(
+    () =>
+      [...document.querySelectorAll("main section")].filter((section) => {
+        const style = getComputedStyle(section);
+        return (
+          style.borderTopWidth !== "0px" || style.borderBottomWidth !== "0px"
+        );
+      }).length,
+  );
+  expect(borderedSections).toBe(0);
+});
+
+test("nav links stay small and the byline is a single line", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const navFontPx = await page.evaluate(() => {
+    const nav = document.querySelector(".nav-links");
+    if (nav === null) {
+      return 0;
+    }
+    // fontSize is a "<n>px" string; drop the unit and coerce the number.
+    return Number(getComputedStyle(nav).fontSize.replace("px", ""));
+  });
+  expect(navFontPx).toBeGreaterThan(0);
+  expect(navFontPx).toBeLessThan(14);
+
+  await page.goto("/calculator-writeup.html");
+  // The byline wraps to multiple lines only on narrow phones by design, so the
+  // single-line assertion applies from 600px up (null signals "skip below").
+  const bylineLines = await page.evaluate(() => {
+    if (window.innerWidth < 600) {
+      return null;
+    }
+    const byline = document.querySelector(".byline");
+    if (byline === null) {
+      return null;
+    }
+    const tops = [...byline.querySelectorAll("span")].map((span) =>
+      Math.round(span.getBoundingClientRect().top),
+    );
+    return new Set(tops).size;
+  });
+  if (bylineLines === null) {
+    return;
+  }
+  expect(bylineLines).toBe(1);
 });

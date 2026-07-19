@@ -5,3 +5,4 @@ coverage/
 test-results/
 scratchpad/
 **/.lighthouseci/
+*.report.html

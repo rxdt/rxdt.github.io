@@ -41,7 +41,8 @@
       }
     </script>
     <link rel="stylesheet" href="/styles/tokens.css" />
-    <link rel="stylesheet" href="/styles/engineering-the-loop.css" />
+    <link rel="stylesheet" href="/styles/writeup.css" />
+    <script defer src="/scripts/cursor.js"></script>
   </head>
   <body>
     <div class="page">
@@ -55,7 +56,9 @@
       </div>
 
       <header class="masthead">
-        <p class="eyebrow">Field Notes &middot; On Harnesses</p>
+        <p class="eyebrow">
+          16 July 2026 &middot; Field Notes &middot; On Harnesses
+        </p>
         <h1>Stop Prompting, Start Engineering the Loop</h1>
         <p class="sub">
           The hardest problem in AI-assisted coding isn&rsquo;t picking a model.
@@ -130,6 +133,21 @@
             It&rsquo;s the best execution environment around whatever model you
             have.
           </p>
+
+          <figure class="figure">
+            <img
+              src="/assets/loop-five-layers.webp"
+              width="1600"
+              height="983"
+              loading="lazy"
+              decoding="async"
+              alt="The five layers of AI engineering as concentric circles: Human on the outside, then Loop, Harness, Context, and Prompt at the center. Most people tune the center; the leverage is at the edge."
+            />
+            <figcaption>
+              The five layers of AI engineering &mdash; the leverage is at the
+              edge, not the center.
+            </figcaption>
+          </figure>
         </div>
         <div class="margin margin-empty" aria-hidden="true"></div>
       </div>
@@ -177,6 +195,21 @@
             inspect diffs, enforce scope, and reject work that violates a
             contract.
           </p>
+
+          <figure class="figure">
+            <img
+              src="/assets/loop-harness-loop.webp"
+              width="1600"
+              height="840"
+              loading="lazy"
+              decoding="async"
+              alt="Two panels, same model. NO HARNESS: a car wanders a chaotic looping path, 'cleaning up' nobody asked for, never reaching the actual task, tokens burned: all of them. HARNESS: the car drives straight down a scoped lane past checkpoints (tests, diff review, contract) to a STOP sign; done means done."
+            />
+            <figcaption>
+              Same model, no harness vs. a scoped harness &mdash; boundaries,
+              not prompts, are what keep the agent on the road.
+            </figcaption>
+          </figure>
         </div>
 
         <div class="margin">
@@ -246,6 +279,21 @@
             criteria, independent tests, static analysis, type checks, security
             scans, and human review proportional to risk.
           </p>
+
+          <figure class="figure">
+            <img
+              src="/assets/loop-harness-comparison.webp"
+              width="1600"
+              height="1600"
+              loading="lazy"
+              decoding="async"
+              alt="A four-stage loop: PLAN (define goal, choose approach) design the loop to EXECUTE (run, observe, collect data) generate feedback to EVALUATE (analyze results, extract signals) learn and adjust to IMPROVE (refine strategy, update inputs) close the loop and iterate back to PLAN."
+            />
+            <figcaption>
+              The loop: plan, execute, evaluate, improve &mdash; verification
+              lives inside it, not after it.
+            </figcaption>
+          </figure>
         </div>
 
         <div class="margin">

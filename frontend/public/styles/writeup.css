@@ -1,14 +1,21 @@
 /*
- * Conference-review article styles. The shared :root design vocabulary lives in
- * tokens.css (linked separately in the HTML); this file references those custom
- * properties and adds page-local tokens below for values the shared scale does
- * not carry. Page-local names follow the stylelint custom-property-pattern
- * (background|color|font|layout|radius|shadow|space|z prefixes). Raw colors map
- * to their exact --color-* token; px are converted to rem (px / 16). No rule is
- * suppressed: every value is tokenized and every selector is expressed within
- * the gate's type/qualifier budget while matching the same elements.
+ * Shared writeup styles. Every writeup page (engineering-the-loop,
+ * calculator-writeup, conference) links tokens.css + this file and nothing else,
+ * so the three articles render with one identical style. Each page uses the
+ * subset of classes it needs; a shared element (.page, .flow, .masthead, code,
+ * h2, .margin, .pull, .colophon, …) is defined exactly once here and never
+ * restyled per page.
+ *
+ * Shared design tokens (colors, spacing, radii, type families, layout) live in
+ * tokens.css, globally available here — never re-imported. The custom
+ * properties below are page-local values with no shared-token equivalent
+ * (fluid type clamps, unitless line-heights, reading measures, one-off insets),
+ * named to the stylelint custom-property-pattern so strict-value and the unit
+ * allow-list see a token, not a raw magic number.
  */
 :root {
+  color-scheme: dark;
+
   /* Radii not in the shared scale */
   --radius-xs: 0.125rem;
   --radius-hairline: 0.1875rem;
@@ -30,9 +37,9 @@
   --space-card-x: 1.15rem;
   --space-card-bottom: 1.2rem;
   --space-meta-gap-col: 1.2rem;
-  --space-flow-tight: 1.15rem;
   --space-quote: 1.3rem;
   --space-flow: 1.4rem;
+  --space-kicker: 2.2rem;
   --space-mast-bottom: 1.7rem;
   --space-h2: 2rem;
   --space-mast-gap: 2.6rem;
@@ -44,9 +51,14 @@
   /* Page-specific spacing (em, type-relative) */
   --space-code-y: 0.08em;
   --space-code-x: 0.34em;
+  --space-notes-pad: 0.55rem 0 0.55rem 1.4rem;
 
   /* Auto keyword, tokenized so strict-value accepts centered margins */
   --space-auto: auto;
+
+  /* Gaps */
+  --space-stamp-gap: 0.4rem;
+  --space-byline-gap: 1.4rem;
 
   /* Line heights (unitless) */
   --font-lh-body: 1.62;
@@ -84,11 +96,11 @@
   --font-lead: 1.12em;
 
   /* Fluid font-size ramps */
-  --font-body-fluid: clamp(1.02rem, 0.96rem + 0.3vw, 1.16rem);
+  --font-body-fluid: clamp(0.9375rem, 0.9rem + 0.18vw, 1rem);
   --font-h1-fluid: clamp(1.9rem, 1.3rem + 2.8vw, 3.4rem);
   --font-sub-fluid: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
   --font-h2-fluid: clamp(1.35rem, 1.05rem + 1.1vw, 1.9rem);
-  --font-pull-fluid: clamp(1.3rem, 1rem + 1.6vw, 2rem);
+  --font-pull-fluid: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
 
   /* Layout widths */
   --layout-page: 78rem;
@@ -98,21 +110,15 @@
   --layout-page-pad-block: clamp(1.4rem, 4vw, 4rem);
   --layout-page-pad-inline: clamp(1.1rem, 4vw, 3.5rem);
 
-  /* Gaps */
-  --space-stamp-gap: 0.4rem;
-  --space-byline-gap: 1.4rem;
-
   /*
-   * Page text measure. The source used 66ch for the main column and per-block
-   * ch caps for the masthead lines and pull quote; ch has no gate-legal unit
-   * and no exact rem/em equivalent. Converted to em using Inter's ~0.5em-per-ch
-   * advance (66ch -> 33em, 22ch -> 11em, 40ch -> 20em, 24ch -> 12em). These are
-   * the ONLY approximate values in the file; column width may drift sub-pixel.
+   * Reading measure (article body column) and per-block caps for the masthead
+   * lines and pull quote. ch has no gate-legal unit and no exact rem/em
+   * equivalent; converted to em using Inter's ~0.5em-per-ch advance. Column
+   * width may drift sub-pixel.
    */
   --layout-conf-measure: 33em;
   --layout-measure-h1: 11em;
   --layout-measure-sub: 20em;
-  --layout-measure-pull: 12em;
 }
 
 * {
@@ -134,6 +140,12 @@ body {
   text-rendering: optimizelegibility;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    background-attachment: fixed;
+  }
+}
+
 .page {
   max-width: var(--layout-page);
   margin-block: 0;
@@ -142,10 +154,30 @@ body {
   padding-inline: var(--layout-page-pad-inline);
 }
 
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.site-link {
+  display: inline-flex;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-mono-link);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.canonical-link {
+  text-decoration-color: var(--color-violet);
+}
+
 /* ---- Masthead ---- */
 .masthead {
-  border-top: 0.0625rem solid var(--color-line);
-  border-bottom: 0.0625rem solid var(--color-line);
   padding-block: var(--space-gutter) var(--space-mast-bottom);
   padding-inline: 0;
   margin-bottom: var(--space-mast-gap);
@@ -204,15 +236,23 @@ body {
     minmax(0, var(--layout-margin-col));
   gap: var(--layout-gutter-fluid);
   align-items: start;
-  justify-content: center;
+  justify-content: start;
 }
 
 .flow {
   min-width: 0;
 }
 
+/* A writeup with no marginalia has .flow as a direct child of .page (not inside
+   the .col grid). Center its reading column so the body is not stranded on the
+   left with the sidebar's empty space to the right. */
+.page > .flow {
+  max-width: var(--layout-conf-measure);
+  margin-inline: auto;
+}
+
 .flow > * + * {
-  margin-top: var(--space-flow-tight);
+  margin-top: var(--space-card-x);
 }
 
 p {
@@ -274,15 +314,11 @@ h2 {
 }
 
 .section + .section {
-  margin-top: var(--space-section);
-  padding-top: var(--space-mast-gap);
-  border-top: 0.0625rem solid var(--color-line-soft);
+  margin-top: var(--space-flow);
 }
 
 .section-offset {
-  margin-top: var(--space-section);
-  padding-top: var(--space-mast-gap);
-  border-top: 0.0625rem solid var(--color-line-soft);
+  margin-top: var(--space-flow);
 }
 
 .flow-section-offset {
@@ -339,15 +375,20 @@ h2 {
   margin-bottom: var(--space-label);
 }
 
-/*
- * Emphasis inside a paper heading block. Source used `h2 em` (two type
- * selectors, over the cap); no <h2> in conference.html contains an <em>, so the
- * rule matches zero elements. Scoped here to the titled heading block, which is
- * where a heading em would live; matches the same (empty) set in this HTML.
- */
 .paper-head em {
   color: var(--color-muted);
   font-weight: 600;
+}
+
+.kicker {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-mono-label);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-violet);
+  display: block;
+  margin-top: var(--space-kicker);
+  margin-bottom: var(--space-sm);
 }
 
 /* ---- Verdict stamps ---- */
@@ -405,8 +446,6 @@ h2 {
   margin-bottom: var(--space-2xs);
 }
 
-/* .margin-json is only ever on <pre> in conference.html; bare class matches
-   the same nodes without the pre qualifier. */
 .margin .margin-json {
   font-family: var(--font-family-mono);
   font-size: var(--font-json);
@@ -439,7 +478,6 @@ h2 {
 }
 
 .margin code {
-  color: var(--color-amber);
   overflow-wrap: break-word;
 }
 
@@ -450,7 +488,7 @@ h2 {
 }
 
 /* On narrow screens marginalia falls inline under its anchor */
-@media (width <= 62em) {
+@media (width <= 40em) {
   .col {
     grid-template-columns: var(--layout-grid-single);
   }
@@ -494,15 +532,15 @@ blockquote {
   max-width: var(--layout-conf-measure);
 }
 
-/* .pull is only ever on <blockquote> in conference.html; bare class matches
-   the same node without the blockquote qualifier. */
+/* Pull quotes are emphasized copy that stays in the reading column, left
+   aligned like the body text around them. */
 .pull {
   font-style: normal;
   border-left: none;
   padding: 0;
-  text-align: center;
+  text-align: left;
   margin-block: var(--space-snug);
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 .pull p {
@@ -510,14 +548,41 @@ blockquote {
   line-height: var(--font-lh-quote);
   font-weight: 600;
   letter-spacing: -0.01em;
-  max-width: var(--layout-measure-pull);
   margin-block: 0;
-  margin-inline: auto;
+  margin-inline: 0;
   text-wrap: balance;
 }
 
 .plain-quote {
   font-style: normal;
+}
+
+/* Article figures (diagrams). They fill the reading column at full width. They
+   deliberately do NOT break out into the marginalia track the way pull quotes
+   do, because most figures sit in sections that have a populated sticky sidebar
+   and a rightward breakout would overlap it. */
+.figure {
+  margin-block: var(--space-flow-section);
+  margin-inline: 0;
+  width: 100%;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0.0625rem solid var(--color-line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--color-panel);
+}
+
+.figure figcaption {
+  margin-top: var(--space-cozy);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-label-xs);
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  text-align: center;
 }
 
 .dialogue > * + * {
@@ -532,6 +597,50 @@ blockquote {
   color: var(--color-violet);
   display: block;
   margin-bottom: var(--space-nudge);
+}
+
+/* ---- Notes list (em-dash bullets) ---- */
+.notes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: var(--layout-conf-measure);
+}
+
+.notes li {
+  position: relative;
+  padding: var(--space-notes-pad);
+}
+
+.notes li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: var(--color-violet);
+  font-family: var(--font-family-mono);
+}
+
+/* ---- Audit checklist (checkmark bullets) ---- */
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: var(--layout-conf-measure);
+}
+
+.checklist li {
+  position: relative;
+  padding: var(--space-sm) 0 var(--space-sm) var(--space-lg);
+}
+
+.checklist li::before {
+  content: "\2713";
+  position: absolute;
+  left: var(--space-nudge);
+  top: var(--space-sm);
+  font-family: var(--font-family-mono);
+  font-weight: 700;
+  color: var(--color-violet);
 }
 
 /* ---- Results table ---- */
@@ -567,10 +676,6 @@ td {
   vertical-align: top;
 }
 
-/* Every <th> in conference.html lives in <thead> (tbody rows use <td>), so the
-   bare type matches the same cells as the source `thead th` within the type
-   cap. Same specificity as the `th, td` rule above but ordered after it, so the
-   header overrides apply identically. */
 th {
   font-family: var(--font-family-mono);
   font-size: var(--font-label-xs);
@@ -588,8 +693,6 @@ td .m {
   overflow-wrap: break-word;
 }
 
-/* .rule is a hr modifier class; no <hr> exists in conference.html, so both the
-   qualified and bare class match zero elements. Bare class drops the qualifier. */
 .rule {
   border: none;
   border-top: 0.0625rem solid var(--color-line-soft);
@@ -602,7 +705,6 @@ td .m {
   font-size: var(--font-colophon);
   line-height: var(--font-lh-colophon);
   color: var(--color-muted);
-  border-top: 0.0625rem solid var(--color-line);
   margin-top: var(--space-colophon);
   padding-top: var(--space-gutter);
   max-width: var(--layout-conf-measure);
@@ -617,7 +719,6 @@ td .m {
 .footnote {
   font-size: var(--font-footnote);
   color: var(--color-muted);
-  border-top: 0.0625rem solid var(--color-line-soft);
   margin-top: var(--space-flow);
   padding-top: var(--space-md);
   max-width: var(--layout-conf-measure);
@@ -646,28 +747,6 @@ td .m {
 
 .verdict-line strong {
   color: var(--color-violet);
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-md);
-}
-
-.site-link {
-  display: inline-flex;
-  font-family: var(--font-family-mono);
-  font-size: var(--font-mono-link);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-}
-
-.canonical-link {
-  text-decoration-color: var(--color-violet);
 }
 
 @media (prefers-reduced-motion: no-preference) {

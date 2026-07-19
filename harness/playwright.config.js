@@ -1,7 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-
-// End-to-end gate. Specs live in frontend/tests (they exercise the frontend app);
-// this harness-owned config drives the frontend app via the dev server below.
 export default defineConfig({
   testDir: "../frontend/tests",
   webServer: {
@@ -11,11 +8,15 @@ export default defineConfig({
   },
   use: {
     baseURL: "http://127.0.0.1:5183",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
     trace: "on-first-retry",
   },
   projects: [
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },
     { name: "desktop-safari", use: { ...devices["Desktop Safari"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "Mobile Safari", use: { ...devices["iPhone 13"] } },
     { name: "iphone", use: { ...devices["iPhone 13"] } },
     { name: "pixel", use: { ...devices["Pixel 5"] } },
     {

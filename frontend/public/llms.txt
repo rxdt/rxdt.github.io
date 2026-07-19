@@ -1,17 +1,19 @@
 # Rox dT, rxdt.dev
 
-Personal site of Rox dT: agent tools, AI evaluation projects, and practical
-software including the AI Deployment Calculator, a browser tool that estimates
-GPU VRAM and hardware for AI workloads.
+> Personal site of Rox dT, featuring agent tools, AI evaluation projects, and
+> practical software for AI workloads.
 
-The site is a static, multi-page TypeScript + Vite app developed by coding
-agents (Claude, Codex, and other CLI agents) running in a repo-native loop
-harness: prompts, specs, project status, tests, and gate checks live with the
-code, and agents commit only after passing guardrails such as ESLint,
-Stylelint, HTML validation, strict TypeScript, Vitest coverage, Playwright,
-Lighthouse, dependency checks, security checks, and containment rules.
+The site is a static, multi-page TypeScript + Vite application. Its primary interactive project is the AI Deployment Calculator, a browser tool that estimates GPU VRAM and hardware requirements for AI workloads.
 
-Site: https://rxdt.dev/
-Repository: https://github.com/rxdt/rxdt.github.io
-AI Deployment Calculator: https://vram.rxdt.dev/
-Calculator source: https://github.com/rxdt/ai_deployment_calculator
+## Site
+
+- [Rox dT personal site](https://rxdt.dev/): Main site and project overview.
+
+## Projects
+
+- [AI Deployment Calculator](https://vram.rxdt.dev/): Browser-based tool for estimating GPU VRAM and hardware for AI workloads.
+
+## Source code
+
+- [Site repository](https://github.com/rxdt/rxdt.github.io): Source for the rxdt.dev static site.
+- [AI Deployment Calculator repository](https://github.com/rxdt/ai_deployment_calculator): Source for the calculator.

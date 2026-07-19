@@ -10,7 +10,7 @@
   ],
   "workspaces": {
     "frontend": {
-      "entry": ["tests/**/*.spec.ts", "scripts/*.js", "public/scripts/*.js"]
+      "entry": ["tests/**/*.spec.ts", "public/scripts/*.js"]
     },
     "harness": {
       "entry": ["*.test.ts", "lighthouserc.cjs"],

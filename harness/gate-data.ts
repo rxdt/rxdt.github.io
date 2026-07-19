@@ -85,11 +85,6 @@ export const FORBIDDEN_PATTERNS = [
 ] as const;
 
 // SINGLE SOURCE OF TRUTH. Every gate check's command lives ONLY in harness/package.json scripts
-// (top-level, visible, one place). Here we read that file and derive each check's argv, so the gate
-// and the human `pnpm run <check>` cannot drift — a gate.test.ts test re-derives from disk and fails
-// on any mismatch. The scripts prefix `cd .. &&` to run from the repo root (where the gate spawns);
-// we strip that prefix and tokenize (respecting double-quoted globs). Tools resolve by BARE NAME:
-// the gate prepends harness/node_modules/.bin to PATH (see checkEnvironment in gate.ts).
 import { readFileSync } from "node:fs";
 
 const packageJsonUrl = new URL("package.json", import.meta.url);
@@ -97,8 +92,7 @@ const packageJsonUrl = new URL("package.json", import.meta.url);
 /**
 Narrows a parsed package.json (unknown) to its scripts map without an unsafe
 assertion, keeping only string-valued entries (the only kind a script can be).
-Exported and pure so its malformed-input branches are unit-testable.
-@param parsed - The parsed package.json value to read `scripts` from.
+@param parsed package.json value to read `scripts` from.
 @returns A map of script name to command string.
 */
 export function scriptsMap(parsed: unknown): Map<string, string> {

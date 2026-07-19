@@ -1,18 +1,3 @@
-/*
- * Home page styles. The shared design vocabulary lives in tokens.css (linked
- * separately in the HTML); this file references those --color-*, --radius-*,
- * --shadow-*, --space-* and --font-* custom properties and never redeclares
- * that block. Raw colors map to their exact token; px are converted to rem.
- *
- * tokens.css does not cover every dimension this page needs (its spacing/type
- * scale is intentionally small), so the :root block below adds PAGE-LOCAL
- * custom properties for the values it lacks. These follow the gate's
- * custom-property-pattern (space-/font-/layout- prefixes) and hold the exact
- * original values, so the rendered look is byte-for-byte identical. Grid `fr`
- * tracks are expressed as percentage tracks (equal grids reproduce fr exactly;
- * the hero/contact ratio grids approximate it) and the oversized backdrop inset
- * uses vw in place of the gate-banned vmax.
- */
 :root {
   /* Spacing not in tokens.css (px / 16). */
   --space-hairline: 0.0625rem;
@@ -31,8 +16,8 @@
   --space-3xl-plus: 3.625rem;
 
   /* Type sizes not in tokens.css. */
-  --font-body-md: 1rem;
-  --font-h3: 1.75rem;
+  --font-body-md: 0.9375rem;
+  --font-h3: 1.25rem;
 
   /* Line heights (unitless; no token equivalent). */
   --font-leading-tight: 0.95;
@@ -41,18 +26,19 @@
   --font-leading-body: 1.5;
 
   /* Page-local layout dimensions. */
-  --layout-shell-max: 70rem;
-  --layout-h1-measure: 47.5rem;
-  --layout-lede-measure: 45rem;
+  --layout-shell-max: 68rem;
+  --layout-gutter-fluid: clamp(1.5rem, 5vw, 4rem);
+  --layout-h1-measure: 42rem;
+  --layout-lede-measure: 34rem;
   --layout-note-measure: 32.5rem;
-  --layout-portrait: 22.5rem;
-  --layout-portrait-sm: 20rem;
-  --layout-project-image: 18.75rem;
+  --layout-portrait: 11rem;
+  --layout-portrait-sm: 10rem;
+  --layout-project-image: 11rem;
   --layout-eyebrow-rule: 2.125rem;
   --layout-eyebrow-rule-h: 0.1875rem;
   --layout-icon: 1.375rem;
   --layout-icon-sm: 1.25rem;
-  --layout-button-min: 2.875rem;
+  --layout-button-min: 2.375rem;
   --layout-nav-min: 4.5rem;
   --layout-hero-min-offset: 4.5rem;
   --layout-hero-col-min: 18.75rem;
@@ -69,14 +55,10 @@
   /* Non-token grid track lists (fr is banned even inside tokens, so these use
    * percentage tracks). Equal-track grids reproduce fr exactly; the hero and
    * contact ratio grids approximate fr with proportional percentages. */
-  --layout-hero-columns: minmax(0, 59.0909%)
-    minmax(var(--layout-hero-col-min), 40.9091%);
+  --layout-hero-copy-max: 40rem;
   --layout-contact-columns: minmax(0, 47.3684%)
     minmax(var(--layout-contact-col-min), 52.6316%);
   --layout-focus-columns: repeat(3, minmax(0, 33.3333%));
-
-  /* Circle radius (50% is not a gate ignoreValue; token keeps it strict-clean). */
-  --radius-circle: 50%;
 
   /* Backgrounds with no whole-value token. */
   --color-grid-vignette: rgb(0 0 0 / 22%);
@@ -94,6 +76,16 @@
   .background-grid::before {
     animation: grid-spin 18000ms linear infinite;
   }
+}
+
+/* The horizontal clip must live on the document root, not only on <body>.
+   The fixed .background-grid sits at inset: -62vw and, in WebKit, registers as
+   root-level horizontal overflow even though <body> sets overflow-x: hidden
+   (WebKit does not reliably propagate body overflow to the viewport the way
+   Blink does). Clipping <html> suppresses the sideways scroll the WCAG reflow
+   test measures on document.documentElement. */
+html {
+  overflow-x: var(--layout-clip);
 }
 
 body {
@@ -172,17 +164,6 @@ footer {
   }
 }
 
-.cursor-gold-dot {
-  position: var(--layout-pin);
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  border-radius: var(--radius-circle);
-  mix-blend-mode: screen;
-  z-index: var(--z-header);
-  will-change: transform;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -203,9 +184,9 @@ a:hover {
 }
 
 .shell {
-  width: min(var(--layout-shell-max), calc(100% - var(--space-lg)));
-  margin: 0;
+  max-width: var(--layout-shell-max);
   margin-inline: auto;
+  padding-inline: var(--layout-gutter-fluid);
 }
 
 header {
@@ -237,17 +218,39 @@ header {
   align-items: center;
   gap: var(--space-lg-sm);
   color: var(--color-muted);
-  font-size: var(--font-code);
+  font-size: var(--font-label-sm);
   font-weight: 650;
 }
 
-.hero {
-  display: grid;
-  grid-template-columns: var(--layout-hero-columns);
-  gap: var(--space-xl);
+.nav-github {
+  display: inline-flex;
   align-items: center;
-  min-height: calc(100vh - var(--layout-hero-min-offset));
-  padding: var(--space-3xl-plus) 0 var(--space-xl);
+  gap: var(--space-2xs);
+}
+
+.nav-github svg {
+  width: var(--layout-icon-sm);
+  height: var(--layout-icon-sm);
+  flex: 0 0 auto;
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3xl-plus);
+  padding: var(--space-3xl-plus) 0 var(--space-3xl);
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md-plus);
+  min-width: 0;
+  max-width: min(var(--layout-hero-copy-max), 100%);
+  text-align: center;
 }
 
 .eyebrow {
@@ -270,7 +273,7 @@ header {
 }
 
 h1 {
-  margin: var(--space-lg-sm) 0 var(--space-lg-md);
+  margin: 0;
   max-width: var(--layout-h1-measure);
   font-size: var(--font-h1);
   line-height: var(--font-leading-tight);
@@ -279,6 +282,7 @@ h1 {
 
 .lede {
   max-width: var(--layout-lede-measure);
+  margin: 0;
   color: var(--color-muted);
   font-size: var(--font-lede);
 }
@@ -286,8 +290,10 @@ h1 {
 .portrait {
   position: relative;
   overflow: var(--layout-clip);
-  width: min(100%, var(--layout-portrait));
-  justify-self: end;
+  flex: 0 0 var(--layout-portrait);
+  width: var(--layout-portrait);
+  aspect-ratio: 1 / 1;
+  margin: 0;
   border: var(--space-hairline) solid var(--color-line-hover);
   border-radius: var(--radius-md);
   background: var(--color-scrim-soft);
@@ -314,7 +320,7 @@ h1 {
 
 .portrait img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   display: block;
   object-fit: cover;
   object-position: 50% 28%;
@@ -323,9 +329,10 @@ h1 {
 
 .actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: center;
   gap: var(--space-md-sm);
-  margin-top: var(--space-xl-md);
+  margin: 0;
 }
 
 .button {
@@ -333,10 +340,12 @@ h1 {
   align-items: center;
   justify-content: center;
   min-height: var(--layout-button-min);
-  padding: 0 var(--space-lg-sm);
+  padding: 0 var(--space-sm-plus);
+  font-size: var(--font-label-sm);
+  white-space: nowrap;
   border: var(--space-hairline) solid var(--color-line-strong);
   border-radius: var(--radius-sm);
-  font-weight: 800;
+  font-weight: 600;
   background: var(--color-violet-wash);
   color: var(--color-ink);
   box-shadow: inset 0 0 var(--layout-shadow-inset) var(--color-violet-wash-soft);
@@ -357,7 +366,6 @@ h1 {
 
 section {
   padding: var(--space-3xl) 0;
-  border-top: var(--space-hairline) solid var(--color-line-soft);
 }
 
 .section-head {
@@ -572,7 +580,7 @@ footer {
   .hero {
     grid-template-columns: var(--layout-grid-single);
     min-height: auto;
-    padding-top: var(--space-xl);
+    padding-top: var(--space-md-plus);
   }
 
   .portrait {

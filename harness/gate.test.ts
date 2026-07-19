@@ -5,7 +5,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   appendFileSync,
   copyFileSync,
-  cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -216,7 +215,15 @@ A fresh Git repo for a test: a filesystem copy of the seeded template (see `seed
 */
 function makeRepo(): string {
   const repo = mkdtempSync(path.join(tmpdir(), "harness-"));
-  cpSync(seededTemplate(), repo, { recursive: true });
+  // Clone (rather than cpSync) the template's .git: copying a live .git tree file-by-file
+  // races on Git's object files and can throw ENOENT. `git clone --local` reproduces the
+  // repo atomically. Clone omits the source's local config, so re-set the commit identity.
+  runCommand(
+    ["git", "clone", "-q", "--local", seededTemplate(), repo],
+    tmpdir(),
+  );
+  runCommand(["git", "config", "user.email", "harness@test.local"], repo);
+  runCommand(["git", "config", "user.name", "harness-test"], repo);
   return repo;
 }
 
@@ -2019,7 +2026,7 @@ describe("frontend gate shape", () => {
     // let a dead harness/bin/ file go unnoticed.
     expect(config.workspaces).toEqual({
       frontend: {
-        entry: ["tests/**/*.spec.ts", "scripts/*.js", "public/scripts/*.js"],
+        entry: ["tests/**/*.spec.ts", "public/scripts/*.js"],
       },
       harness: {
         entry: ["*.test.ts", "lighthouserc.cjs"],
@@ -2069,7 +2076,11 @@ describe("frontend gate shape", () => {
       expect(script, `${name} must run from repo root`).toMatch(/^cd \.\. &&/u);
     }
     // Style/html/spelling target frontend or a rooted glob, not a bare directory walk.
-    expect(scripts.style).toContain('"frontend/**/*.css"');
+    // The style script is read via a renamed destructure: a `.style`/`["style"]`
+    // member access would trip the no-inline-styles lint rule (it flags any `.style`
+    // access, DOM or not), and this is a package script named style, not a DOM node.
+    const { style: styleScript } = scripts;
+    expect(styleScript).toContain('"frontend/**/*.css"');
     expect(scripts.spelling).toContain('"frontend/*"');
     // The two-step human typecheck alias and the frontend alias stay indirection-only.
     expect(scripts["typecheck:frontend"]).toBe("pnpm typecheck:project");
@@ -2154,6 +2165,7 @@ describe("frontend gate shape", () => {
         "dev",
         "lint",
         "preview",
+        "serve",
         "setup:e2e",
         "test",
         "test:coverage",

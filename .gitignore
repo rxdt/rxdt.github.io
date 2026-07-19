@@ -10,6 +10,7 @@ dist/
 **test-results/
 **/.lighthouseci/
 **/.playwright-*
+*.report.html
 scratchpad/
 *pnpm-debug.log
 .npmrc
