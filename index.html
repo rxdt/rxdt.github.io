@@ -245,6 +245,23 @@
         text-decoration: none;
       }
 
+      .project-image--rent {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 20px;
+        background: linear-gradient(135deg, #b5714e, #8a4f34);
+        color: var(--paper);
+        font-size: clamp(26px, 4vw, 34px);
+        font-weight: 850;
+        line-height: 1.05;
+      }
+
+      .project-image--rent:hover {
+        text-decoration: none;
+      }
+
       .project-body {
         padding: 22px;
       }
@@ -405,6 +422,27 @@
             </p>
           </div>
           <div class="project-grid">
+            <article class="project">
+              <a class="project-image project-image--rent" href="https://rent-or-own.onrender.com/" aria-label="Open Rent or Own, a rent vs. buy calculator">
+                <span>Rent or Own</span>
+              </a>
+              <div class="project-body">
+                <div class="project-kicker">Full-stack web app</div>
+                <h3>Rent or Own</h3>
+                <p>
+                  A rent-vs-buy calculator that compares renting and buying a home over your
+                  time horizon — net worth, monthly cost, break-even year, and a clear
+                  recommendation. A deterministic Python engine (mortgage amortization, taxes,
+                  closing and selling costs, investment of the down-payment differential) behind
+                  a React front end, backed by a full test suite.
+                </p>
+                <div class="links">
+                  <a href="https://rent-or-own.onrender.com/">Launch calculator</a>
+                  <a href="https://github.com/rxdt/proprietor">Repository</a>
+                </div>
+              </div>
+            </article>
+
             <article class="project">
               <a class="project-image project-image--calc" href="https://aideploymentcalculator.vercel.app/" aria-label="Open the AI Deployment Calculator">
                 <span>AI Deployment Calculator</span>
