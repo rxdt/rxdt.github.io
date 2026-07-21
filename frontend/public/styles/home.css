@@ -239,7 +239,7 @@ header {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3xl-plus);
+  gap: var(--space-lg-md);
   padding: var(--space-3xl-plus) 0 var(--space-3xl);
 }
 

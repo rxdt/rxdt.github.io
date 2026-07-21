@@ -3,36 +3,60 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>First and Last Intent-Inference Conference</title>
+    <title>AI Intent Classification | Intent-Inference Conference</title>
     <meta
       name="description"
-      content="I asked three AIs to build one spaCy intent-inference system, and they held a conference to explain why a human should do it instead."
+      content="An AI intent-classification experiment using spaCy, three systems, and a human review loop to test what the models actually built."
     />
     <link rel="canonical" href="https://rxdt.dev/conference.html" />
     <meta
       property="og:title"
-      content="First and Last Intent-Inference Conference"
+      content="AI Intent Classification | Intent-Inference Conference"
     />
     <meta
       property="og:description"
-      content="I asked three AIs to build one spaCy intent-inference system, and they held a conference to explain why a human should do it instead."
+      content="An AI intent-classification experiment using spaCy, three systems, and a human review loop to test what the models actually built."
     />
     <meta property="og:type" content="article" />
     <meta property="og:url" content="https://rxdt.dev/conference.html" />
     <meta
       property="og:image"
-      content="https://rxdt.dev/assets/inference-conference.png"
+      content="https://rxdt.dev/assets/conf-header.webp"
+    />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1067" />
+    <meta
+      property="og:image:alt"
+      content="The Loop of Absurdity: three AI research labs and a human review loop"
     />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="AI Intent Classification | Intent-Inference Conference"
+    />
+    <meta
+      name="twitter:description"
+      content="An AI intent-classification experiment using spaCy, three systems, and a human review loop to test what the models actually built."
+    />
+    <meta
+      name="twitter:image"
+      content="https://rxdt.dev/assets/conf-header.webp"
+    />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": "The First (and Last) Intent-Inference Conference",
-        "description": "I asked three AIs to build one spaCy intent-inference system, and they held a conference to explain why a human should do it instead.",
+        "description": "An AI intent-classification experiment using spaCy, three systems, and a human review loop to test what the models actually built.",
         "url": "https://rxdt.dev/conference.html",
-        "image": "https://rxdt.dev/assets/inference-conference.png",
+        "image": "https://rxdt.dev/assets/conf-header.webp",
+        "datePublished": "2026-07-08",
+        "dateModified": "2026-07-21",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://rxdt.dev/conference.html"
+        },
         "author": {
           "@type": "Person",
           "name": "Roxana del Toro",
@@ -144,12 +168,24 @@
               >Nobody won. The best design is one none of them built. We need a
               human.</strong
             >
-            This is the story of that conference. Everything below is real. I
-            have receipts: a 981 KB JSON transcript and a two-part AI-generated
-            podcast, whose episode titles were, unprompted,
-            <em>&ldquo;AI Agents Reject Every Recommendation System&rdquo;</em>
+            This is the story of that conference. Everything below is real.
+            <a href="https://github.com/rxdt/inference_conference"
+              >I have receipts</a
+            >: a 981 KB JSON transcript. Plus a two-part AI-generated podcast,
+            whose episode titles were, unprompted,
+            <em
+              ><a
+                href="https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/cc0f7cf9-c1a8-47f5-94ee-64f6f4dff176?utm_source=nlm_web_share&amp;utm_medium=google_oo&amp;utm_campaign=art_share_1&amp;utm_content=&amp;utm_smc=nlm_web_share_google_oo_art_share_1_"
+                >&ldquo;AI Agents Reject Every Recommendation System&rdquo;</a
+              ></em
+            >
             and
-            <em>&ldquo;Why Transparent AI Recommends NSFW Models.&rdquo;</em>
+            <em
+              ><a
+                href="https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/9ea6db54-44b4-40f7-88e8-aba5387ad732?utm_source=nlm_web_share&amp;utm_medium=google_oo&amp;utm_campaign=art_share_1&amp;utm_content=&amp;utm_smc=nlm_web_share_google_oo_art_share_1_"
+                >&ldquo;Why Transparent AI Recommends NSFW Models.&rdquo;</a
+              ></em
+            >
             But we&rsquo;ll get there.
           </p>
 
@@ -439,7 +475,12 @@
           </p>
         </div>
         <div class="margin">
-          <span class="label">CONFERENCE.json, the receipt</span>
+          <span class="label"
+            ><a
+              href="https://github.com/rxdt/inference_conference/blob/main/CONFERENCE.json"
+              >CONFERENCE.json</a
+            >, the receipt</span
+          >
           <pre class="margin-json" tabindex="0">
 {
   "prompt": "gimme model to scan
@@ -868,11 +909,27 @@
           <p>
             To round out the bizarre loop I&rsquo;d put myself in, I dropped the
             massive conference JSON into an AI podcast generator. I highly
-            recommend listening to at least part 2.
+            recommend part 2.<br />
+            1.
+            <a
+              href="https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/cc0f7cf9-c1a8-47f5-94ee-64f6f4dff176?utm_source=nlm_web_share&amp;utm_medium=google_oo&amp;utm_campaign=art_share_1&amp;utm_content=&amp;utm_smc=nlm_web_share_google_oo_art_share_1_"
+            >
+              AI Agents Reject Every Recommendation System</a
+            >_<br />
+            2.
+            <a
+              href="https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/9ea6db54-44b4-40f7-88e8-aba5387ad732?utm_source=nlm_web_share&amp;utm_medium=google_oo&amp;utm_campaign=art_share_1&amp;utm_content=&amp;utm_smc=nlm_web_share_google_oo_art_share_1_"
+              >Why AI Recommends NSFW Models</a
+            >
           </p>
         </div>
         <div class="margin">
-          <span class="label">CONFERENCE.json, the ruling</span>
+          <span class="label"
+            ><a
+              href="https://github.com/rxdt/inference_conference/blob/main/CONFERENCE.json"
+              >CONFERENCE.json</a
+            >, the ruling</span
+          >
           <pre class="margin-json" tabindex="0">
 {
   "final_decision":
@@ -907,30 +964,28 @@
             <strong>a human</strong> and a design that
             <strong>none of the machines had built.</strong>
           </p>
-          <p>
+          <h3>
             The circle closes on the obvious note. That human read the
             transcript, said &lsquo;duh,&rsquo; and continued building.
-          </p>
+          </h3>
           <p>I&rsquo;m not going to tell you the name of my app yet.</p>
         </div>
         <div class="margin margin-empty" aria-hidden="true"></div>
       </div>
 
       <p class="colophon">
-        Everything in this post is drawn from a real transcript
-        (<strong>CONFERENCE.json</strong>, 981&nbsp;KB) and a real two-part
-        AI-generated podcast. The three repositories, the three prompts, the
-        model names, the metrics, and every quotation are as they were recorded.
         No spaCy pipelines were harmed, though several were deeply
-        misunderstood.
-        <br />More code at
-        <a href="https://github.com/rxdt">github.com/rxdt</a> and more tools at
-        <a href="https://vram.rxdt.dev/">vram.rxdt.dev</a>. <br />More writing:
-        <a href="/engineering-the-loop.html"
-          >Stop Prompting, Start Engineering the Loop</a
-        >
-        &middot;
-        <a href="/calculator-writeup.html">A Frontend Loop Needs a Real App</a>.
+        misunderstood.<br />
+        <br />Everything in this post is drawn from a real transcript (<strong
+          ><a
+            href="https://github.com/rxdt/inference_conference/blob/main/CONFERENCE.json"
+            >CONFERENCE.json</a
+          ></strong
+        >, 981&nbsp;KB) and a real two-part AI-generated podcast. The three
+        repositories, the three prompts, the model names, the metrics, and every
+        quotation are as they were recorded.<br />
+        <br />More code at <a href="https://github.com/rxdt">github.com/rxdt</a
+        ><br />
         <br /><a href="/">Back to Rox dT</a>
       </p>
     </div>

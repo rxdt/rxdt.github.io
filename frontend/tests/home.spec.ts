@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const writeupRoutes = [
   {
@@ -13,6 +13,10 @@ const writeupRoutes = [
     heading: /the first \(and last\) intent-inference conference/i,
     route: "/conference.html",
   },
+  {
+    heading: /an engineer in venture capital/i,
+    route: "/business-experience.html",
+  },
 ] as const;
 
 const externalLinkContracts = [
@@ -24,7 +28,8 @@ const externalLinkContracts = [
       "https://github.com/rxdt/comfyday-public",
       "https://github.com/rxdt/inference_conference",
       "https://github.com/rxdt/loopgate_harness",
-      "https://github.com/rxdt/rxdt.github.io",
+      "https://github.com/rxdt/proprietor",
+      "https://rentorown.rxdt.dev/",
       "https://www.linkedin.com/in/roxdt/",
       "https://vram.rxdt.dev/",
       "https://x.com/roxdtvc",
@@ -53,8 +58,11 @@ const externalLinkContracts = [
     expectedDestinations: [
       "https://dev.to/rxdt/proceedings-of-the-first-and-last-intent-inference-conference-24a5",
       "https://github.com/rxdt",
+      "https://github.com/rxdt/inference_conference",
+      "https://github.com/rxdt/inference_conference/blob/main/CONFERENCE.json",
+      "https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/9ea6db54-44b4-40f7-88e8-aba5387ad732?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1_",
+      "https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/cc0f7cf9-c1a8-47f5-94ee-64f6f4dff176?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1_",
       "https://spacy.io/",
-      "https://vram.rxdt.dev/",
     ],
     heading: /the first \(and last\) intent-inference conference/i,
     route: "/conference.html",
@@ -86,6 +94,21 @@ const isCalculatorStructuredData = (
   value["@type"] === "WebApplication" &&
   value.name === "AI Deployment Calculator" &&
   typeof value.url === "string";
+
+const expectDecodedImage = async (
+  page: Page,
+  alt: string,
+  source: string,
+): Promise<void> => {
+  const image = page.getByAltText(alt);
+  await expect(image).toHaveAttribute("src", source);
+  await expect(image).toHaveJSProperty("complete", true);
+  expect(
+    await image.evaluate((node) =>
+      node instanceof HTMLImageElement ? node.naturalWidth : 0,
+    ),
+  ).toBeGreaterThan(0);
+};
 
 test("homepage renders portfolio with ambient cursor and grid effects", async ({
   page,
@@ -122,7 +145,7 @@ test("homepage loads project media and exposes expected links", async ({
 
   await expect(
     page.locator(".links").getByRole("link", { name: "Writeup" }),
-  ).toHaveCount(3);
+  ).toHaveCount(4);
   await expect(
     page.getByRole("link", { name: /open the ai deployment calculator/i }),
   ).toHaveAttribute("href", "https://vram.rxdt.dev/");
@@ -170,30 +193,32 @@ test("homepage renders required plan media with durable playback contracts", asy
     image instanceof HTMLImageElement ? image.currentSrc : "",
   );
   expect(portraitSource).toMatch(/\/assets\/merged\.webp$/);
-  await expect(
-    page.getByAltText("AI Deployment Calculator project thumbnail"),
-  ).toHaveAttribute("src", "/assets/caclulator.png");
-  await expect(
-    page.getByAltText("AI Deployment Calculator project thumbnail"),
-  ).toHaveJSProperty("complete", true);
-  expect(
-    await page
-      .getByAltText("AI Deployment Calculator project thumbnail")
-      .evaluate((img) =>
-        img instanceof HTMLImageElement ? img.naturalWidth : 0,
-      ),
-  ).toBeGreaterThan(0);
+  await expectDecodedImage(
+    page,
+    "AI Deployment Calculator project thumbnail",
+    "/assets/calculator.png",
+  );
   // A malformed <img> tag (e.g. an unterminated attribute) still exposes a
   // src/alt but never decodes; assert the browser actually loaded the bytes.
-  await expect(portrait).toHaveJSProperty("complete", true);
-  expect(
-    await portrait.evaluate((img) =>
-      img instanceof HTMLImageElement ? img.naturalWidth : 0,
-    ),
-  ).toBeGreaterThan(0);
+  await expectDecodedImage(page, "Portrait of Rox dT", "/assets/merged.webp");
+  await expectDecodedImage(
+    page,
+    "Intent Inference Conference project thumbnail",
+    "/assets/inference-conference.png",
+  );
+  await expectDecodedImage(
+    page,
+    "VC experience from a systems engineer",
+    "/assets/vc2-960.webp",
+  );
   await expect(
-    page.getByAltText("Intent Inference Conference project thumbnail"),
-  ).toHaveAttribute("src", "/assets/inference-conference.png");
+    page.getByAltText("VC experience from a systems engineer"),
+  ).toHaveAttribute("srcset", "/assets/vc2-960.webp 960w");
+  await expectDecodedImage(
+    page,
+    "Rent or Own Proprietor Thumbnail",
+    "/assets/prooprietor.svg",
+  );
 
   const comfydayVideo = page.locator("video.project-video");
   await expect(comfydayVideo.locator("source")).toHaveAttribute(
@@ -304,6 +329,47 @@ for (const { heading, route } of writeupRoutes) {
     await expect(page.locator("body")).toHaveCSS("margin", "0px");
   });
 }
+
+test("business writeup defers animated media from the Lighthouse initial load", async ({
+  page,
+}) => {
+  const imageResponses: string[] = [];
+  page.on("response", (response) => {
+    if (response.request().resourceType() === "image") {
+      imageResponses.push(new URL(response.url()).pathname);
+    }
+  });
+
+  const response = await page.goto("/business-experience.html");
+  expect(response?.status()).toBe(200);
+
+  const animatedImage = page.locator(
+    'img[src="/assets/investing_code_running.gif"]',
+  );
+  await expect(animatedImage).toHaveAttribute("loading", "lazy");
+  await expect(animatedImage).toHaveAttribute("decoding", "async");
+  await expect(animatedImage).toHaveAttribute("width", "1536");
+  await expect(animatedImage).toHaveAttribute("height", "1024");
+  expect(imageResponses).not.toContain("/assets/investing_code_running.gif");
+
+  await animatedImage.scrollIntoViewIfNeeded();
+  await expect(animatedImage).toHaveJSProperty("complete", true);
+  expect(
+    await animatedImage.evaluate((node) =>
+      node instanceof HTMLImageElement ? node.naturalWidth : 0,
+    ),
+  ).toBeGreaterThan(0);
+
+  const assetResponse = await page.request.get(
+    "/assets/investing_code_running.gif",
+  );
+  expect(assetResponse.status()).toBe(200);
+  expect(assetResponse.headers()["content-type"]).toContain("image/gif");
+  const assetBytes = Number(assetResponse.headers()["content-length"] ?? 0);
+  expect(assetBytes).toBeGreaterThan(0);
+  expect(assetBytes).toBeLessThanOrEqual(7_000_000);
+});
+
 test("the GitHub Pages 404 fallback redirects unknown routes to the homepage", async ({
   page,
 }) => {
@@ -442,6 +508,49 @@ test("hero keeps the portrait beside the copy, not drifting far right", async ({
   expect(geometry.gap).toBeLessThanOrEqual(96);
   // The hero row is centered: left and right margins match within a few px.
   expect(geometry.centerSkew).toBeLessThanOrEqual(2);
+});
+
+test("hero preserves its type scale and portrait alignment", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+
+  const geometry = await page.evaluate(() => {
+    const hero = document.querySelector(".hero");
+    const copy = document.querySelector(".hero-copy");
+    const lede = document.querySelector(".lede");
+    const portrait = document.querySelector(".portrait");
+    if (hero === null || copy === null || lede === null || portrait === null) {
+      return null;
+    }
+
+    const heroBox = hero.getBoundingClientRect();
+    const copyBox = copy.getBoundingClientRect();
+    const portraitBox = portrait.getBoundingClientRect();
+
+    return {
+      ledeFontSize: Number(getComputedStyle(lede).fontSize.replace("px", "")),
+      copyWidth: copyBox.width,
+      portraitCenterSkew: Math.abs(
+        portraitBox.top +
+          portraitBox.height / 2 -
+          (heroBox.top + heroBox.height / 2),
+      ),
+    };
+  });
+
+  expect(geometry).not.toBeNull();
+  if (geometry === null) {
+    return;
+  }
+
+  // The lede should remain readable after the deliberate small reduction,
+  // without regrowing to billboard size or collapsing into body text.
+  expect(geometry.ledeFontSize).toBeGreaterThanOrEqual(17);
+  expect(geometry.ledeFontSize).toBeLessThanOrEqual(19);
+  expect(geometry.copyWidth).toBeLessThanOrEqual(640);
+  expect(geometry.portraitCenterSkew).toBeLessThanOrEqual(3);
 });
 
 test("homepage sections have no horizontal divider rules", async ({ page }) => {
