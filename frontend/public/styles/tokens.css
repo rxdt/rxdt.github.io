@@ -29,6 +29,10 @@
   --color-cyan-wash-soft: rgb(34 211 238 / 18%);
   --color-scrim: rgb(13 15 18 / 92%);
   --color-scrim-soft: rgb(8 8 12 / 55%);
+  --color-live: rgb(52 211 153 / 70%);
+  --color-live-wash: rgb(52 211 153 / 12%);
+  --color-live-ring: rgb(52 211 153 / 45%);
+  --color-live-ring-fade: rgb(52 211 153 / 0%);
 
   /* Backgrounds */
   --background-paper: radial-gradient(

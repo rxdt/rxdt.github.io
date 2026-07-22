@@ -9,8 +9,9 @@
   },
   "scripts": {
     "build": "vite build --config ../harness/vite.config.ts",
-    "dev": "vite --config ../harness/vite.config.ts --host 127.0.0.1",
-    "preview": "vite preview --config ../harness/vite.config.ts --host 127.0.0.1",
+    "predev": "lsof -ti:5173 | xargs kill 2>/dev/null || true",
+    "dev": "exec vite --config ../harness/vite.config.ts --host 127.0.0.1",
+    "preview": "exec vite preview --config ../harness/vite.config.ts --host 127.0.0.1",
     "serve": "vite build --config ../harness/vite.config.ts && vite preview --config ../harness/vite.config.ts --host 127.0.0.1",
     "lint": "pnpm --prefix ../harness run lint",
     "setup:e2e": "pnpm --prefix ../harness run setup:e2e",

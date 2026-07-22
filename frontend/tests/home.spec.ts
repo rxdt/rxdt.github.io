@@ -183,16 +183,17 @@ test("homepage renders required plan media with durable playback contracts", asy
 
   expect(response?.status()).toBe(200);
   const portrait = page.getByAltText("Portrait of Rox dT");
-  await expect(portrait).toHaveAttribute("src", "/assets/merged.webp");
+  await expect(portrait).toHaveAttribute("src", "/assets/rxdt.webp");
   await expect(portrait).toHaveAttribute("width", "174");
   await expect(portrait).toHaveAttribute("height", "174");
   await expect(portrait).toHaveAttribute("fetchpriority", "high");
-  // The portrait is served as a single animated WebP (no <picture>/AVIF): the
-  // AVIF variant had zero per-frame delay and rendered frozen, so it was dropped.
+  // The portrait is a single static WebP served at its 174px display size, with
+  // its alpha flattened onto the page background so Lighthouse's image-delivery
+  // insight stays under budget (transparency tripled the byte size).
   const portraitSource = await portrait.evaluate((image) =>
     image instanceof HTMLImageElement ? image.currentSrc : "",
   );
-  expect(portraitSource).toMatch(/\/assets\/merged\.webp$/);
+  expect(portraitSource).toMatch(/\/assets\/rxdt\.webp$/);
   await expectDecodedImage(
     page,
     "AI Deployment Calculator project thumbnail",
@@ -200,7 +201,7 @@ test("homepage renders required plan media with durable playback contracts", asy
   );
   // A malformed <img> tag (e.g. an unterminated attribute) still exposes a
   // src/alt but never decodes; assert the browser actually loaded the bytes.
-  await expectDecodedImage(page, "Portrait of Rox dT", "/assets/merged.webp");
+  await expectDecodedImage(page, "Portrait of Rox dT", "/assets/rxdt.webp");
   await expectDecodedImage(
     page,
     "Intent Inference Conference project thumbnail",
@@ -234,8 +235,8 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(comfydayVideo).toHaveAttribute("playsinline", "");
 });
 
-test("portrait asset serves an animated WebP", async ({ page }) => {
-  const webpResponse = await page.request.get("/assets/merged.webp");
+test("portrait asset serves a static WebP", async ({ page }) => {
+  const webpResponse = await page.request.get("/assets/rxdt.webp");
   expect(webpResponse.status()).toBe(200);
   expect(webpResponse.headers()["content-type"]).toContain("image/webp");
 });
@@ -476,67 +477,42 @@ test("hero H1 stays in its intended size band on desktop", async ({ page }) => {
   expect(size).toBeLessThanOrEqual(70);
 });
 
-test("hero keeps the portrait beside the copy, not drifting far right", async ({
-  page,
-}) => {
+test("hero row stays horizontally centered", async ({ page }) => {
   await page.goto("/");
-  // On viewports below 900px the portrait wraps below the copy (gap is null),
-  // so the side-by-side geometry is only asserted where the row layout applies.
-  const geometry = await page.evaluate(() => {
+  const centerSkew = await page.evaluate(() => {
     if (window.innerWidth < 900) {
       return null;
     }
-    const copy = document.querySelector(".hero-copy");
-    const portrait = document.querySelector(".portrait");
     const hero = document.querySelector(".hero");
-    if (copy === null || portrait === null || hero === null) {
+    if (hero === null) {
       return null;
     }
-    const copyBox = copy.getBoundingClientRect();
-    const portraitBox = portrait.getBoundingClientRect();
     const heroBox = hero.getBoundingClientRect();
-    return {
-      gap: portraitBox.left - copyBox.right,
-      centerSkew: Math.abs(heroBox.left - (window.innerWidth - heroBox.right)),
-    };
+    return Math.abs(heroBox.left - (window.innerWidth - heroBox.right));
   });
-  if (geometry === null) {
+  if (centerSkew === null) {
     return;
   }
-  // The portrait must hug the copy (no dead gap like the far-right drift bug).
-  expect(geometry.gap).toBeGreaterThanOrEqual(0);
-  expect(geometry.gap).toBeLessThanOrEqual(96);
   // The hero row is centered: left and right margins match within a few px.
-  expect(geometry.centerSkew).toBeLessThanOrEqual(2);
+  expect(centerSkew).toBeLessThanOrEqual(2);
 });
 
-test("hero preserves its type scale and portrait alignment", async ({
-  page,
-}) => {
+test("hero preserves its type scale and copy width", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
 
   const geometry = await page.evaluate(() => {
-    const hero = document.querySelector(".hero");
     const copy = document.querySelector(".hero-copy");
     const lede = document.querySelector(".lede");
-    const portrait = document.querySelector(".portrait");
-    if (hero === null || copy === null || lede === null || portrait === null) {
+    if (copy === null || lede === null) {
       return null;
     }
 
-    const heroBox = hero.getBoundingClientRect();
     const copyBox = copy.getBoundingClientRect();
-    const portraitBox = portrait.getBoundingClientRect();
 
     return {
       ledeFontSize: Number(getComputedStyle(lede).fontSize.replace("px", "")),
       copyWidth: copyBox.width,
-      portraitCenterSkew: Math.abs(
-        portraitBox.top +
-          portraitBox.height / 2 -
-          (heroBox.top + heroBox.height / 2),
-      ),
     };
   });
 
@@ -550,7 +526,6 @@ test("hero preserves its type scale and portrait alignment", async ({
   expect(geometry.ledeFontSize).toBeGreaterThanOrEqual(17);
   expect(geometry.ledeFontSize).toBeLessThanOrEqual(19);
   expect(geometry.copyWidth).toBeLessThanOrEqual(640);
-  expect(geometry.portraitCenterSkew).toBeLessThanOrEqual(3);
 });
 
 test("homepage sections have no horizontal divider rules", async ({ page }) => {

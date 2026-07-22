@@ -2164,6 +2164,7 @@ describe("frontend gate shape", () => {
         "build",
         "dev",
         "lint",
+        "predev",
         "preview",
         "serve",
         "setup:e2e",
