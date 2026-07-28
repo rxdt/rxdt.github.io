@@ -186,7 +186,11 @@ test("homepage renders required plan media with durable playback contracts", asy
   await expect(portrait).toHaveAttribute("src", "/assets/rxdt.webp");
   await expect(portrait).toHaveAttribute("width", "174");
   await expect(portrait).toHaveAttribute("height", "174");
-  await expect(portrait).toHaveAttribute("fetchpriority", "high");
+  await expect(portrait).toHaveAttribute("loading", "lazy");
+  // The portrait sits offscreen at the foot of the page, so it is lazily loaded
+  // to stay under Lighthouse's offscreen-images budget. Bring it into view
+  // before asserting it decodes, mirroring the animated-gif playback contract.
+  await portrait.scrollIntoViewIfNeeded();
   // The portrait is a single static WebP served at its 174px display size, with
   // its alpha flattened onto the page background so Lighthouse's image-delivery
   // insight stays under budget (transparency tripled the byte size).
