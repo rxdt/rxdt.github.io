@@ -60,6 +60,7 @@ const externalLinkContracts = [
       "https://github.com/rxdt",
       "https://github.com/rxdt/inference_conference",
       "https://github.com/rxdt/inference_conference/blob/main/CONFERENCE.json",
+      "https://news.ycombinator.com/submitlink?u=https://rxdt.dev/conference.html&t=The%20First%20(and%20Last)%20Intent-Inference%20Conference",
       "https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/9ea6db54-44b4-40f7-88e8-aba5387ad732?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1_",
       "https://notebooklm.google.com/notebook/8ca34315-7fd2-4a66-b26e-7398ff358ee3/artifact/cc0f7cf9-c1a8-47f5-94ee-64f6f4dff176?utm_source=nlm_web_share&utm_medium=google_oo&utm_campaign=art_share_1&utm_content=&utm_smc=nlm_web_share_google_oo_art_share_1_",
       "https://spacy.io/",
