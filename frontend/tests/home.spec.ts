@@ -193,6 +193,11 @@ test("homepage renders required plan media with durable playback contracts", asy
   // to stay under Lighthouse's offscreen-images budget. Bring it into view
   // before asserting it decodes, mirroring the animated-gif playback contract.
   await portrait.scrollIntoViewIfNeeded();
+  // Wait for the lazily-loaded image to actually fetch before reading
+  // currentSrc: scrollIntoViewIfNeeded only triggers the load, and currentSrc
+  // stays "" until the browser picks a source. Firefox/mobile are slower than
+  // Chromium here, so poll on `complete` first (as the animated-gif test does).
+  await expect(portrait).toHaveJSProperty("complete", true);
   // The portrait is a single static WebP served at its 174px display size, with
   // its alpha flattened onto the page background so Lighthouse's image-delivery
   // insight stays under budget (transparency tripled the byte size).
