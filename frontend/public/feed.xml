@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Rox dT — Writeups</title>
+  <subtitle>Forward Deployed Engineering, AI agents, evaluation, and practical software.</subtitle>
+  <link href="https://rxdt.dev/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://rxdt.dev/" rel="alternate" type="text/html" />
+  <id>https://rxdt.dev/feed.xml</id>
+  <updated>2026-07-21T00:00:00Z</updated>
+  <author>
+    <name>Roxana del Toro</name>
+    <uri>https://rxdt.dev/</uri>
+  </author>
+  <entry>
+    <title>An engineer in Venture Capital</title>
+    <link href="https://rxdt.dev/business-experience.html" rel="alternate" type="text/html" />
+    <id>https://rxdt.dev/business-experience.html</id>
+    <published>2026-07-20T00:00:00Z</published>
+    <updated>2026-07-21T00:00:00Z</updated>
+    <summary>What venture capital taught a Forward Deployed Engineer about technical diligence, product judgment, and building for the outcome.</summary>
+  </entry>
+  <entry>
+    <title>Stop Prompting, Start Engineering the Loop</title>
+    <link href="https://rxdt.dev/engineering-the-loop.html" rel="alternate" type="text/html" />
+    <id>https://rxdt.dev/engineering-the-loop.html</id>
+    <published>2026-07-16T00:00:00Z</published>
+    <updated>2026-07-21T00:00:00Z</updated>
+    <summary>Why AI coding agents need engineered loops, verification gates, and controlled delegation instead of endless prompting.</summary>
+  </entry>
+  <entry>
+    <title>A Frontend Loop Needs a Real App</title>
+    <link href="https://rxdt.dev/calculator-writeup.html" rel="alternate" type="text/html" />
+    <id>https://rxdt.dev/calculator-writeup.html</id>
+    <published>2026-07-14T00:00:00Z</published>
+    <updated>2026-07-21T00:00:00Z</updated>
+    <summary>How an AI VRAM calculator became a realistic test for frontend coding agents, browser state, real math, and verification.</summary>
+  </entry>
+  <entry>
+    <title>The First (and Last) Intent-Inference Conference</title>
+    <link href="https://rxdt.dev/conference.html" rel="alternate" type="text/html" />
+    <id>https://rxdt.dev/conference.html</id>
+    <published>2026-07-08T00:00:00Z</published>
+    <updated>2026-07-21T00:00:00Z</updated>
+    <summary>An AI intent-classification experiment using spaCy, three systems, and a human review loop to test what the models actually built.</summary>
+  </entry>
+</feed>
