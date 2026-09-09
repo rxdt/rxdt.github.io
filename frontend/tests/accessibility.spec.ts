@@ -20,6 +20,14 @@ const accessibleRoutes = [
     heading: /the first \(and last\) intent-inference conference/i,
     route: "/conference.html",
   },
+  {
+    heading: /an engineer in venture capital/i,
+    route: "/business-experience.html",
+  },
+  {
+    heading: /loopgate makes agents prove the code works/i,
+    route: "/loopgate.html",
+  },
 ] as const;
 
 // The WCAG levels the site commits to: A and AA across the 2.0/2.1/2.2 rule

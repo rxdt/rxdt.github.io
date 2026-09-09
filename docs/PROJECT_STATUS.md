@@ -14,10 +14,13 @@
   check requires semgrep; ci.yml installs it with `pip install semgrep`. The
   `audit` check passes via pnpm-workspace.yaml `overrides` forcing patched
   transitive dev deps (tmp, uuid, fast-json-patch, @opentelemetry/core).
-- The legacy GitHub "pages build and deployment" Jekyll workflow is still
-  ACTIVE (dynamic workflow, no file in-repo). If ci.yml's deploy is skipped it
-  can overwrite the site with a Jekyll-rendered README. Owner should disable it
-  (Actions tab, or `gh workflow disable 309717422`).
+- The legacy GitHub "pages build and deployment" Jekyll workflow (309717422,
+  dynamic, no file in-repo) shows as ACTIVE and cannot be disabled — the API
+  returns 422, because with Pages on `build_type: "workflow"` this same dynamic
+  workflow is what `actions/deploy-pages` runs to publish the artifact. It no
+  longer does a Jekyll build: `gh api repos/rxdt/rxdt.github.io/pages` reports
+  `build_type: workflow`, and its last Jekyll-style run was 2026-07-16, before
+  the switch. No owner action needed; do not try to disable it.
 - SEO: every page has title, meta description, canonical, OG/twitter tags,
   favicon, JSON-LD (Person + WebApplication on home; Article on all three
   writeups). All three writeups are SELF-canonical and in sitemap.xml. The

@@ -2,7 +2,7 @@
 
 Extracted from the homepage (`frontend/public/scripts/home-styles.js`), the
 single source of the site's look. Every page — including article pages — must
-use these tokens.
+use these tokens, with one documented carve-out listed under "Exceptions".
 
 ## Overview
 
@@ -154,3 +154,30 @@ rounded:
 - Do ship styles via same-origin constructable-stylesheet scripts (CSP forbids
   inline styles) with `<body hidden>` until the sheet is adopted.
 - Do maintain WCAG AA contrast (4.5:1 for body text) against `paper`.
+
+## Exceptions
+
+One page is deliberately outside the dark system.
+
+**`loopgate.html` (light, green-accented).** LoopGate is a product page for the
+RXDT Labs harness, not a chapter of the rxdt.dev personal-site narrative. It
+addresses a different audience (teams evaluating a developer tool) and is linked
+out to from GitHub and social, so it carries its own light palette and its own
+stylesheet, `frontend/public/styles/loopgate.css`. It does not load
+`tokens.css`.
+
+The carve-out covers palette and scheme only. Everything else still holds:
+
+- Token names follow the shared
+  `background|color|font|layout|radius|shadow|space|z` prefix pattern, so the
+  stylelint contract applies unchanged.
+- Values the gate rejects inline (raw lengths on sizing properties, grid track
+  lists, hex in `background`) are named as tokens, never waived with a lint
+  suppression comment.
+- Breakpoints use content-driven `em` in context range notation
+  (`@media (width <= 55em)`).
+- WCAG AA contrast, keyboard-visible `:focus-visible`, and
+  `prefers-reduced-motion` behavior are the same bar as every other page.
+
+Do not treat this as precedent: a new page needs an explicit entry here, not a
+new stylesheet.
