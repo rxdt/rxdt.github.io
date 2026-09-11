@@ -87,3 +87,12 @@ survive the harness gate and manual visual review.
   network-dependency-tree deadlock; homepage Vite bundle dropped.
 - Prior loops: axe WCAG A/AA e2e; LoopGate tile uncropped; calculator links to
   `vram.rxdt.dev`; CSP-safe externalized styling; optimized media.
+
+## LoopGate video update
+
+- Branch: `codex/add-loopgate-page`, PR #9.
+- Added the 60-second launch video, poster, and responsive player.
+- Copy now describes documented gates and Git-backed progress.
+- Validation: `pnpm gate` passed all 18 checks.
+- Updated dependency pins remove audit findings without exclusions.
+- PR #10 will inherit the page and dependency fixes from PR #9.
