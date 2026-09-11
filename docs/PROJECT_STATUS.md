@@ -93,4 +93,5 @@
 - Added the 60-second launch video, poster, and responsive player.
 - Copy now describes documented gates and Git-backed progress.
 - Validation: `pnpm gate` passed all 18 checks.
-- Existing CI and dependency config edits remain outside this change.
+- Updated dependency pins remove audit findings without exclusions.
+- PR #10 will inherit the page and dependency fixes from PR #9.
