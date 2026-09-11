@@ -31,7 +31,6 @@
   --color-terminal-muted: #aab1ad;
   --color-dot: #545b60;
   --color-pass: #79e0a7;
-  --color-review: #ffb86b;
   --color-shadow: #dfe7e2;
 
   /* Backgrounds — `background` rejects hex/rgb() literals inline. */
@@ -357,10 +356,6 @@ h3 {
   font-weight: 750;
 }
 
-.status.review {
-  color: var(--color-review);
-}
-
 .section {
   padding-top: var(--space-9xl);
 }
@@ -430,6 +425,29 @@ h3 {
   color: var(--color-accent-dark);
   font-family: var(--font-family-mono);
   font-weight: 800;
+}
+
+.demo-video {
+  margin: 0 0 var(--space-3xl);
+}
+
+.demo-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--space-hairline) solid var(--color-line);
+  background: var(--color-code);
+}
+
+.demo-video video:focus-visible {
+  outline: var(--space-hairline) solid var(--color-accent-dark);
+  outline-offset: var(--space-2xs);
+}
+
+.demo-video figcaption {
+  margin-top: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--font-label);
 }
 
 .split {

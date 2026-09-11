@@ -86,3 +86,11 @@
   name the fix (restore the script or remove the check name).
 - semgrep is the only check tool that is not an npm devDependency; any CI or
   fresh machine must install it out-of-band or the gate fails on `sast`.
+
+## LoopGate video update
+
+- Branch: `codex/add-loopgate-page`, PR #9.
+- Added the 60-second launch video, poster, and responsive player.
+- Copy now describes documented gates and Git-backed progress.
+- Validation: `pnpm gate` passed all 18 checks.
+- Existing CI and dependency config edits remain outside this change.

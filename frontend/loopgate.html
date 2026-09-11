@@ -6,7 +6,7 @@
     <title>LoopGate | RXDT Labs</title>
     <meta
       name="description"
-      content="LoopGate runs AI coding-agent output through repo-specific tests, lint, static checks, traces, and human-readable evidence before accepting code."
+      content="LoopGate runs coding agents through repo-specific quality gates: tests, lint, type checks, security scans, and commit guardrails."
     />
     <link rel="canonical" href="https://rxdt.dev/loopgate.html" />
     <meta property="og:title" content="LoopGate | RXDT Labs" />
@@ -44,7 +44,7 @@
         "name": "LoopGate",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Cross-platform",
-        "description": "Verification infrastructure for AI coding agents. LoopGate runs agent output through repo-specific tests, lint, static checks, traces, and human-readable evidence before accepting code.",
+        "description": "LoopGate is an open-source coding-agent harness with repo-specific quality gates, bounded iterations, and Git-backed progress.",
         "url": "https://rxdt.dev/loopgate.html",
         "codeRepository": "https://github.com/rxdt/loopgate_harness",
         "author": {
@@ -84,9 +84,9 @@
           </p>
           <h1>LoopGate makes agents prove the code works.</h1>
           <p class="lead">
-            RXDT Labs builds developer tools that run agent-written code through
-            repo-specific tests, lint, static checks, traces, and human-readable
-            evidence before accepting output.
+            Run Claude, Codex, Copilot, or any prompt-reading CLI agent with
+            repo-specific tests, lint, type checks, and security scans. Set the
+            plan and quality gates, then require each iteration to pass.
           </p>
           <div class="actions" role="group" aria-label="Primary links">
             <a class="button" href="https://github.com/rxdt/loopgate_harness"
@@ -105,7 +105,7 @@
 
         <aside
           class="terminal"
-          aria-label="LoopGate verification report example"
+          aria-label="Illustrative LoopGate quality gate results"
         >
           <div class="terminal-head">
             <div class="dots" aria-hidden="true">
@@ -113,11 +113,11 @@
               <span class="dot"></span>
               <span class="dot"></span>
             </div>
-            <span>loopgate verify</span>
+            <span>harness gate</span>
           </div>
           <div class="terminal-body">
             <div class="line">
-              <span class="status">PASS</span><span>repo context loaded</span>
+              <span class="status">PASS</span><span>format checks clean</span>
             </div>
             <div class="line">
               <span class="status">PASS</span><span>tests completed</span>
@@ -126,11 +126,10 @@
               <span class="status">PASS</span><span>lint clean</span>
             </div>
             <div class="line">
-              <span class="status review">REVIEW</span
-              ><span>trace explains changed behavior</span>
+              <span class="status">PASS</span><span>type checks clean</span>
             </div>
             <div class="line">
-              <span class="status">PASS</span><span>evidence packet ready</span>
+              <span class="status">PASS</span><span>security checks clean</span>
             </div>
           </div>
         </aside>
@@ -159,8 +158,8 @@
             <strong>Weak acceptance</strong>
             <h3>Vibes are not a merge policy.</h3>
             <p>
-              Teams need test results, lint status, static checks, traces, and a
-              plain-English explanation in one reviewable packet.
+              Teams need repeatable checks before a commit or push. Run fast
+              preflight checks often and the full gate before pushing.
             </p>
           </article>
           <article class="card">
@@ -179,9 +178,9 @@
         <div class="section-head">
           <h2>A harness for verified agent work.</h2>
           <p>
-            LoopGate wraps agent output in a loop: propose, inspect, run gates,
-            collect evidence, and only then accept or send the agent back
-            through another iteration.
+            Each fresh agent iteration reads the plan and specs, makes a bounded
+            change, updates progress, and commits through quality gates. Failed
+            checks must be repaired before a blocking gate allows work through.
           </p>
         </div>
         <div class="flow" role="group" aria-label="LoopGate workflow">
@@ -197,37 +196,62 @@
           </div>
           <div class="step">
             <h3>Verify locally</h3>
-            <p>Run tests, lint, static checks, traces, and custom gates.</p>
+            <p>
+              Run tests, lint, type checks, security scans, and custom gates.
+            </p>
           </div>
           <div class="step">
-            <h3>Emit evidence</h3>
-            <p>
-              Produce a readable packet for humans, CI, or future automation.
-            </p>
+            <h3>Save progress</h3>
+            <p>Update specs and status, then commit through the repo checks.</p>
           </div>
         </div>
       </section>
 
       <section id="demo" class="section">
         <div class="section-head">
-          <h2>What the demo shows.</h2>
+          <h2>What AI slop?</h2>
           <p>
-            An agent makes a real repo change. LoopGate runs the verification
-            loop, shows the checks, and produces an evidence report a human can
-            inspect.
+            Agents can edit. Your quality standards decide what lands. Watch the
+            60-second introduction to LoopGate.
           </p>
         </div>
+        <figure class="demo-video">
+          <video
+            controls
+            playsinline
+            preload="none"
+            width="1920"
+            height="1080"
+            poster="/assets/loopgate-launch-poster.jpg?v=2"
+            aria-label="LoopGate launch demo"
+            aria-describedby="demo-caption"
+          >
+            <source src="/assets/loopgate-launch.mp4?v=2" type="video/mp4" />
+            <a href="/assets/loopgate-launch.mp4?v=2"
+              >Download the launch video</a
+            >.
+          </video>
+          <figcaption id="demo-caption">
+            An illustrative workflow: the agent reads your plan and specs, faces
+            automatic commit and pre-push checks, and must repair failures to
+            continue. Mutation testing tests the tests. Forbidden files,
+            patterns, and diff limits contain the work. Markdown and code carry
+            progress across fresh contexts. Works with CLI loops and interactive
+            agent sessions. Music only; all demo text is shown on screen.
+          </figcaption>
+        </figure>
         <div class="split">
           <div class="list">
             <div class="list-item">
-              Run Claude, Codex, Copilot, or another CLI agent against a scoped
-              task.
+              Run any CLI agent in a loop, or apply the same repo standards to
+              interactive Claude and Codex sessions.
             </div>
             <div class="list-item">
               Require each iteration to pass repo-local quality gates.
             </div>
             <div class="list-item">
-              Turn the final result into a readable pass/fail/review verdict.
+              Keep specs, status, logs, and commits available to the next
+              iteration.
             </div>
           </div>
           <div class="quote">
