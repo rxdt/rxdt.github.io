@@ -95,4 +95,4 @@
 - Validation: local gate passed with the committed dependency fix.
 - Approved dependency fix committed with hooks and checks enabled.
 - Audit reports zero known vulnerabilities with no exclusions.
-- PR #10 includes the page and dependency fixes from PR #9.
+- Merged main into PR #9, retaining patched dependencies and Browserslist 4.28.9.
