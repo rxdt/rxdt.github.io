@@ -17,6 +17,12 @@ test("homepage distinguishes the Python and JS harnesses", async ({ page }) => {
   await expect(card).toContainText(
     "This site itself was built using loopgate_js.",
   );
+  await expect(
+    card.getByRole("link", {
+      name: "LoopGate JS GitHub repository",
+      exact: true,
+    }),
+  ).toHaveAttribute("href", "https://github.com/rxdt/loopgate_js");
   const image = card.getByRole("img");
   await image.scrollIntoViewIfNeeded();
   await expect(image).toHaveJSProperty("naturalWidth", 384);
