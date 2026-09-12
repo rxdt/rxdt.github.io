@@ -19,7 +19,7 @@ test("homepage distinguishes the Python and JS harnesses", async ({ page }) => {
   );
   const image = card.getByRole("img");
   await image.scrollIntoViewIfNeeded();
-  await expect(image).toHaveJSProperty("naturalWidth", 768);
+  await expect(image).toHaveJSProperty("naturalWidth", 384);
   await card
     .getByRole("link", { name: "Why frontend gates are harder", exact: true })
     .click();
