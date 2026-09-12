@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LoopGate | RXDT Labs</title>
+    <meta
+      name="description"
+      content="LoopGate runs coding agents through repo-specific quality gates: tests, lint, type checks, security scans, and commit guardrails."
+    />
+    <link rel="canonical" href="https://rxdt.dev/loopgate.html" />
+    <meta property="og:title" content="LoopGate | RXDT Labs" />
+    <meta
+      property="og:description"
+      content="Verification infrastructure for AI coding agents. Fast code is not the milestone. Verified code is."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://rxdt.dev/loopgate.html" />
+    <meta
+      property="og:image"
+      content="https://rxdt.dev/assets/loopgate-og.webp"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="LoopGate by RXDT Labs: verification infrastructure for AI coding agents"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LoopGate | RXDT Labs" />
+    <meta
+      name="twitter:description"
+      content="Verification infrastructure for AI coding agents."
+    />
+    <meta
+      name="twitter:image"
+      content="https://rxdt.dev/assets/loopgate-og.webp"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "LoopGate",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Cross-platform",
+        "description": "LoopGate is an open-source coding-agent harness with repo-specific quality gates, bounded iterations, and Git-backed progress.",
+        "url": "https://rxdt.dev/loopgate.html",
+        "codeRepository": "https://github.com/rxdt/loopgate_harness",
+        "author": {
+          "@type": "Person",
+          "name": "Roxana del Toro",
+          "url": "https://rxdt.dev/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/styles/loopgate.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="shell nav" aria-label="Main navigation">
+        <a class="brand" href="/">
+          <span class="mark">RX</span>
+          <span>RXDT Labs</span>
+        </a>
+        <div class="navlinks">
+          <a href="#problem">Problem</a>
+          <a href="#product">Product</a>
+          <a href="#demo">Demo</a>
+          <a
+            class="button secondary"
+            href="https://github.com/rxdt/loopgate_harness"
+            >GitHub</a
+          >
+        </div>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">
+            Verification infrastructure for AI coding agents
+          </p>
+          <h1>LoopGate makes agents prove the code works.</h1>
+          <p class="lead">
+            Run Claude, Codex, Copilot, or any prompt-reading CLI agent with
+            repo-specific tests, lint, type checks, and security scans. Set the
+            plan and quality gates, then require each iteration to pass.
+          </p>
+          <div class="actions" role="group" aria-label="Primary links">
+            <a class="button" href="https://github.com/rxdt/loopgate_harness"
+              >View the repo</a
+            >
+            <a class="button secondary" href="/engineering-the-loop.html"
+              >Read the loop thesis</a
+            >
+          </div>
+          <div class="meta" role="group" aria-label="Product facts">
+            <span class="pill">Open-source harness</span>
+            <span class="pill">Built for real repos</span>
+            <span class="pill">Claude, Codex, Copilot</span>
+          </div>
+        </div>
+
+        <aside
+          class="terminal"
+          aria-label="Illustrative LoopGate quality gate results"
+        >
+          <div class="terminal-head">
+            <div class="dots" aria-hidden="true">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <span>harness gate</span>
+          </div>
+          <div class="terminal-body">
+            <div class="line">
+              <span class="status">PASS</span><span>format checks clean</span>
+            </div>
+            <div class="line">
+              <span class="status">PASS</span><span>tests completed</span>
+            </div>
+            <div class="line">
+              <span class="status">PASS</span><span>lint clean</span>
+            </div>
+            <div class="line">
+              <span class="status">PASS</span><span>type checks clean</span>
+            </div>
+            <div class="line">
+              <span class="status">PASS</span><span>security checks clean</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="problem" class="section">
+        <div class="section-head">
+          <h2>AI agents ship faster than teams can trust.</h2>
+          <p>
+            Coding agents can generate useful changes, but teams still need a
+            repeatable way to decide whether the work should be accepted.
+            LoopGate turns that acceptance step into an explicit verification
+            loop.
+          </p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <strong>Agent sprawl</strong>
+            <h3>Every tool speaks a different dialect.</h3>
+            <p>
+              Claude, Codex, Copilot, Cursor, and custom agents all need the
+              same bar for evidence before their work lands.
+            </p>
+          </article>
+          <article class="card">
+            <strong>Weak acceptance</strong>
+            <h3>Vibes are not a merge policy.</h3>
+            <p>
+              Teams need repeatable checks before a commit or push. Run fast
+              preflight checks often and the full gate before pushing.
+            </p>
+          </article>
+          <article class="card">
+            <strong>Real repos</strong>
+            <h3>The gate has to fit the codebase.</h3>
+            <p>
+              LoopGate is designed around repo-local commands and context
+              instead of generic demos that collapse on contact with production
+              code.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="product" class="section">
+        <div class="section-head">
+          <h2>A harness for verified agent work.</h2>
+          <p>
+            Each fresh agent iteration reads the plan and specs, makes a bounded
+            change, updates progress, and commits through quality gates. Failed
+            checks must be repaired before a blocking gate allows work through.
+          </p>
+        </div>
+        <div class="flow" role="group" aria-label="LoopGate workflow">
+          <div class="step">
+            <h3>Collect context</h3>
+            <p>
+              Load the repo, target files, task intent, and acceptance criteria.
+            </p>
+          </div>
+          <div class="step">
+            <h3>Run the agent</h3>
+            <p>Let the selected coding agent produce a bounded change.</p>
+          </div>
+          <div class="step">
+            <h3>Verify locally</h3>
+            <p>
+              Run tests, lint, type checks, security scans, and custom gates.
+            </p>
+          </div>
+          <div class="step">
+            <h3>Save progress</h3>
+            <p>Update specs and status, then commit through the repo checks.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="section">
+        <div class="section-head">
+          <h2>What AI slop?</h2>
+          <p>
+            Agents can edit. Your quality standards decide what lands. Watch the
+            60-second introduction to LoopGate.
+          </p>
+        </div>
+        <figure class="demo-video">
+          <video
+            controls
+            playsinline
+            preload="none"
+            width="1920"
+            height="1080"
+            poster="/assets/loopgate-launch-poster.jpg?v=2"
+            aria-label="LoopGate launch demo"
+            aria-describedby="demo-caption"
+          >
+            <source src="/assets/loopgate-launch.mp4?v=2" type="video/mp4" />
+            <a href="/assets/loopgate-launch.mp4?v=2"
+              >Download the launch video</a
+            >.
+          </video>
+          <figcaption id="demo-caption">
+            An illustrative workflow: the agent reads your plan and specs, faces
+            automatic commit and pre-push checks, and must repair failures to
+            continue. Mutation testing tests the tests. Forbidden files,
+            patterns, and diff limits contain the work. Markdown and code carry
+            progress across fresh contexts. Works with CLI loops and interactive
+            agent sessions. Music only; all demo text is shown on screen.
+          </figcaption>
+        </figure>
+        <div class="split">
+          <div class="list">
+            <div class="list-item">
+              Run any CLI agent in a loop, or apply the same repo standards to
+              interactive Claude and Codex sessions.
+            </div>
+            <div class="list-item">
+              Require each iteration to pass repo-local quality gates.
+            </div>
+            <div class="list-item">
+              Keep specs, status, logs, and commits available to the next
+              iteration.
+            </div>
+          </div>
+          <div class="quote">
+            <p>Fast code is not the milestone. Verified code is.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell footer-row">
+        <span>LoopGate by RXDT Labs. Built by Rox dT.</span>
+        <span>
+          <a href="https://github.com/rxdt">github.com/rxdt</a> ·
+          <a href="https://rxdt.dev">rxdt.dev</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

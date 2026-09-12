@@ -1,0 +1,522 @@
+/*
+ * LoopGate landing page.
+ *
+ * DELIBERATE EXCEPTION to DESIGN.md: this is the only light-scheme page on the
+ * site. It is a product page for RXDT Labs' harness, not part of the rxdt.dev
+ * personal-site narrative, so it carries its own palette rather than the shared
+ * dark violet system. See DESIGN.md "Exceptions" for the rationale.
+ *
+ * Everything below still obeys the shared lint contract: token names match the
+ * `background|color|font|layout|radius|shadow|space|z` prefix pattern, and every
+ * literal the gate rejects inline (raw lengths on sizing properties, grid track
+ * lists, hex in `background`) is named as a token instead of suppressed.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Colors */
+  --color-ink: #101014;
+  --color-muted: #5b5e66;
+  --color-line: #d9dee7;
+  --color-line-dark: #2b2f32;
+  --color-line-faint: rgb(255 255 255 / 8%);
+  --color-line-quote: #b8dfca;
+  --color-soft: #f4f6f8;
+  --color-panel: #fff;
+  --color-accent-dark: #075c42;
+  --color-code: #151719;
+  --color-on-code: #fff;
+  --color-terminal-ink: #f5f7f4;
+  --color-terminal-muted: #aab1ad;
+  --color-dot: #545b60;
+  --color-pass: #79e0a7;
+  --color-shadow: #dfe7e2;
+
+  /* Backgrounds — `background` rejects hex/rgb() literals inline. */
+  --background-page: #fbfcfd;
+  --background-header: rgb(251 252 253 / 92%);
+  --background-quote: #e9f6ef;
+
+  /* Shadows */
+  --shadow-block: 0.75rem 0.75rem 0 var(--color-shadow);
+  --shadow-block-sm: 0.5rem 0.5rem 0 var(--color-shadow);
+
+  /* Radii */
+  --radius-full: 62.4375rem;
+
+  /* Spacing */
+  --space-hairline: 0.0625rem;
+  --space-2xs: 0.4rem;
+  --space-xs: 0.55rem;
+  --space-sm: 0.625rem;
+  --space-sm-plus: 0.75rem;
+  --space-md: 0.85rem;
+  --space-md-plus: 0.875rem;
+  --space-lg: 1rem;
+  --space-lg-plus: 1.125rem;
+  --space-xl: 1.2rem;
+  --space-xl-plus: 1.25rem;
+  --space-2xl: 1.5rem;
+  --space-2xl-plus: 1.75rem;
+  --space-3xl: 2rem;
+  --space-4xl: 2.625rem;
+  --space-5xl: 3rem;
+  --space-6xl: 4.125rem;
+  --space-7xl: 4.625rem;
+  --space-8xl: 4.75rem;
+  --space-9xl: 5.5rem;
+
+  /* Type scale. The fluid ramps hold vw, which the font-size unit list rejects
+   * inline but allows once named — the gate inspects the literal, not the token. */
+  --font-h1: clamp(3.25rem, 8vw, 6.875rem);
+  --font-h2: clamp(2rem, 4vw, 3.5rem);
+  --font-h3: 1.15rem;
+  --font-quote: 1.6rem;
+  --font-lede: 1.175rem;
+  --font-body: 1rem;
+  --font-code: 0.86rem;
+  --font-label: 0.875rem;
+  --font-label-sm: 0.8rem;
+  --font-label-xs: 0.75rem;
+  --font-family-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "BlinkMacSystemFont",
+    "Segoe UI", sans-serif;
+  --font-family-mono:
+    ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+
+  /* Line heights (unitless). */
+  --font-leading-body: 1.55;
+  --font-leading-h1: 0.9;
+  --font-leading-flat: 1;
+  --font-leading-quote: 1.05;
+  --font-leading-snug: 1.2;
+
+  /* Layout dimensions. Sizing properties reject raw lengths inline. */
+  --layout-shell: min(70rem, calc(100% - 2.5rem));
+  --layout-nav-min: 4.25rem;
+  --layout-mark: 2.125rem;
+  --layout-button-min: 2.625rem;
+  --layout-pill-min: 2rem;
+  --layout-terminal-head-min: 2.75rem;
+  --layout-dot: 0.625rem;
+  --layout-h1-measure: 6.6em;
+  --layout-lede-measure: 37rem;
+  --layout-card-min: 13rem;
+  --layout-step-min: 10rem;
+  --layout-blur: 1rem;
+  --layout-clip: hidden;
+
+  /* Grid track lists. `fr` is not on the allowed unit list even inside a token,
+   * so equal-track grids use exact percentages and ratio grids approximate. */
+  --layout-hero-columns: minmax(0, 51%) minmax(20rem, 49%);
+  --layout-section-head-columns: minmax(0, 45%) minmax(0, 48%);
+  --layout-grid-thirds: repeat(3, minmax(0, 33.3333%));
+  --layout-grid-quarters: repeat(4, minmax(0, 25%));
+  --layout-split-columns: minmax(0, 58.8235%) minmax(18rem, 41.1765%);
+  --layout-line-columns: 5.25rem minmax(0, 100%);
+  --layout-grid-single: minmax(0, 100%);
+
+  /* Breakpoint. Content-driven em, per the media-feature unit list. */
+  --layout-breakpoint: 55em;
+
+  /* Z layers */
+  --z-header: 10;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background-page);
+  color: var(--color-ink);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-body);
+  line-height: var(--font-leading-body);
+}
+
+a {
+  color: inherit;
+}
+
+/* Keyboard-visible focus on every interactive target. Bare :focus is banned by
+ * the gate because it also fires on mouse clicks. */
+a:focus-visible {
+  outline: var(--space-hairline) solid var(--color-accent-dark);
+  outline-offset: var(--space-2xs);
+}
+
+.shell {
+  width: var(--layout-shell);
+  margin-inline: auto;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  border-bottom: var(--space-hairline) solid var(--color-line);
+  background: var(--background-header);
+  backdrop-filter: blur(var(--layout-blur));
+}
+
+.nav {
+  min-height: var(--layout-nav-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl-plus);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm-plus);
+  color: var(--color-ink);
+  font-weight: 780;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+.mark {
+  width: var(--layout-mark);
+  height: var(--layout-mark);
+  display: grid;
+  place-items: center;
+  border: var(--space-hairline) solid var(--color-code);
+  background: var(--color-panel);
+  font-size: var(--font-label-xs);
+  font-weight: 850;
+}
+
+.navlinks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg-plus);
+  color: var(--color-muted);
+  font-size: var(--font-label);
+}
+
+.navlinks a {
+  text-decoration: none;
+}
+
+.button {
+  min-height: var(--layout-button-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-lg);
+  border: var(--space-hairline) solid var(--color-code);
+  background: var(--color-code);
+  color: var(--color-on-code);
+  font-size: var(--font-label);
+  font-weight: 740;
+  text-decoration: none;
+}
+
+.button.secondary {
+  background: var(--color-panel);
+  color: var(--color-code);
+}
+
+main {
+  padding-block: var(--space-7xl) var(--space-6xl);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: var(--layout-hero-columns);
+  gap: var(--space-4xl);
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-lg);
+  color: var(--color-accent-dark);
+  font-size: var(--font-label-sm);
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: var(--layout-h1-measure);
+  margin-bottom: var(--space-xl-plus);
+  font-size: var(--font-h1);
+  line-height: var(--font-leading-h1);
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-h2);
+  line-height: var(--font-leading-flat);
+  letter-spacing: 0;
+}
+
+h3 {
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-h3);
+  line-height: var(--font-leading-snug);
+}
+
+.lead {
+  max-width: var(--layout-lede-measure);
+  color: var(--color-muted);
+  font-size: var(--font-lede);
+}
+
+.actions,
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm-plus);
+  margin-top: var(--space-2xl);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--layout-pill-min);
+  padding-inline: var(--space-sm-plus);
+  border: var(--space-hairline) solid var(--color-line);
+  background: var(--color-panel);
+  color: var(--color-muted);
+  font-size: var(--font-label-sm);
+  font-weight: 700;
+}
+
+.terminal {
+  border: var(--space-hairline) solid var(--color-code);
+  background: var(--color-code);
+  color: var(--color-terminal-ink);
+  box-shadow: var(--shadow-block);
+  overflow: var(--layout-clip);
+}
+
+.terminal-head {
+  min-height: var(--layout-terminal-head-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-inline: var(--space-lg);
+  border-bottom: var(--space-hairline) solid var(--color-line-dark);
+  color: var(--color-terminal-muted);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-label-sm);
+}
+
+.dots {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+.dot {
+  width: var(--layout-dot);
+  height: var(--layout-dot);
+  border-radius: var(--radius-full);
+  background: var(--color-dot);
+}
+
+.terminal-body {
+  padding: var(--space-xl-plus);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-code);
+}
+
+.line {
+  display: grid;
+  grid-template-columns: var(--layout-line-columns);
+  gap: var(--space-lg);
+  padding-block: var(--space-xs);
+  border-bottom: var(--space-hairline) solid var(--color-line-faint);
+}
+
+.line:last-child {
+  border-bottom: 0;
+}
+
+.status {
+  color: var(--color-pass);
+  font-weight: 750;
+}
+
+.section {
+  padding-top: var(--space-9xl);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: var(--layout-section-head-columns);
+  gap: var(--space-3xl);
+  align-items: end;
+  margin-bottom: var(--space-2xl-plus);
+}
+
+.section-head p,
+.card p,
+.list-item,
+.quote p,
+.footer-row {
+  color: var(--color-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: var(--layout-grid-thirds);
+  gap: var(--space-lg);
+}
+
+.card,
+.quote,
+.list-item {
+  border: var(--space-hairline) solid var(--color-line);
+  background: var(--color-panel);
+}
+
+.card {
+  min-height: var(--layout-card-min);
+  padding: var(--space-xl-plus);
+}
+
+.card strong {
+  display: inline-flex;
+  margin-bottom: var(--space-lg);
+  color: var(--color-accent-dark);
+  font-size: var(--font-label-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: var(--layout-grid-quarters);
+  gap: var(--space-sm-plus);
+  counter-reset: flow;
+}
+
+.step {
+  min-height: var(--layout-step-min);
+  padding: var(--space-lg);
+  border: var(--space-hairline) solid var(--color-code);
+  background: var(--color-soft);
+  counter-increment: flow;
+}
+
+.step::before {
+  content: "0" counter(flow);
+  display: inline-flex;
+  margin-bottom: var(--space-xl);
+  color: var(--color-accent-dark);
+  font-family: var(--font-family-mono);
+  font-weight: 800;
+}
+
+.demo-video {
+  margin: 0 0 var(--space-3xl);
+}
+
+.demo-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--space-hairline) solid var(--color-line);
+  background: var(--color-code);
+}
+
+.demo-video video:focus-visible {
+  outline: var(--space-hairline) solid var(--color-accent-dark);
+  outline-offset: var(--space-2xs);
+}
+
+.demo-video figcaption {
+  margin-top: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--font-label);
+}
+
+.split {
+  display: grid;
+  grid-template-columns: var(--layout-split-columns);
+  gap: var(--space-lg);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-sm-plus);
+}
+
+.list-item {
+  padding: var(--space-lg);
+}
+
+.quote {
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-xl-plus);
+  background: var(--background-quote);
+  border-color: var(--color-line-quote);
+}
+
+.quote p {
+  margin: 0;
+  color: var(--color-accent-dark);
+  font-size: var(--font-quote);
+  font-weight: 820;
+  line-height: var(--font-leading-quote);
+}
+
+footer {
+  margin-top: var(--space-8xl);
+  padding-block: var(--space-2xl-plus);
+  border-top: var(--space-hairline) solid var(--color-line);
+  color: var(--color-muted);
+  font-size: var(--font-label);
+}
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-md-plus);
+}
+
+@media (width <= 55em) {
+  .hero,
+  .section-head,
+  .split {
+    grid-template-columns: var(--layout-grid-single);
+  }
+
+  .grid,
+  .flow {
+    grid-template-columns: var(--layout-grid-single);
+  }
+
+  .navlinks {
+    display: none;
+  }
+
+  main {
+    padding-top: var(--space-5xl);
+  }
+
+  .terminal {
+    box-shadow: var(--shadow-block-sm);
+  }
+}

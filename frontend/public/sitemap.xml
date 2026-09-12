@@ -31,9 +31,21 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://rxdt.dev/loopgate.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://vram.rxdt.dev</loc>
     <lastmod>2026-07-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rxdt.dev/machine_learning_forecasting.html</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

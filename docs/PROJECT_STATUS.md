@@ -14,10 +14,13 @@
   check requires semgrep; ci.yml installs it with `pip install semgrep`. The
   `audit` check passes via pnpm-workspace.yaml `overrides` forcing patched
   transitive dev deps (tmp, uuid, fast-json-patch, @opentelemetry/core).
-- The legacy GitHub "pages build and deployment" Jekyll workflow is still
-  ACTIVE (dynamic workflow, no file in-repo). If ci.yml's deploy is skipped it
-  can overwrite the site with a Jekyll-rendered README. Owner should disable it
-  (Actions tab, or `gh workflow disable 309717422`).
+- The legacy GitHub "pages build and deployment" Jekyll workflow (309717422,
+  dynamic, no file in-repo) shows as ACTIVE and cannot be disabled — the API
+  returns 422, because with Pages on `build_type: "workflow"` this same dynamic
+  workflow is what `actions/deploy-pages` runs to publish the artifact. It no
+  longer does a Jekyll build: `gh api repos/rxdt/rxdt.github.io/pages` reports
+  `build_type: workflow`, and its last Jekyll-style run was 2026-07-16, before
+  the switch. No owner action needed; do not try to disable it.
 - SEO: every page has title, meta description, canonical, OG/twitter tags,
   favicon, JSON-LD (Person + WebApplication on home; Article on all three
   writeups). All three writeups are SELF-canonical and in sitemap.xml. The
@@ -83,3 +86,13 @@
   name the fix (restore the script or remove the check name).
 - semgrep is the only check tool that is not an npm devDependency; any CI or
   fresh machine must install it out-of-band or the gate fails on `sast`.
+
+## LoopGate video update
+
+- Branch: `codex/add-loopgate-page`, PR #9.
+- Added the 60-second launch video, poster, and responsive player.
+- Copy now describes documented gates and Git-backed progress.
+- Validation: local gate passed with the committed dependency fix.
+- Approved dependency fix committed with hooks and checks enabled.
+- Audit reports zero known vulnerabilities with no exclusions.
+- Merged main into PR #9, retaining patched dependencies and Browserslist 4.28.9.
