@@ -92,7 +92,7 @@
 - Branch: `codex/add-loopgate-page`, PR #9.
 - Added the 60-second launch video, poster, and responsive player.
 - Copy now describes documented gates and Git-backed progress.
-- Validation: local gate passed with the prepared dependency patch.
-- Blocker: commit hook excludes the approved dependency files.
-- Fix: scratchpad/loopgate-ci-dependencies.patch, audit has zero findings.
-- PR #10 includes the page fixes. Dependency fixes still need a human commit.
+- Validation: local gate passed with the committed dependency fix.
+- Approved dependency fix committed with hooks and checks enabled.
+- Audit reports zero known vulnerabilities with no exclusions.
+- PR #10 includes the page and dependency fixes from PR #9.
