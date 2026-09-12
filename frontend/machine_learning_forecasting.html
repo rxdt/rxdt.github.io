@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Three Models, One Shopping List | Rox dT</title>
+    <meta
+      name="description"
+      content="In under seven days, I built a Python retail forecasting pipeline with three models, a custom evaluation harness, inventory recommendations, and monitoring."
+    />
+    <link
+      rel="canonical"
+      href="https://rxdt.dev/machine_learning_forecasting.html"
+    />
+    <meta
+      property="og:title"
+      content="Three Models, One Shopping List | Rox dT"
+    />
+    <meta
+      property="og:description"
+      content="In under seven days, I built a Python retail forecasting pipeline with three models, a custom evaluation harness, inventory recommendations, and monitoring."
+    />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:url"
+      content="https://rxdt.dev/machine_learning_forecasting.html"
+    />
+    <meta
+      property="og:image"
+      content="https://rxdt.dev/assets/runtime-og.webp"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Three Models, One Shopping List",
+        "description": "In under seven days, I built a Python retail forecasting pipeline with three models, a custom evaluation harness, inventory recommendations, and monitoring.",
+        "url": "https://rxdt.dev/machine_learning_forecasting.html",
+        "datePublished": "2026-09-11",
+        "author": {
+          "@type": "Person",
+          "name": "Roxana del Toro",
+          "url": "https://rxdt.dev/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/styles/writeup.css" />
+    <script defer src="/scripts/cursor.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topbar">
+        <a class="site-link" href="/">Rox dT</a>
+        <a class="site-link" href="https://github.com/rxdt/forecasting_m5"
+          >Explore the code &rarr;</a
+        >
+      </div>
+      <header class="masthead">
+        <p class="eyebrow">11 September 2026 &middot; Project Notes</p>
+        <h1>Three Models, One Shopping List</h1>
+        <p class="sub">A backend engineer’s week in retail forecasting.</p>
+        <p class="byline">
+          <span>By Rox dT</span
+          ><span>Python &middot; Forecasting &middot; Evaluation</span>
+        </p>
+      </header>
+      <article class="flow" aria-label="Retail forecasting project writeup">
+        <p class="lead">
+          Ordering stock sounds straightforward until you’re responsible for it.
+          Buy too little and customers leave empty-handed. Buy too much and
+          you’ve paid good money to store things nobody wants yet. I wanted to
+          build something that could help make that call.
+        </p>
+        <p>
+          I’m a backend Python engineer, not a data scientist, and retail
+          forecasting was new territory for me. In under seven days, I built a
+          working pipeline that takes sales history, compares three forecasting
+          models, and uses the winner to recommend what to order. It includes
+          data validation, an evaluation harness I built, inventory
+          calculations, monitoring, charts, and one notebook that runs the whole
+          thing.
+        </p>
+        <h2>I made the models compete</h2>
+        <p>
+          The M5 retail forecasting competition got me interested in LightGBM,
+          which featured prominently among its successful approaches. But I
+          wanted to see how it compared with alternatives, so I put three models
+          through the same experiment.
+        </p>
+        <p>
+          Seasonal naive starts with “next week will probably look like last
+          week.” AutoARIMA looks for statistical patterns in sales over time.
+          LightGBM learns across products and locations, using sales history,
+          prices, and calendar information. Each has to predict the next four
+          weeks.
+        </p>
+        <p>
+          My evaluation harness rewinds the calendar to 18 different starting
+          points. At each one, the models see only the sales history available
+          then, and their predictions are checked against what happened next.
+          The harness checks dates and forecast outputs before scoring them,
+          compares the models on the same data, and saves the predictions for
+          inspection.
+        </p>
+        <p>
+          LightGBM won on the synthetic demo, with 5.9% order-cycle forecast
+          error, compared with 6.8% for AutoARIMA and 12.0% for seasonal naive.
+          These are results from the demo, not the M5 competition.
+        </p>
+        <h2>Okay, but what do we order?</h2>
+        <p>
+          A forecast doesn’t know what’s already sitting on the shelf. The
+          ordering logic combines predicted demand with available stock,
+          delivery time, a safety buffer, and minimum order quantities to
+          recommend a purchase. That gives the model’s output a practical use
+          beyond making a nice chart.
+        </p>
+        <p>
+          There’s also monitoring for deteriorating accuracy, consistent over-
+          or under-prediction, and uncertainty ranges that deserve suspicion.
+          LightGBM supplied a good example. Its supposedly 80% prediction range
+          caught actual sales only 67.7% of the time. I’d want that calibrated
+          before trusting it with purchasing decisions, even though it won the
+          comparison.
+        </p>
+        <h2>How I got through it in a week</h2>
+        <p>
+          I used
+          <a href="https://github.com/rxdt/loopgate_harness"
+            >LoopGate, my own Python development harness</a
+          >, to work with coding agents while automating formatting, linting,
+          complexity checks, type checking, security scanning, and tests with a
+          100% coverage threshold. It checks the software, while the separate
+          evaluation harness checks how the forecasting models perform.
+        </p>
+        <p>
+          Having those checks running gave me more room to learn the domain and
+          work through the decisions. The public demo uses synthetic data and
+          explicit inventory assumptions, so there’s more validation to do
+          before real deployment. For a week’s work, though, I’m pleased that
+          you can follow it from the input data right through to an order
+          recommendation.
+        </p>
+        <p>
+          <a href="https://www.figma.com/slides/2Sit8ZfFHchWyZc2lh4BvQ"
+            >Have a look at the slides</a
+          >, or
+          <a href="https://github.com/rxdt/forecasting_m5"
+            >run the project yourself</a
+          >.
+        </p>
+      </article>
+      <p class="colophon"><a href="/">Back to Rox dT</a></p>
+    </main>
+  </body>
+</html>
