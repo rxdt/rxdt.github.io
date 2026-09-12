@@ -93,6 +93,7 @@ survive the harness gate and manual visual review.
 - Branch: `codex/add-loopgate-page`, PR #9.
 - Added the 60-second launch video, poster, and responsive player.
 - Copy now describes documented gates and Git-backed progress.
-- Validation: `pnpm gate` passed all 18 checks.
-- Updated dependency pins remove audit findings without exclusions.
-- PR #10 will inherit the page and dependency fixes from PR #9.
+- Validation: local gate passed with the committed dependency fix.
+- Approved dependency fix committed with hooks and checks enabled.
+- Audit reports zero known vulnerabilities with no exclusions.
+- PR #10 includes the page and dependency fixes from PR #9.
