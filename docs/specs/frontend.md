@@ -90,10 +90,10 @@ survive the harness gate and manual visual review.
 
 ## LoopGate video update
 
-- Branch: `codex/consolidate-loopgate-card`.
+- Branch: `codex/loopgate-js-repo-link`.
 - Added the 60-second launch video, poster, and responsive player.
 - Copy now describes documented gates and Git-backed progress.
 - Validation: local gate passed with the committed dependency fix.
 - Approved dependency fix committed with hooks and checks enabled.
 - Audit reports zero known vulnerabilities with no exclusions.
-- One LoopGate card, plus a distinct LoopGate JS card, artwork, and short writeup.
+- LoopGate JS card includes direct writeup and GitHub repository links.

@@ -28,6 +28,7 @@ const externalLinkContracts = [
       "https://github.com/rxdt/comfyday-public",
       "https://github.com/rxdt/inference_conference",
       "https://github.com/rxdt/loopgate_harness",
+      "https://github.com/rxdt/loopgate_js",
       "https://github.com/rxdt/proprietor",
       "https://hackernoon.com/three-ai-agents-held-a-conference-and-decided-i-should-do-the-work-instead",
       "https://rentorown.rxdt.dev/",
