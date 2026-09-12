@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Why frontend gates are harder | Rox dT</title>
+    <meta
+      name="description"
+      content="LoopGate JS checks more than a successful build: browser behavior, responsive layouts, accessibility, and production assets. This site was built using loopgate_js."
+    />
+    <link rel="canonical" href="https://rxdt.dev/loopgate-js.html" />
+    <meta
+      property="og:title"
+      content="Why frontend gates are harder | Rox dT"
+    />
+    <meta
+      property="og:description"
+      content="LoopGate JS checks more than a successful build: browser behavior, responsive layouts, accessibility, and production assets. This site was built using loopgate_js."
+    />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://rxdt.dev/loopgate-js.html" />
+    <meta
+      property="og:image"
+      content="https://rxdt.dev/assets/loopgate-js.webp"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Why frontend gates are harder | Rox dT"
+    />
+    <meta
+      name="twitter:description"
+      content="What a frontend coding-agent harness has to check beyond a passing build."
+    />
+    <meta
+      name="twitter:image"
+      content="https://rxdt.dev/assets/loopgate-js.webp"
+    />
+    <meta
+      property="og:image:alt"
+      content="Browser windows passing through quality gates"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Why frontend gates are harder",
+        "description": "LoopGate JS checks more than a successful build: browser behavior, responsive layouts, accessibility, and production assets. This site was built using loopgate_js.",
+        "url": "https://rxdt.dev/loopgate-js.html",
+        "datePublished": "2026-09-11",
+        "author": {
+          "@type": "Person",
+          "name": "Roxana del Toro",
+          "url": "https://rxdt.dev/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/styles/tokens.css" />
+    <link rel="stylesheet" href="/styles/writeup.css" />
+    <script defer src="/scripts/cursor.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topbar">
+        <a class="site-link" href="/">Rox dT</a>
+        <a class="site-link" href="https://github.com/rxdt/loopgate_js"
+          >Explore LoopGate JS &rarr;</a
+        >
+      </div>
+      <header class="masthead">
+        <p class="eyebrow">Project Notes &middot; LoopGate JS</p>
+        <h1>Why frontend gates are harder</h1>
+        <p class="sub">The browser gets a vote.</p>
+        <p class="byline">
+          <span>By Rox dT</span
+          ><span>TypeScript &middot; Vite &middot; Coding agents</span>
+        </p>
+      </header>
+      <article class="flow" aria-label="LoopGate JS project writeup">
+        <p class="lead">
+          A frontend can pass its unit tests and still give someone a blank
+          page. Or a button they cannot reach with a keyboard. Or a layout that
+          works beautifully until the screen gets smaller.
+        </p>
+        <p>
+          That is why I built LoopGate JS. It brings coding agents into a
+          TypeScript and Vite workflow where the repository defines what has to
+          pass before their work lands.
+        </p>
+        <h2>A passing build is only the beginning</h2>
+        <p>
+          Frontend correctness includes things a compiler cannot see. Does the
+          page render? Do production assets load? Does the layout fit a phone?
+          Can someone navigate it without a mouse?
+        </p>
+        <p>
+          The harness combines formatting, lint, types, security checks, and
+          unit coverage with Playwright browser tests, accessibility checks, and
+          Lighthouse budgets. Each catches a different kind of failure. A green
+          unit test cannot tell you whether a stylesheet disappeared from the
+          production build.
+        </p>
+        <h2>Make the loop face the browser</h2>
+        <p>
+          Agents work in fresh iterations, with plans and specs kept in the
+          repo. Fast preflight checks run before commits. The full gate runs
+          before pushes, so browser behavior is part of the acceptance criteria.
+        </p>
+        <p>
+          That still leaves taste and judgment to a person. A page can satisfy
+          every automated check and feel wrong. The harness makes repeatable
+          failures easier to catch, leaving more attention for the decisions
+          that need a human.
+        </p>
+        <p>
+          <strong>This site itself was built using loopgate_js.</strong> It is a
+          working example of the same frontend harness.
+        </p>
+        <p>
+          Read the
+          <a
+            href="https://github.com/rxdt/loopgate_js#why-frontend-loops-are-harder"
+            >LoopGate JS README</a
+          >
+          for the checks and setup, or the
+          <a href="engineering-the-loop.html"
+            >writeup on engineering the loop</a
+          >
+          for the broader approach.
+        </p>
+      </article>
+      <p class="colophon"><a href="/">Back to Rox dT</a></p>
+    </main>
+  </body>
+</html>

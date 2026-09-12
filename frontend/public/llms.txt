@@ -11,6 +11,8 @@ The site is a static, multi-page TypeScript + Vite application. Its primary inte
 
 ## Projects
 
+- [LoopGate JS](https://rxdt.dev/loopgate-js.html): Why frontend coding-agent gates need browser, accessibility, and layout checks. This site was built using loopgate_js.
+
 - [Retail Demand Forecasting](https://rxdt.dev/machine_learning_forecasting.html): Three-model Python pipeline with a custom evaluation harness, inventory recommendations, and monitoring.
 
 - [AI Deployment Calculator](https://vram.rxdt.dev/): Browser-based tool for estimating GPU VRAM and hardware for AI workloads.

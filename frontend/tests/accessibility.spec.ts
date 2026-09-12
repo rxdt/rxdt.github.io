@@ -7,6 +7,7 @@ import { expect, test } from "@playwright/test";
 // subset can miss, and running it across every device project asserts the site
 // stays accessible responsively (mobile nav wrap, single-column grids, etc.).
 const accessibleRoutes = [
+  { heading: /why frontend gates are harder/i, route: "/loopgate-js.html" },
   { heading: /human in the loop/i, route: "/" },
   {
     heading: /a frontend loop needs a real app/i,
