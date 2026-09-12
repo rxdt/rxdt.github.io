@@ -96,4 +96,4 @@ survive the harness gate and manual visual review.
 - Validation: local gate passed with the committed dependency fix.
 - Approved dependency fix committed with hooks and checks enabled.
 - Audit reports zero known vulnerabilities with no exclusions.
-- One LoopGate homepage card links to the landing page, writeup, and repository.
+- One LoopGate card, plus a distinct LoopGate JS card, artwork, and short writeup.
