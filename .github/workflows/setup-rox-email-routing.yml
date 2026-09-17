@@ -1,0 +1,129 @@
+name: Configure rxdt.dev email routing
+
+on:
+  push:
+    branches:
+      - codex/setup-rox-email-routing-20260917
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+      CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+      CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+    steps:
+      - name: Configure and verify route
+        shell: python
+        run: |
+          import json
+          import os
+          import sys
+          import urllib.parse
+          import urllib.request
+          import urllib.error
+
+          API = "https://api.cloudflare.com/client/v4"
+          DOMAIN = "rxdt.dev"
+          SOURCE = "rox@rxdt.dev"
+          DESTINATION = "rxdeltoro@gmail.com"
+
+          token = (
+              os.environ.get("CLOUDFLARE_API_TOKEN")
+              or os.environ.get("CF_API_TOKEN")
+              or os.environ.get("CLOUDFLARE_TOKEN")
+          )
+          global_key = os.environ.get("CLOUDFLARE_API_KEY")
+          email = os.environ.get("CLOUDFLARE_EMAIL")
+
+          if token:
+              headers = {"Authorization": f"Bearer {token}"}
+          elif global_key and email:
+              headers = {"X-Auth-Key": global_key, "X-Auth-Email": email}
+          else:
+              print("BLOCKED_NO_CLOUDFLARE_CREDENTIAL_SECRET")
+              sys.exit(3)
+          headers["Content-Type"] = "application/json"
+
+          def request(method, path, body=None):
+              data = None if body is None else json.dumps(body).encode()
+              req = urllib.request.Request(API + path, data=data, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      payload = json.loads(response.read().decode())
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read().decode(errors="replace")
+                  try:
+                      payload = json.loads(raw)
+                  except Exception:
+                      payload = {"success": False, "errors": [{"message": raw[:500]}]}
+              if not payload.get("success"):
+                  errors = "; ".join(str(e.get("message", e)) for e in payload.get("errors", []))
+                  raise RuntimeError(f"{method} {path} failed: {errors}")
+              return payload.get("result")
+
+          zones = request("GET", "/zones?" + urllib.parse.urlencode({"name": DOMAIN, "status": "active"}))
+          if len(zones) != 1:
+              raise RuntimeError(f"Expected one active {DOMAIN} zone; found {len(zones)}")
+          zone = zones[0]
+          zone_id = zone["id"]
+          account_id = zone["account"]["id"]
+
+          addresses = request("GET", f"/accounts/{account_id}/email/routing/addresses")
+          destination = next((a for a in addresses if a.get("email", "").lower() == DESTINATION), None)
+          if destination is None:
+              destination = request(
+                  "POST",
+                  f"/accounts/{account_id}/email/routing/addresses",
+                  {"email": DESTINATION},
+              )
+              print("DESTINATION_CREATED")
+
+          if not destination.get("verified"):
+              print("BLOCKED_DESTINATION_UNVERIFIED")
+              sys.exit(2)
+
+          settings = request("GET", f"/zones/{zone_id}/email/routing")
+          if not settings.get("enabled") or settings.get("status") != "ready":
+              settings = request("POST", f"/zones/{zone_id}/email/routing/enable", {})
+
+          rules = request("GET", f"/zones/{zone_id}/email/routing/rules")
+          matching = None
+          for rule in rules:
+              for matcher in rule.get("matchers", []):
+                  if matcher.get("type") == "literal" and matcher.get("field") == "to" and matcher.get("value", "").lower() == SOURCE:
+                      matching = rule
+                      break
+              if matching:
+                  break
+
+          desired = {
+              "name": "Forward rox@rxdt.dev to Gmail",
+              "enabled": True,
+              "matchers": [{"type": "literal", "field": "to", "value": SOURCE}],
+              "actions": [{"type": "forward", "value": [DESTINATION]}],
+              "source": "api",
+          }
+          if matching:
+              rule = request("PUT", f"/zones/{zone_id}/email/routing/rules/{matching['id']}", desired)
+          else:
+              rule = request("POST", f"/zones/{zone_id}/email/routing/rules", desired)
+
+          settings = request("GET", f"/zones/{zone_id}/email/routing")
+          rules = request("GET", f"/zones/{zone_id}/email/routing/rules")
+          verified = any(
+              r.get("enabled")
+              and any(m.get("type") == "literal" and m.get("field") == "to" and m.get("value", "").lower() == SOURCE for m in r.get("matchers", []))
+              and any(a.get("type") == "forward" and DESTINATION in a.get("value", []) for a in r.get("actions", []))
+              for r in rules
+          )
+          if not settings.get("enabled") or settings.get("status") != "ready" or not verified:
+              raise RuntimeError("Cloudflare API verification failed")
+          print("ROUTE_VERIFIED: rox@rxdt.dev -> rxdeltoro@gmail.com")
